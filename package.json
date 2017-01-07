@@ -1,0 +1,33 @@
+{
+  "name": "novation-circuit-midi-cc-connector",
+  "version": "0.0.1",
+  "description": "Unofficial Novation Circuit&trade; MIDI CC JavaScript data library",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scrawlon/Unofficial-Novation-Circuit-MIDI-CC-JavaScript-data-library.git"
+  },
+  "keywords": [
+    "novation",
+    "circuit",
+    "midi"
+  ],
+  "author": "Scott McGrath (scrawlon)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scrawlon/Unofficial-Novation-Circuit-MIDI-CC-JavaScript-data-library/issues"
+  },
+  "homepage": "https://github.com/scrawlon/Unofficial-Novation-Circuit-MIDI-CC-JavaScript-data-library#readme",
+  "devDependencies": {
+    "browserify": "^13.1.1",
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-streamify": "^1.0.2",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.7",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
