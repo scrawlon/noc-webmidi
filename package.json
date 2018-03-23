@@ -1,6 +1,6 @@
 {
   "name": "noc-webmidi",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Unofficial Novation Circuit&trade; MIDI CC JavaScript data library",
   "main": "index.js",
   "scripts": {
@@ -33,6 +33,5 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
