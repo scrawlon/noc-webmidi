@@ -1,6 +1,6 @@
 {
   "name": "noc-webmidi",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Unofficial Novation Circuit&trade; MIDI CC JavaScript data library",
   "main": "index.js",
   "scripts": {
