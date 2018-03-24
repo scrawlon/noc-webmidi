@@ -21,32 +21,17 @@ gulp.task('browserify', function() {
         .pipe(gulp.dest('./dist/js/'));
 
       bundle
+        .pipe(source(outputName))
+        .pipe(rename('index.js'))
+        .pipe(gulp.dest('./'));
+
+      bundle
         .pipe(source(devOutputName))
         .pipe(streamify(uglify()))
         .pipe(gulp.dest('./dist/js/'));
     }));
 });
 
-gulp.task('package', function() {
-  gulp.src(sourceDirectory + 'index.js')
-    .on('error', function(err) { gutil.log('error', err) })
-    .pipe(rename(function(path) {
-      var inputName = sourceDirectory + path.basename + path.extname,
-        outputName = path.basename + path.extname,
-        // devOutputName = path.basename + ".min" + path.extname,
-        bundle = browserify(inputName).bundle();
-
-      // bundle
-      //   .pipe(source(outputName))
-      //   .pipe(gulp.dest('./dist/js/'));
-
-      bundle
-        .pipe(source(outputName))
-        .pipe(streamify(uglify()))
-        .pipe(gulp.dest('./'));
-    }));
-});
-
 gulp.task('watch', function() {
-  gulp.watch(sourceDirectory+'*.js', ['browserify', 'package']);
+  gulp.watch(sourceDirectory+'*.js', ['browserify']);
 });
