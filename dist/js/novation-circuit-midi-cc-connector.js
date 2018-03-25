@@ -217,8 +217,8 @@ var synth = require('./novation-circuit-synth.js'),
 var helpers = require('./helpers.js'),
   synth = require('./novation-circuit-synth.js'),
   drum = require('./novation-circuit-drums.js'),
-  session = require('./novation-circuit-session.js'),
-  allMidiCCs = require('./novation-circuit-midi-ccs.js');
+  session = require('./novation-circuit-session.js');
+  // allMidiCCs = require('./novation-circuit-midi-ccs.js');
 
 (function() {
   var midiCCs = allMidiCCs.midiCCs,
@@ -358,7 +358,7 @@ var helpers = require('./helpers.js'),
 
 })();
 
-},{"./helpers.js":1,"./novation-circuit-drums.js":2,"./novation-circuit-midi-ccs.js":4,"./novation-circuit-session.js":6,"./novation-circuit-synth.js":7}],6:[function(require,module,exports){
+},{"./helpers.js":1,"./novation-circuit-drums.js":2,"./novation-circuit-session.js":6,"./novation-circuit-synth.js":7}],6:[function(require,module,exports){
 (function() {
   var midiCCs = {},
     midiComponents = {};

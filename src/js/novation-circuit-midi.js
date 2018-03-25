@@ -1,8 +1,8 @@
 var helpers = require('./helpers.js'),
   synth = require('./novation-circuit-synth.js'),
   drum = require('./novation-circuit-drums.js'),
-  session = require('./novation-circuit-session.js'),
-  allMidiCCs = require('./novation-circuit-midi-ccs.js');
+  session = require('./novation-circuit-session.js');
+  // allMidiCCs = require('./novation-circuit-midi-ccs.js');
 
 (function() {
   var midiCCs = allMidiCCs.midiCCs,
