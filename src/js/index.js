@@ -31,7 +31,7 @@
     }
   };
 
-  var midiComponents = new Map(),
+  var midiComponents = setMidiComponents(synth, drum, session),
     midiDrumCCs = getDrumComponents(drum.midiComponents),
     midiChannels = {
       '0': 'synth 1',
@@ -40,45 +40,17 @@
       '15': 'session'
     };
 
-  midiComponents.set('synth 1', getComponentSettings(0,synth.midiComponents));
-  midiComponents.set('synth 2', getComponentSettings(1,synth.midiComponents));
-  midiComponents.set('drum 1', getComponentSettings(9,drum.midiComponents[0]));
-  midiComponents.set('drum 2', getComponentSettings(9,drum.midiComponents[1]));
-  midiComponents.set('drum 3', getComponentSettings(9,drum.midiComponents[2]));
-  midiComponents.set('drum 4', getComponentSettings(9,drum.midiComponents[3]));
-  midiComponents.set('session', getComponentSettings(15,session.midiComponents));
+  function setMidiComponents(synth, drum, session) {
+    var midiComponents = new Map();
+    midiComponents.set('synth 1', getComponentSettings(0,synth.midiComponents));
+    midiComponents.set('synth 2', getComponentSettings(1,synth.midiComponents));
+    midiComponents.set('drum 1', getComponentSettings(9,drum.midiComponents[0]));
+    midiComponents.set('drum 2', getComponentSettings(9,drum.midiComponents[1]));
+    midiComponents.set('drum 3', getComponentSettings(9,drum.midiComponents[2]));
+    midiComponents.set('drum 4', getComponentSettings(9,drum.midiComponents[3]));
+    midiComponents.set('session', getComponentSettings(15,session.midiComponents));
 
-  function getDrumComponents(drumComponents) {
-    var drumComponentsArray = [];
-    drumComponents.forEach(function(component) {
-      drumComponentsArray.push(component.settings);
-    });
-
-    return drumComponentsArray;
-  }
-
-  function getComponentSettings(midiChannel, midiCCObject) {
-    var midiCCObjectKeys = Object.keys(midiCCObject),
-      componentSettings = new Map();
-
-    midiCCObjectKeys.forEach(function(key) {
-      componentSettings.set( key, getMidiSettings(midiChannel, midiCCObject[key]) );
-    });
-
-    return componentSettings;
-  }
-
-  function getMidiSettings(midiChannel, midiCCArray) {
-    var midiCCArrayLength = midiCCArray.length,
-      midiSettings = [];
-
-    for (var i=0; i<midiCCArrayLength; i++) {
-      var thisSetting = helpers.getCircuitMidiCC(midiChannel, midiCCArray[i]);
-
-      midiSettings[midiCCArray[i]] = thisSetting;
-    }
-
-    return midiSettings;
+    return midiComponents;
   }
 
   function getMidiComponents(components) {
@@ -111,6 +83,39 @@
     });
 
     return defaultPatch;
+  }
+
+  function getDrumComponents(drumComponents) {
+    var drumComponentsArray = [];
+    drumComponents.forEach(function(component) {
+      drumComponentsArray.push(component.settings);
+    });
+
+    return drumComponentsArray;
+  }
+
+  function getComponentSettings(midiChannel, midiCCObject) {
+    var midiCCObjectKeys = Object.keys(midiCCObject),
+      componentSettings = new Map();
+
+    midiCCObjectKeys.forEach(function(key) {
+      componentSettings.set( key, getMidiSettings(midiChannel, midiCCObject[key]) );
+    });
+
+    return componentSettings;
+  }
+
+  function getMidiSettings(midiChannel, midiCCArray) {
+    var midiCCArrayLength = midiCCArray.length,
+      midiSettings = [];
+
+    for (var i=0; i<midiCCArrayLength; i++) {
+      var thisSetting = helpers.getCircuitMidiCC(midiChannel, midiCCArray[i]);
+
+      midiSettings[midiCCArray[i]] = thisSetting;
+    }
+
+    return midiSettings;
   }
 
   function getMidiParameterName(parameter) {
@@ -157,34 +162,6 @@
 
     return values;
   }
-
-    // module.exports = {
-    //   // midiCCs: midiCCs,
-    //   midiComponents: getMidiComponents(midiComponents),
-    //   midiDrumCCs: midiDrumCCs,
-    //   midiChannels: midiChannels
-    // };
-
-  // })();
-
-
-  /* old code */
-  // circuitMidiApp = (function() {
-  //   var midiCCs = circuitMidi.midiCCs,
-  //     midiComponents = circuitMidi.midiComponents,
-  //     midiDrumCCs = circuitMidi.midiDrumCCs,
-  //     midiChannels = circuitMidi.midiChannels,
-  //     getCircuitMidiCC = helpers.getCircuitMidiCC;
-  //
-  //   return {
-  //     midiCCs: midiCCs,
-  //     midiComponents: midiComponents,
-  //     midiDrumCCs: midiDrumCCs,
-  //     midiChannels: midiChannels,
-  //     getCircuitMidiCC: getCircuitMidiCC
-  //   }
-  // })();
-  /* end olf code */
 
   module.exports = {
     midiCCs: midiCCs,
