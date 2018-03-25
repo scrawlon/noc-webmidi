@@ -31,7 +31,7 @@
     }
   };
 
-  var midiComponents = setMidiComponents(synth, drum, session),
+  var midiComponents = getMidiComponents(synth, drum, session),
     midiDrumCCs = getDrumComponents(drum.midiComponents),
     midiChannels = {
       '0': 'synth 1',
@@ -40,23 +40,22 @@
       '15': 'session'
     };
 
-  function setMidiComponents(synth, drum, session) {
-    var midiComponents = new Map();
-    midiComponents.set('synth 1', getComponentSettings(0,synth.midiComponents));
-    midiComponents.set('synth 2', getComponentSettings(1,synth.midiComponents));
-    midiComponents.set('drum 1', getComponentSettings(9,drum.midiComponents[0]));
-    midiComponents.set('drum 2', getComponentSettings(9,drum.midiComponents[1]));
-    midiComponents.set('drum 3', getComponentSettings(9,drum.midiComponents[2]));
-    midiComponents.set('drum 4', getComponentSettings(9,drum.midiComponents[3]));
-    midiComponents.set('session', getComponentSettings(15,session.midiComponents));
+  function getMidiComponents(synth, drum, session) {
+    var components = {
+      'synth 1': getComponentSettings(0,synth.midiComponents),
+      'synth 2': getComponentSettings(1,synth.midiComponents),
+      'drum 1': getComponentSettings(9,drum.midiComponents[0]),
+      'drum 2': getComponentSettings(9,drum.midiComponents[1]),
+      'drum 3': getComponentSettings(9,drum.midiComponents[2]),
+      'drum 4': getComponentSettings(9,drum.midiComponents[3]),
+      'session': getComponentSettings(15,session.midiComponents)
+    };
+    var componentsKeys = Object.keys(components);
 
-    return midiComponents;
-  }
-
-  function getMidiComponents(components) {
     var defaultPatch = new Map();
 
-    components.forEach(function(value, key) {
+    componentsKeys.forEach(function(key) {
+      var value = components[key];
       var componentValues = new Map();
 
       value.forEach(function(v, k) {
@@ -81,6 +80,7 @@
         defaultPatch.set( key, componentValues );
       });
     });
+
 
     return defaultPatch;
   }
@@ -119,22 +119,18 @@
   }
 
   function getMidiParameterName(parameter) {
-    return parameter['name'] ? parameter['name'] : false;
+    return parameter.name ? parameter.name : false;
   }
 
   function getMidiParameterDefault(parameter) {
-    return parameter['default'] ? parameter['default'] : false;
+    return parameter.default ? parameter.default : false;
   }
 
   function getMidiParameterRange(parameter) {
-    var range = parameter['range'] ? parameter['range'] : false,
-      rangeValues = parameter['rangeValues'] ? parameter['rangeValues'] : false;
+    var range = parameter.hasOwnProperty('range') ? parameter.range : false,
+      rangeValues = parameter.hasOwnProperty('rangeValues') ? parameter.rangeValues : false;
 
-    if (rangeValues) {
-      return getRangeValues(range, rangeValues);
-    } else {
-      return getRange(range);
-    }
+    return rangeValues ? getRangeValues(range, rangeValues) : getRange(range);
   }
 
   function getRangeValues(range, rangeValues) {
@@ -153,7 +149,7 @@
 
   function getRange(range) {
     var values = {},
-      rangeValuesStart = range[0]
+      rangeValuesStart = range[0],
       rangeLength = range[1];
 
     for(var i=0; i<rangeLength+1; i++) {
