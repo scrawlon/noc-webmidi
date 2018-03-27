@@ -150,7 +150,7 @@
     return values;
   }
 
-  module.exports = {
+  window.circuitMidiApp = {
     midiCCs: midiCCs,
     midiComponents: midiComponents,
     midiDrumCCs: midiDrumCCs,

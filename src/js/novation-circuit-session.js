@@ -92,6 +92,17 @@
       'name': 'synth 2 level',
       'range': [0,127],
       'default': 100
+    },
+    // Section: Pan
+    '117': {
+      'name': 'synth 1 pan',
+      'range': [0,127],
+      'default': 100
+    },
+    '118': {
+      'name': 'synth 2 pan',
+      'range': [0,127],
+      'default': 100
     }
   };
 
@@ -99,7 +110,7 @@
     'reverb': ['88','89','90','106','109','110'],
     'delay': ['111','112','113','114','115','116'],
     'master filter': ['74','71'],
-    'mixer': ['12','14']
+    'mixer': ['12','14','117','118']
   };
 
   module.exports = {
