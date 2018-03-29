@@ -1,4 +1,4 @@
-# Novation Circuit&trade; noc-webmidi.js
+# **noc-webmidi.js** -- Novation Circuit&trade; JavaScript Midi library
 This JavaScript library provides a way to interpret MIDI CC data
 from the Novation Circuit&trade; and it contains all the info needed to
 create a MIDI CC editor for the Circuit&trade; --
@@ -9,11 +9,11 @@ Novation&trade; "Circuit MIDI Parameters" guide, [available here][1].
 
 ## News
 This project is now called 'noc-webmidi' (**No**vation **C**ircuit&trade;
-**Web MIDI**. It's easier to remember, and it's more npm-friendly.
+**Web MIDI**). It's easier to remember, and it's more npm-friendly.
 Which leads to our next announcement -- noc-webmidi is now avialable on npm!
 
-We're looking into adding SysEx and NPRN support, depending on what the
-WebMIDI spec supports.
+We're looking into adding SysEx and NPRN, dependent on
+WebMIDI support.
 
 ## Installation
 1. For standard use in web pages:
