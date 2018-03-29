@@ -1,14 +1,14 @@
 {
   "name": "noc-webmidi",
   "version": "0.0.3",
-  "description": "Unofficial Novation Circuit&trade; MIDI CC JavaScript data library",
+  "description": "noc-webmidi.js -- Novation Circuit&trade; JavaScript Midi library",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scrawlon/Unofficial-Novation-Circuit-MIDI-CC-JavaScript-data-library.git"
+    "url": "git+https://github.com/scrawlon/noc-webmidi.git"
   },
   "keywords": [
     "novation",
@@ -18,9 +18,9 @@
   "author": "Scott McGrath (scrawlon)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/scrawlon/Unofficial-Novation-Circuit-MIDI-CC-JavaScript-data-library/issues"
+    "url": "https://github.com/scrawlon/noc-webmidi/issues"
   },
-  "homepage": "https://github.com/scrawlon/Unofficial-Novation-Circuit-MIDI-CC-JavaScript-data-library#readme",
+  "homepage": "https://github.com/scrawlon/noc-webmidi",
   "devDependencies": {
     "browserify": "^13.1.1",
     "gulp": "^3.9.1",
