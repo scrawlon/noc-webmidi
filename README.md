@@ -1,7 +1,4 @@
-# Unofficial Novation Circuit&trade; MIDI CC JavaScript data library
-I am not employed by or in anyway associated with Focusrite Novation&trade;
-
-## Purpose
+# Novation Circuit&trade; noc-webmidi.js
 This JavaScript library provides a way to interpret MIDI CC data
 from the Novation Circuit&trade; and it contains all the info needed to
 create a MIDI CC editor for the Circuit&trade; --
@@ -10,12 +7,25 @@ Novation&trade; "Circuit MIDI Parameters" guide, [available here][1].
 
 [1]: https://us.novationmusic.com/circuit/circuit/support-downloads
 
-## Installation
-1. Use the "Clone or Download" button from the Github repo to obtain a local copy
-of the library.
-2. Add the '/dist/js/circuit-midi-cc-connector.min.js' script to your html page:
+## News
+This project is now called 'noc-webmidi' (**No**vation **C**ircuit&trade;
+**Web MIDI**. It's easier to remember, and it's more npm-friendly.
+Which leads to our next announcement -- noc-webmidi is now avialable on npm!
 
-`<script src="/dist/js/novation-circuit-midi-cc-connector.min.js" type="text/javascript"></script>`
+We're looking into adding SysEx and NPRN support, depending on what the
+WebMIDI spec supports.
+
+## Installation
+1. For standard use in web pages:
+  a. Use the "Clone or Download" button from the Github repo to obtain a local copy
+  of the library.
+  b. Add the '/dist/js/noc-webmidi.min.js' script to your html page:
+
+  `<script src="/dist/js/noc-webmidi.min.js" type="text/javascript"></script>`
+
+2. For use with Node.js
+  a. `npm install --save noc-webmidi`
+  b. in your app add: `var circuitMidiApp = require('noc-webmidi');`
 
 ## What is it?
 The library contains a global JavaScript object named __circuitMidiApp__ that includes
@@ -106,7 +116,7 @@ by component type:
     The above function call sends parameters 1 (midi channels are zero-indexed,
     so 1 corresponds to midi channel 2) and 108 (midi cc number). The return value
     is the MIDI CC object for 'synth env 1 velocity':  
-    
+
     `{
       default: 64,  
       name: "env 1 velocity",  
@@ -116,7 +126,7 @@ by component type:
 
 ## Sample code
 If you're still not sure what's this is useful for, there's a sample project in
-the `/samples_code` folder. The file `samples_code.js` contains code for a
+the `/sample_code` folder. The file `sample_code.js` contains code for a
 simple Circuit MIDI CC editor. Open the file '/samples_code/index.html' in the
 Google Chrome web browser.
 
@@ -137,5 +147,7 @@ If you want to work on the code:
   * Run 'npm install'.
   * Run 'gulp watch'.
 * Development files are in '/src/js'.
-* Changes are compiled by Gulp into '/dist/js'.
+* Changes are compiled by Gulp into '/dist/js' and '/lib'.
 * All code is written in vanilla JavaScript.
+
+***I am not employed by or in anyway associated with Focusrite Novation&trade;
