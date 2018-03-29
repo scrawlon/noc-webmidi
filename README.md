@@ -16,16 +16,20 @@ We're looking into adding SysEx and NPRN, dependent on
 WebMIDI support.
 
 ## Installation
-1. For standard use in web pages:
-  a. Use the "Clone or Download" button from the Github repo to obtain a local copy
+For standard use in web pages:
+
+  * Use the "Clone or Download" button from the Github repo to obtain a local copy
   of the library.
-  b. Add the '/dist/js/noc-webmidi.min.js' script to your html page:
+
+  * Add the '/dist/js/noc-webmidi.min.js' script to your html page:
 
   `<script src="/dist/js/noc-webmidi.min.js" type="text/javascript"></script>`
 
-2. For use with Node.js
-  a. `npm install --save noc-webmidi`
-  b. in your app add: `var circuitMidiApp = require('noc-webmidi');`
+For use with Node.js
+
+  * `npm install --save noc-webmidi`
+
+  * require 'noc-webmidi in your code': `var circuitMidiApp = require('noc-webmidi');`
 
 ## What is it?
 The library contains a global JavaScript object named __circuitMidiApp__ that includes
