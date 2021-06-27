@@ -1,19 +1,16 @@
-# **noc-webmidi.js** -- Novation Circuit&trade; JavaScript Midi library
-This JavaScript library provides a way to interpret MIDI CC data
-from the Novation Circuit&trade; and it contains all the info needed to
-create a MIDI CC editor for the Circuit&trade; --
+# NoC Web MIDI JS
+
+This JavaScript library provides MIDI CC data for controlling 
+the Novation Circuit groovebox.
+
 The MIDI CC info contained here comes from the official
-Novation&trade; "Circuit MIDI Parameters" guide, [available here][1].
+["Circuit MIDI Parameters" guide][1].
 
-[1]: https://us.novationmusic.com/circuit/circuit/support-downloads
+[1]: https://customer.novationmusic.com/en/support/downloads?brand=Novation&product_by_type=541&download_type=all
 
-## News
-This project is now called 'noc-webmidi' (**No**vation **C**ircuit&trade;
-**Web MIDI**). It's easier to remember, and it's more npm-friendly.
-Which leads to our next announcement -- noc-webmidi is now avialable on npm!
-
-We're looking into adding SysEx and NPRN, dependent on
-WebMIDI support.
+[Visit the official NoC Web MIDI JS website](https://noc-webmidi.com) for more info,
+and to try the 
+[Novation Circuit MIDI CC patch editor](https://noc-webmidi.com/sample-app).
 
 ## Installation
 For standard use in web pages:
