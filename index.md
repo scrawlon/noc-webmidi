@@ -28,4 +28,6 @@ to show what's possible with noc-webmidi JavaScript library.
 
 Watch a demonstration of the MIDI CC patch editor in action below:
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/_iTwsS1-S4A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="videoWrapper">
+    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/_iTwsS1-S4A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
