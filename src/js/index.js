@@ -3,7 +3,7 @@
   var synth = require('./novation-circuit-synth.js'),
     drum = require('./novation-circuit-drums.js'),
     session = require('./novation-circuit-session.js'),
-    nrpnDebug = require('./nrpn/synth.js');
+    midiNRPNs = require('./nrpn/');
 
   var midiCCs = {
     synth: synth.midiCCs,
@@ -157,6 +157,6 @@
     midiDrumCCs: midiDrumCCs,
     midiChannels: midiChannels,
     getCircuitMidiCC: getCircuitMidiCC,
-    nrpnDebug: nrpnDebug
+    midiNRPNs: midiNRPNs
   }
 })();
