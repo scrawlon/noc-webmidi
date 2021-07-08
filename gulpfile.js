@@ -7,10 +7,10 @@ var browserify = require('browserify'),
   streamify = require('gulp-streamify'),
   uglify = require('gulp-uglify');
 
-gulp.task('browserify', function() {
+gulp.task('browserify', function () {
   gulp.src(sourceDirectory + 'noc-webmidi.js')
-    .on('error', function(err) { gutil.log('error', err) })
-    .pipe(rename(function(path) {
+    .on('error', function (err) { gutil.log('error', err) })
+    .pipe(rename(function (path) {
       var inputName = sourceDirectory + path.basename + path.extname,
         outputName = path.basename + ".min" + path.extname,
         bundle = browserify(inputName).bundle();
@@ -22,13 +22,13 @@ gulp.task('browserify', function() {
     }));
 });
 
-gulp.task('package', function() {
-    return browserify('./src/js/index.js', { standalone: 'nocWebMidi' }).bundle() // .bundle is a browserify function
+gulp.task('package', function () {
+  return browserify('./src/js/index.js', { standalone: 'nocWebMidi' }).bundle() // .bundle is a browserify function
     .pipe(source('index.js'))    // Pass to output using vinyl-source-stream
     .pipe(streamify(uglify()))
     .pipe(gulp.dest('./lib'));
 });
 
-gulp.task('watch', function() {
-  gulp.watch(sourceDirectory+'*.js', ['browserify', 'package']);
+gulp.task('watch', function () {
+  gulp.watch(sourceDirectory + '**/*.js', ['browserify', 'package']);
 });

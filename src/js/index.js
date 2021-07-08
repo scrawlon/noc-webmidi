@@ -1,8 +1,9 @@
-(function() {
+(function () {
   "use strict";
   var synth = require('./novation-circuit-synth.js'),
     drum = require('./novation-circuit-drums.js'),
-    session = require('./novation-circuit-session.js');
+    session = require('./novation-circuit-session.js'),
+    nrpnDebug = require('./nrpn/synth.js');
 
   var midiCCs = {
     synth: synth.midiCCs,
@@ -21,27 +22,27 @@
 
   function getMidiComponents() {
     var components = {
-      'synth 1': getComponentSettings(0,synth.midiComponents),
-      'synth 2': getComponentSettings(1,synth.midiComponents),
-      'drum 1': getComponentSettings(9,drum.midiComponents[0]),
-      'drum 2': getComponentSettings(9,drum.midiComponents[1]),
-      'drum 3': getComponentSettings(9,drum.midiComponents[2]),
-      'drum 4': getComponentSettings(9,drum.midiComponents[3]),
-      'session': getComponentSettings(15,session.midiComponents)
+      'synth 1': getComponentSettings(0, synth.midiComponents),
+      'synth 2': getComponentSettings(1, synth.midiComponents),
+      'drum 1': getComponentSettings(9, drum.midiComponents[0]),
+      'drum 2': getComponentSettings(9, drum.midiComponents[1]),
+      'drum 3': getComponentSettings(9, drum.midiComponents[2]),
+      'drum 4': getComponentSettings(9, drum.midiComponents[3]),
+      'session': getComponentSettings(15, session.midiComponents)
     };
     var componentsKeys = Object.keys(components);
     var defaultPatch = new Map();
 
-    componentsKeys.forEach(function(key) {
+    componentsKeys.forEach(function (key) {
       var value = components[key];
       var componentValues = new Map();
 
-      value.forEach(function(v, k) {
+      value.forEach(function (v, k) {
         var midiParameters = Object.keys(v),
           componentArray = [],
           componentType = "";
 
-        midiParameters.forEach(function(parameter) {
+        midiParameters.forEach(function (parameter) {
           if (!componentType) {
             componentType = k;
           }
@@ -54,8 +55,8 @@
           });
         });
 
-        componentValues.set( componentType, componentArray );
-        defaultPatch.set( key, componentValues );
+        componentValues.set(componentType, componentArray);
+        defaultPatch.set(key, componentValues);
       });
     });
 
@@ -63,15 +64,15 @@
   }
 
   function getDrumComponents(drumComponents) {
-    return drumComponents.map(function(component) { return component.settings; });
+    return drumComponents.map(function (component) { return component.settings; });
   }
 
   function getComponentSettings(midiChannel, midiCCObject) {
     var midiCCObjectKeys = Object.keys(midiCCObject),
       componentSettings = new Map();
 
-    midiCCObjectKeys.forEach(function(key) {
-      componentSettings.set( key, getMidiSettings(midiChannel, midiCCObject[key]) );
+    midiCCObjectKeys.forEach(function (key) {
+      componentSettings.set(key, getMidiSettings(midiChannel, midiCCObject[key]));
     });
 
     return componentSettings;
@@ -81,7 +82,7 @@
     var midiCCArrayLength = midiCCArray.length,
       midiSettings = [];
 
-    for (var i=0; i<midiCCArrayLength; i++) {
+    for (var i = 0; i < midiCCArrayLength; i++) {
       var thisSetting = getCircuitMidiCC(midiChannel, midiCCArray[i]);
 
       midiSettings[midiCCArray[i]] = thisSetting;
@@ -93,7 +94,7 @@
   function getCircuitMidiCC(midiChannel, midiCCNumber) {
     var circuitCCValues = false;
 
-    switch( midiChannel ) {
+    switch (midiChannel) {
       case 0:
       case 1:
         circuitCCValues = midiCCs.synth[midiCCNumber];
@@ -128,11 +129,11 @@
     var values = {},
       rangeStart = range[0],
       rangeValuesStart = rangeValues[0],
-      rangeValuesType = typeof(rangeValues[0]),
+      rangeValuesType = typeof (rangeValues[0]),
       rangeLength = range[1] - range[0];
 
-    for(var i=0; i<rangeLength+1; i++) {
-      values[rangeStart+i] = rangeValuesType === 'number' ? rangeValuesStart+i : rangeValues[i];
+    for (var i = 0; i < rangeLength + 1; i++) {
+      values[rangeStart + i] = rangeValuesType === 'number' ? rangeValuesStart + i : rangeValues[i];
     }
 
     return values;
@@ -143,8 +144,8 @@
       rangeValuesStart = range[0],
       rangeLength = range[1];
 
-    for(var i=0; i<rangeLength+1; i++) {
-      values[rangeValuesStart+i] = rangeValuesStart+i;
+    for (var i = 0; i < rangeLength + 1; i++) {
+      values[rangeValuesStart + i] = rangeValuesStart + i;
     }
 
     return values;
@@ -155,6 +156,7 @@
     midiComponents: midiComponents,
     midiDrumCCs: midiDrumCCs,
     midiChannels: midiChannels,
-    getCircuitMidiCC: getCircuitMidiCC
+    getCircuitMidiCC: getCircuitMidiCC,
+    nrpnDebug: nrpnDebug
   }
 })();

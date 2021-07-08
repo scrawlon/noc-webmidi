@@ -1,4 +1,4 @@
-(function() {
+(function () {
   var midiPatch = {},
     midiCCs = circuitMidiApp.midiCCs,
     midiChannels = circuitMidiApp.midiChannels,
@@ -13,6 +13,8 @@
       channel: 0,
       enabled: false
     };
+
+  console.log({ circuitMidiApp });
 
   showEditorTest();
 
@@ -30,13 +32,13 @@
   function buildMidiComponents(midiChannelsKeys) {
     var circuitWebMidiTestDiv = document.getElementById("circuit-web-midi-test");
 
-    midiComponents.forEach(function(value, key) {
+    midiComponents.forEach(function (value, key) {
       var thisMidiChannel = 0,
         outputHTML = "",
         keyHyphen = key.replace(' ', '-');
 
-      midiChannelsKeys.forEach(function(channelKey) {
-        if ( key === midiChannels[channelKey] || key.split(' ')[0] === midiChannels[channelKey] ) {
+      midiChannelsKeys.forEach(function (channelKey) {
+        if (key === midiChannels[channelKey] || key.split(' ')[0] === midiChannels[channelKey]) {
           thisMidiChannel = channelKey;
         }
       });
@@ -44,9 +46,9 @@
       outputHTML += "<div id='" + keyHyphen + "' class='component-section'>"
         + "<h2>" + key
         + "<button type='submit' class='activate-midi-in' data-midi-channel='"
-        + thisMidiChannel  + "' data-midi-enabled=''>MIDI IN</button>"
+        + thisMidiChannel + "' data-midi-enabled=''>MIDI IN</button>"
         + "<button type='submit' class='randomizer' data-component-section='"
-        + keyHyphen  + "'>randomize</button>"
+        + keyHyphen + "'>randomize</button>"
         + "</h2>"
         + "<div class='button-bar'>"
         + "<label for='" + keyHyphen + "-patch-select'>Patch Select: </label>"
@@ -79,11 +81,11 @@
   function getComponentValueString(component, midiChannel) {
     var outputHTML = "";
 
-    component.forEach(function(value, key) {
+    component.forEach(function (value, key) {
       outputHTML += "<div class='component'>"
         + "<h3>" + key + "</h3>";
 
-      value.forEach(function(el) {
+      value.forEach(function (el) {
         outputHTML += "<div id='" + el.name.replace(' ', '-') + "' class='component-value'>";
         outputHTML += el.name + ": " + getComponentRangeDescriptionText(el.range) + "<br />";
         outputHTML += getComponentRangeInput(midiChannel, el.cc, el.name, el.default, el.range);
@@ -100,11 +102,11 @@
     var rangeKeys = Object.keys(range),
       rangeKeysLength = rangeKeys.length;
 
-      if ( range[rangeKeys[0]] === parseInt(range[rangeKeys[0]]) ) {
-        return "(" + range[rangeKeys[0]] + " - " + range[rangeKeys[rangeKeysLength-1]] + ")";
-      }
+    if (range[rangeKeys[0]] === parseInt(range[rangeKeys[0]])) {
+      return "(" + range[rangeKeys[0]] + " - " + range[rangeKeys[rangeKeysLength - 1]] + ")";
+    }
 
-      return "";
+    return "";
   }
 
   function getComponentRangeInput(midiChannel, midiCCNumber, name, defaultValue, range) {
@@ -112,19 +114,19 @@
       rangeKeysLength = rangeKeys.length,
       outputHTML = "";
 
-      if ( range[rangeKeys[0]] !== parseInt(range[rangeKeys[0]]) ) {
-        outputHTML = getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys);
-      } else {
-        outputHTML = getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength);
-      }
+    if (range[rangeKeys[0]] !== parseInt(range[rangeKeys[0]])) {
+      outputHTML = getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys);
+    } else {
+      outputHTML = getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength);
+    }
 
-      return outputHTML;
+    return outputHTML;
   }
 
   function getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys) {
     var outputHTML = "<select name='" + name + "'>";
 
-    rangeKeys.forEach(function(key) {
+    rangeKeys.forEach(function (key) {
       var selected = defaultValue == key ? "selected" : "";
       outputHTML += "<option value='" + key + "' " + selected
         + " data-midi-channel='" + midiChannel + "' "
@@ -137,7 +139,7 @@
   }
 
   function getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength) {
-    return "<input type='range' min='" + rangeKeys[0] + "' max='" + rangeKeys[rangeKeysLength-1] + "' "
+    return "<input type='range' min='" + rangeKeys[0] + "' max='" + rangeKeys[rangeKeysLength - 1] + "' "
       + " data-midi-channel='" + midiChannel + "' "
       + " data-midi-cc='" + midiCCNumber + "' "
       + " />";
@@ -152,9 +154,9 @@
     var selects = document.getElementsByTagName("select"),
       selectsCount = selects.length;
 
-    for ( var i=0; i<selectsCount; i++ ) {
-      if ( !selects[i].id.endsWith('-patch-select') ) {
-        selects[i].addEventListener('change', function() {
+    for (var i = 0; i < selectsCount; i++) {
+      if (!selects[i].id.endsWith('-patch-select')) {
+        selects[i].addEventListener('change', function () {
           var selectedOption = this.options[this.selectedIndex];
 
           handlePatchChanges(selectedOption, this);
@@ -177,9 +179,9 @@
     var selectedMidiChannelHex = selectedMidiChannel.toString(16),
       output = false;
 
-    if ( midi && midi.outputs && outputID ) {
+    if (midi && midi.outputs && outputID) {
       output = midi.outputs.get(outputID);
-      output.send( ["0xB"+selectedMidiChannelHex, selectedMidiCC, selectedMidiCCValue] );
+      output.send(["0xB" + selectedMidiChannelHex, selectedMidiCC, selectedMidiCCValue]);
     }
   }
 
@@ -187,9 +189,9 @@
     var ranges = document.getElementsByTagName("input"),
       rangesCount = ranges.length;
 
-    for ( var i=0; i<rangesCount; i++ ) {
-      if ( ranges[i].type === 'range' ) {
-        ranges[i].addEventListener('change', function() {
+    for (var i = 0; i < rangesCount; i++) {
+      if (ranges[i].type === 'range') {
+        ranges[i].addEventListener('change', function () {
           handlePatchChanges(this, this);
         });
       }
@@ -201,7 +203,7 @@
     var patchSelects = document.querySelectorAll('[id$=patch-select]'),
       patchSelectsCount = patchSelects.length;
 
-    for ( var i=0; i<patchSelectsCount; i++ ) {
+    for (var i = 0; i < patchSelectsCount; i++) {
       var selectId = patchSelects[i].id,
         selectComponent = selectId.split('-')[0];
 
@@ -214,13 +216,13 @@
       patchNames = patches ? Object.keys(patches) : {},
       patchNamesCount = patchNames.length;
 
-    if ( patchNamesCount ) {
+    if (patchNamesCount) {
       patchNames.sort(function (a, b) {
         return a.toLowerCase().localeCompare(b.toLowerCase());
       });
     }
 
-    for ( var i=0; i<patchNamesCount; i++ ) {
+    for (var i = 0; i < patchNamesCount; i++) {
       var option = document.createElement('option');
 
       option.value = patchNames[i];
@@ -233,26 +235,26 @@
     var midiInButtons = document.getElementsByClassName("activate-midi-in"),
       midiInButtonsCount = midiInButtons.length;
 
-    for ( var i=0; i<midiInButtonsCount; i++ ) {
-      midiInButtons[i].addEventListener('click', function() {
+    for (var i = 0; i < midiInButtonsCount; i++) {
+      midiInButtons[i].addEventListener('click', function () {
         var midiInChannel = this.getAttribute('data-midi-channel'),
           midiInEnabled = this.getAttribute('data-midi-enabled'),
           buttonClass = this.className;
 
-        if ( midiInEnabled ) {
+        if (midiInEnabled) {
           this.dataset.midiEnabled = '';
 
-          for ( var j=0; j<midiInButtonsCount; j++ ) {
+          for (var j = 0; j < midiInButtonsCount; j++) {
             midiInButtons[j].className = removeClass(buttonClass, 'active-midi-in');
           }
 
           midiIn.enabled = false;
         } else {
 
-          for ( var j=0; j<midiInButtonsCount; j++ ) {
+          for (var j = 0; j < midiInButtonsCount; j++) {
             midiInButtons[j].className = removeClass(buttonClass, 'active-midi-in');
 
-            if ( midiInButtons[j].getAttribute('data-midi-channel') === midiInChannel ) {
+            if (midiInButtons[j].getAttribute('data-midi-channel') === midiInChannel) {
               midiInButtons[j].className = buttonClass + ' active-midi-in';
             }
           }
@@ -269,8 +271,8 @@
     var classList = classListString.split(' '),
       classInList = classList.indexOf(classToRemove);
 
-    if ( classInList !== -1 ) {
-      return classList.splice(classInList-1, 1);
+    if (classInList !== -1) {
+      return classList.splice(classInList - 1, 1);
     } else {
       return classListString;
     }
@@ -283,11 +285,11 @@
       delete: document.getElementsByClassName("patch-delete"),
       export: document.getElementsByClassName("patch-export"),
       import: document.getElementsByClassName("patch-import")
-      },
+    },
       buttonTypes = Object.keys(buttons),
       buttonTypesCount = buttonTypes.length;
 
-    for (var i=0; i<buttonTypesCount; i++) {
+    for (var i = 0; i < buttonTypesCount; i++) {
       activatePatchButtonsByType(buttonTypes[i], buttons[buttonTypes[i]]);
     }
   }
@@ -295,8 +297,8 @@
   function activatePatchButtonsByType(buttonType, buttons) {
     var buttonsCount = buttons.length;
 
-    for (var i=0; i<buttonsCount; i++) {
-      buttons[i].addEventListener('click', function() {
+    for (var i = 0; i < buttonsCount; i++) {
+      buttons[i].addEventListener('click', function () {
         switch (buttonType) {
           case 'load':
             activatePatchButtonLoad(this);
@@ -323,7 +325,7 @@
       isDrum = buttonData.patchType === 'drum',
       drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false;
 
-    if ( buttonData.patchSelected ) {
+    if (buttonData.patchSelected) {
       var cachedPatches = getCache(buttonData.patchType),
         patch = cachedPatches[buttonData.patchSelected]
           ? cachedPatches[buttonData.patchSelected] : {},
@@ -331,11 +333,11 @@
           ? getPatchMidiChannel(buttonData.patchType)
           : getPatchMidiChannel(buttonData.buttonComponent);
 
-      if ( isDrum ) {
+      if (isDrum) {
         patch = buildDrumPatch(patch, drumNumber);
       }
 
-      if ( patch ) {
+      if (patch) {
         updatePatchValues(midiChannel, patch, buttonData.buttonComponent);
       } else {
         alert('Ooops. Something ain\'t right');
@@ -352,8 +354,8 @@
       drumMidiCC = '',
       drumMidiCCName = '';
 
-    for ( var i=0; i < drumPatchCount; i++ ) {
-      if ( drumPatch[i] ) {
+    for (var i = 0; i < drumPatchCount; i++) {
+      if (drumPatch[i]) {
         drumMidiCC = circuitMidiApp.getCircuitMidiCC(9, drumComponent[i]);
         drumMidiCCName = drumMidiCC.name.replace(/[0-9]\s/g, '');
         patch[drumComponent[i]] = { value: drumPatch[i], name: drumMidiCCName };
@@ -365,10 +367,10 @@
 
   function getPatchMidiChannel(patchComponent) {
     var midiChannelsKeys = Object.keys(midiChannels),
-    midiChannelsKeysCount = midiChannelsKeys.length;
+      midiChannelsKeysCount = midiChannelsKeys.length;
 
-    for ( var i=0; i<midiChannelsKeysCount; i++ ) {
-      if ( midiChannels[midiChannelsKeys[i]] === patchComponent ) {
+    for (var i = 0; i < midiChannelsKeysCount; i++) {
+      if (midiChannels[midiChannelsKeys[i]] === patchComponent) {
         return midiChannelsKeys[i];
       }
     }
@@ -378,16 +380,16 @@
     var midiCCNumbers = Object.keys(patch),
       midiCCNumbersCount = midiCCNumbers.length;
 
-    for ( var i=0; i<midiCCNumbersCount; i++ ) {
+    for (var i = 0; i < midiCCNumbersCount; i++) {
       var options = document.querySelectorAll("[data-midi-channel='" + midiChannel + "']"
         + "[data-midi-cc='" + midiCCNumbers[i] + "']"),
         event = new Event('change');
 
-      if ( options ) {
-        if ( options[0].tagName.toLowerCase() === 'option' ) {
+      if (options) {
+        if (options[0].tagName.toLowerCase() === 'option') {
           options[0].parentNode.selectedIndex = patch[midiCCNumbers[i]].value;
           options[0].dispatchEvent(event);
-        } else if ( options[0].tagName.toLowerCase() === 'input' ) {
+        } else if (options[0].tagName.toLowerCase() === 'input') {
           options[0].value = patch[midiCCNumbers[i]].value;
           options[0].dispatchEvent(event);
         }
@@ -402,18 +404,18 @@
       patchData = midiPatch[buttonData.buttonComponent],
       newPatchName = "";
 
-    if ( isDrum ) {
+    if (isDrum) {
       patchData = midiPatch[buttonData.patchType][drumNumber];
     }
 
-    if ( !patchData ) {
+    if (!patchData) {
       alert('There\'s nothing to save');
       return false;
     }
 
     newPatchName = prompt('Enter a new patch name', buttonData.selectedPatch);
 
-    if ( newPatchName ) {
+    if (newPatchName) {
       setCache(buttonData.patchType, newPatchName, patchData);
       updatePatchSelectOptions('add', newPatchName, buttonData.patchSelects, buttonData.patchSelectId);
     }
@@ -422,14 +424,14 @@
   function updatePatchSelectOptions(addRemove, patchName, selectElements, activeElementId) {
     var selectElementsCount = selectElements.length;
 
-    if ( addRemove === 'add' ) {
-      for ( var i=0; i<selectElementsCount; i++ ) {
+    if (addRemove === 'add') {
+      for (var i = 0; i < selectElementsCount; i++) {
         var matchedElement = document.querySelector(
           "#" + selectElements[i].id + " option[value='" + patchName + "']"
         ),
           selectedIndex = selectElements[i].selectedIndex;
 
-        if ( !matchedElement ) {
+        if (!matchedElement) {
           var option = document.createElement('option'),
             currentSelection = selectElements[i].options[selectElements[i].selectedIndex];
 
@@ -438,21 +440,21 @@
           selectElements[i].add(option);
           sortPatchSelectOptions(selectElements[i]);
 
-          if ( selectElements[i].id === activeElementId ) {
+          if (selectElements[i].id === activeElementId) {
             updateActiveSelectOption(selectElements[i], patchName);
           } else {
             updateActiveSelectOption(selectElements[i], currentSelection.value);
           }
         }
       }
-    } else if ( addRemove === 'delete' ) {
-      for ( var i=0; i<selectElementsCount; i++ ) {
+    } else if (addRemove === 'delete') {
+      for (var i = 0; i < selectElementsCount; i++) {
         var options = selectElements[i].options,
           optionsCount = options.length;
 
-        if ( options ) {
-          for ( var j=0; j<optionsCount; j++ ) {
-            if ( options[j] && options[j].value === patchName ) {
+        if (options) {
+          for (var j = 0; j < optionsCount; j++) {
+            if (options[j] && options[j].value === patchName) {
               selectElements[i].remove(j);
             }
           }
@@ -464,17 +466,17 @@
   function sortPatchSelectOptions(selectElement) {
     var optionsArray = [];
 
-    for ( var i=selectElement.options.length-1; i>0; i-- ) {
-      if ( optionsArray.indexOf(selectElement.options[i]) === -1 ){
+    for (var i = selectElement.options.length - 1; i > 0; i--) {
+      if (optionsArray.indexOf(selectElement.options[i]) === -1) {
         optionsArray.push(selectElement.removeChild(selectElement.options[i]));
       }
     }
 
-    optionsArray.sort(function(a, b) {
+    optionsArray.sort(function (a, b) {
       return a.innerHTML.localeCompare(b.innerHTML);
     });
 
-    while ( optionsArray.length ) {
+    while (optionsArray.length) {
       var nextOption = optionsArray.shift(),
         option = document.createElement('option');
 
@@ -488,8 +490,8 @@
     var options = selectElement.options,
       optionsCount = options.length;
 
-    for ( var i=0; i<optionsCount; i++ ) {
-      if ( options[i].value === patchName ) {
+    for (var i = 0; i < optionsCount; i++) {
+      if (options[i].value === patchName) {
         selectElement.selectedIndex = i;
         return false;
       }
@@ -499,15 +501,15 @@
   function activatePatchButtonDelete(button) {
     var buttonData = getPatchButtonData(button);
 
-    if ( buttonData.patchSelected ) {
+    if (buttonData.patchSelected) {
       var cachedPatches = getCache(buttonData.patchType),
         patchType = buttonData.patchType,
         patchName = buttonData.patchSelected;
 
-      if ( cachedPatches[patchName] ) {
+      if (cachedPatches[patchName]) {
         var confirm = window.confirm('Delete ' + patchName + '?');
 
-        if ( confirm ) {
+        if (confirm) {
           deletePatch(patchType, patchName);
           updatePatchSelectOptions('delete', patchName, buttonData.patchSelects);
           updateActiveSelectOption(buttonData.patchSelect, '');
@@ -548,7 +550,7 @@
       exportPatch = {},
       patchExportHolder = document.createElement("textarea");
 
-    if ( buttonData.patchSelected ) {
+    if (buttonData.patchSelected) {
       var cachedPatches = getCache(buttonData.patchType),
         patch = cachedPatches[buttonData.patchSelected]
           ? cachedPatches[buttonData.patchSelected] : {},
@@ -556,7 +558,7 @@
           ? getPatchMidiChannel(buttonData.patchType)
           : getPatchMidiChannel(buttonData.buttonComponent);
 
-      if ( patch ) {
+      if (patch) {
         patchName = buttonData.patchSelected;
         exportPatch[buttonData.patchType] = {};
         exportPatch[buttonData.patchType][patchName] = patch;
@@ -565,11 +567,11 @@
         document.body.appendChild(patchExportHolder);
         patchExportHolder.select();
 
-        if ( document.execCommand('copy') ) {
-          alert( buttonData.patchType.toUpperCase()
+        if (document.execCommand('copy')) {
+          alert(buttonData.patchType.toUpperCase()
             + ' patch "' + patchName + '" has been copied to the clipboard.');
         } else {
-          alert( 'ERROR: the patch could not be exported');
+          alert('ERROR: the patch could not be exported');
         }
       } else {
         alert('Ooops. Something ain\'t right');
@@ -582,7 +584,7 @@
   function activatePatchButtonImport(button) {
     var buttonData = getPatchButtonData(button),
       importPatchString = prompt('PATCH IMPORT: Paste new '
-      + buttonData.patchType.toUpperCase() + ' patch below.'),
+        + buttonData.patchType.toUpperCase() + ' patch below.'),
       importPatch = JSON.parse(importPatchString),
       importPatchData = {},
       isDrum = buttonData.patchType === 'drum',
@@ -590,11 +592,11 @@
       patchData = midiPatch[buttonData.buttonComponent],
       newPatchName = "";
 
-    if ( importPatch && importPatch[buttonData.patchType] !== undefined ) {
+    if (importPatch && importPatch[buttonData.patchType] !== undefined) {
       importPatchData = getImportPatchData(importPatch[buttonData.patchType]);
     }
 
-    if ( importPatchData && importPatchData.patchName && importPatchData.patch ) {
+    if (importPatchData && importPatchData.patchName && importPatchData.patch) {
       newPatchName = prompt("Save imported patch as...", importPatchData.patchName);
       setCache(buttonData.patchType, newPatchName, importPatchData.patch);
       updatePatchSelectOptions('add', newPatchName, buttonData.patchSelects, buttonData.patchSelectId);
@@ -607,7 +609,7 @@
     var dataKeys = Object.keys(data),
       patchData = {};
 
-    dataKeys.forEach(function(patchName) {
+    dataKeys.forEach(function (patchName) {
       patchData.patchName = patchName;
       patchData.patch = data[patchName];
     });
@@ -619,8 +621,8 @@
     var randomizeButtons = document.getElementsByClassName("randomizer"),
       randomizeButtonsCount = randomizeButtons.length;
 
-    for (var i=0; i<randomizeButtonsCount; i++) {
-      randomizeButtons[i].addEventListener('click', function() {
+    for (var i = 0; i < randomizeButtonsCount; i++) {
+      randomizeButtons[i].addEventListener('click', function () {
         var targetComponentId = this.getAttribute('data-component-section'),
           targetComponent = document.getElementById(targetComponentId),
           targetSelects = targetComponent.getElementsByTagName('select'),
@@ -639,12 +641,12 @@
       randomValue = 0,
       event = new Event('change');
 
-    for (var i=0; i<slidersCount; i++) {
-      sliderMinimum = Math.ceil( sliders[i].getAttribute('min') );
-      sliderMaximum = Math.floor( sliders[i].getAttribute('max') );
+    for (var i = 0; i < slidersCount; i++) {
+      sliderMinimum = Math.ceil(sliders[i].getAttribute('min'));
+      sliderMaximum = Math.floor(sliders[i].getAttribute('max'));
       randomValue = Math.floor(Math.random() * (sliderMaximum - sliderMinimum)) + sliderMinimum,
-      midiChannel = sliders[i].getAttribute('data-midi-channel'),
-      midiCCNumber = sliders[i].getAttribute('data-midi-cc');
+        midiChannel = sliders[i].getAttribute('data-midi-channel'),
+        midiCCNumber = sliders[i].getAttribute('data-midi-cc');
 
       sliders[i].value = randomValue;
       sliders[i].dispatchEvent(event);
@@ -654,15 +656,15 @@
   }
 
   function markControlChange(midiChannel, midiCC, control) {
-    if ( !isChanged(midiChannel, midiCC) ) {
+    if (!isChanged(midiChannel, midiCC)) {
       control.parentNode.className += " midi-patch-value";
     }
   }
 
   function isChanged(midiChannel, midiCC) {
-    if ( !midiPatch[midiChannels[midiChannel]]
-        || ( midiPatch[midiChannels[midiChannel]]
-          && !midiPatch[midiChannels[midiChannel]][midiCC] ) ) {
+    if (!midiPatch[midiChannels[midiChannel]]
+      || (midiPatch[midiChannels[midiChannel]]
+        && !midiPatch[midiChannels[midiChannel]][midiCC])) {
 
       return false;
     }
@@ -677,21 +679,21 @@
       selectedMidiComponent = midiComponents[patchType],
       drumIndex = 0;
 
-    if ( !midiPatch[patchType] && patchType === 'drum' ) {
+    if (!midiPatch[patchType] && patchType === 'drum') {
       midiPatch[patchType] = new Array(4);
-    } else if ( !midiPatch[patchType] ) {
+    } else if (!midiPatch[patchType]) {
       midiPatch[patchType] = {};
     }
 
-    if ( patchType === 'drum' ) {
+    if (patchType === 'drum') {
       drumIndex = getDrumIndex(midiCCNumber);
 
-      if ( !midiPatch[patchType][drumIndex[0]] ) {
+      if (!midiPatch[patchType][drumIndex[0]]) {
         midiPatch[patchType][drumIndex[0]] = new Array(6);
       }
 
       midiPatch[patchType][drumIndex[0]][drumIndex[1]] = midiCCValue;
-    } else  {
+    } else {
       midiPatch[patchType][midiCCNumber] = {
         name: circuitMidiCCValues.name,
         value: midiCCValue
@@ -703,10 +705,10 @@
     var drumNumber = 0,
       controlNumber = 0;
 
-    midiDrumCCs.forEach(function(component, index) {
+    midiDrumCCs.forEach(function (component, index) {
       controlIndex = component.indexOf(midiCCNumber);
 
-      if ( controlIndex !== -1 ) {
+      if (controlIndex !== -1) {
         controlNumber = controlIndex;
         drumNumber = index;
         return true;
@@ -725,12 +727,12 @@
       midiCCNumber = 0,
       event = new Event('change');
 
-    for (var i=0; i<selectsCount; i++){
+    for (var i = 0; i < selectsCount; i++) {
       randomOptions = selects[i].getElementsByTagName('option');
 
-      if ( randomOptions && randomOptions[0] && randomOptions[0].getAttribute('data-midi-channel') ) {
+      if (randomOptions && randomOptions[0] && randomOptions[0].getAttribute('data-midi-channel')) {
         randomOptionsCount = randomOptions.length,
-        randomOptionNumber = Math.floor(Math.random() * (randomOptionsCount));
+          randomOptionNumber = Math.floor(Math.random() * (randomOptionsCount));
         midiChannel = randomOptions[randomOptionNumber].getAttribute('data-midi-channel');
         midiCCNumber = randomOptions[randomOptionNumber].getAttribute('data-midi-cc');
 
@@ -745,30 +747,30 @@
   function setCache(component, patchName, patchData) {
     var savedComponent = {};
 
-    if ( browserLocalStorageEnabled ) {
+    if (browserLocalStorageEnabled) {
       savedComponent = getCache(component) ? getCache(component) : {};
       savedComponent[patchName] = patchData;
 
-      localStorage.setItem( component, JSON.stringify(savedComponent) );
+      localStorage.setItem(component, JSON.stringify(savedComponent));
     }
   }
 
   function getCache(component) {
     var cachedItem = {};
 
-    if ( browserLocalStorageEnabled ) {
-      cachedItem = localStorage.getItem( component );
+    if (browserLocalStorageEnabled) {
+      cachedItem = localStorage.getItem(component);
     }
 
-    return JSON.parse( cachedItem );
+    return JSON.parse(cachedItem);
   }
 
   function deletePatch(component, patchName) {
-    if ( browserLocalStorageEnabled ) {
+    if (browserLocalStorageEnabled) {
       savedComponent = getCache(component) ? getCache(component) : {};
       delete savedComponent[patchName];
 
-      localStorage.setItem( component, JSON.stringify(savedComponent) );
+      localStorage.setItem(component, JSON.stringify(savedComponent));
     }
   }
 
@@ -779,15 +781,15 @@
       localStorage.setItem(mod, mod);
       localStorage.removeItem(mod);
       return true;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
   }
 
   // Begin Web Midi Code
   function getWebMidi() {
-    if ( navigator.requestMIDIAccess ) {
-      navigator.requestMIDIAccess().then( onMIDISuccess, onMIDIFailure );
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
     } else {
       onMIDIFailure('Your browser does not support web midi. This feature is currently only supported in Google Chrome.');
     }
@@ -797,14 +799,14 @@
     midi = MIDIAccess;
     midiDevices.inputs = getMidiDevices(midi, 'inputs');
     midiDevices.outputs = getMidiDevices(midi, 'outputs'),
-    errorMessage = 'unknown error';
+      errorMessage = 'unknown error';
 
     if (!midiDevices.inputs.size) {
       errorMessage = 'Novation Circuit&trade; device not detected on MIDI in<br />'
         + 'Make sure your Circuit&trade; is connected and reload this page.';
       printErrorMessage(errorMessage);
     } else {
-      midiDevices.inputs.forEach(function(device){
+      midiDevices.inputs.forEach(function (device) {
         if (device.name.toLowerCase() === 'circuit') {
           device.onmidimessage = onMIDIMessage;
           inputID = device.id;
@@ -817,7 +819,7 @@
         + 'Make sure your Circuit&trade; is connected and reload this page.';
       printErrorMessage(errorMessage);
     } else {
-      midiDevices.outputs.forEach(function(device){
+      midiDevices.outputs.forEach(function (device) {
         if (device.name.toLowerCase() === 'circuit') {
           outputID = device.id;
         }
@@ -826,7 +828,7 @@
   }
 
   function getMidiDevices(midi, connectionType) {
-    if ( midi && midi[connectionType] && midi.size !== 0 ) {
+    if (midi && midi[connectionType] && midi.size !== 0) {
       return midi[connectionType];
     }
   }
@@ -837,16 +839,16 @@
   }
 
   function onMIDIMessage(event) {
-    if ( midiIn && midiIn.enabled ) {
+    if (midiIn && midiIn.enabled) {
       var str = "",
         eventMidiChannel = event.data && event.data[0] ? (event.data[0] & 0x0F) : false;
-        eventMidiCC = event.data && event.data[1] ? event.data[1] : false,
+      eventMidiCC = event.data && event.data[1] ? event.data[1] : false,
         eventMidiCCValue = event.data && event.data[2] ? event.data[2] : false;
 
-      if ( (eventMidiChannel === midiIn.channel) && eventMidiCC && eventMidiCCValue ) {
+      if ((eventMidiChannel === midiIn.channel) && eventMidiCC && eventMidiCCValue) {
         var eventType = event.data[0] & 0xf0;
 
-        if ( eventType === 0xB0 ) {
+        if (eventType === 0xB0) {
           updateSliderValue(eventMidiChannel, eventMidiCC, eventMidiCCValue);
           updateMidiPatch(eventMidiChannel, eventMidiCC, eventMidiCCValue);
         }
@@ -862,11 +864,11 @@
 
     markControlChange(midiChannel, midiCC, slider);
   }
-  function sendMiddleC( midi, portID ) {
+  function sendMiddleC(midi, portID) {
     var noteOnMessage = [0x90, 60, 63];
     var output = midi.outputs.get(portID);
-    output.send( noteOnMessage );
-    output.send( [0x80, 60, 0x40], window.performance.now() + 1000.0 );
+    output.send(noteOnMessage);
+    output.send([0x80, 60, 0x40], window.performance.now() + 1000.0);
   }
 
   function onMIDIFailure(msg) {
@@ -876,8 +878,8 @@
   function getCircuitDevices(midiDevices) {
     var circuits = [];
 
-    midiDevices.forEach( function( device ) {
-      if ( device.name.toLowerCase() === 'circuit' ) {
+    midiDevices.forEach(function (device) {
+      if (device.name.toLowerCase() === 'circuit') {
         circuits.push(device);
       }
     });
@@ -889,12 +891,12 @@
   function throttle(fn, threshhold, scope) {
     threshhold || (threshhold = 250);
     var last,
-        deferTimer;
+      deferTimer;
     return function () {
       var context = scope || this;
 
       var now = +new Date,
-          args = arguments;
+        args = arguments;
       if (last && now < last + threshhold) {
         // hold on to it
         clearTimeout(deferTimer);
