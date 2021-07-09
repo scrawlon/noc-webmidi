@@ -1,39 +1,34 @@
 (function () {
   "use strict";
-  var synth = require('./novation-circuit-synth.js'),
-    drum = require('./novation-circuit-drums.js'),
-    session = require('./novation-circuit-session.js'),
-    midiNRPNs = require('./nrpn/');
 
-  var midiCCs = {
-    synth: synth.midiCCs,
-    drum: drum.midiCCs,
-    session: session.midiCCs
+  var cc = require('./cc/');
+  var midiNRPNs = require('./nrpn/');
+
+  console.log(cc);
+  console.log(midiNRPNs);
+
+  var midiComponents = getMidiComponents();
+  var midiDrumCCs = getDrumComponents();
+  var midiChannels = {
+    '0': 'synth 1',
+    '1': 'synth 2',
+    '9': 'drum',
+    '15': 'session'
   };
-
-  var midiComponents = getMidiComponents(),
-    midiDrumCCs = getDrumComponents(drum.midiComponents),
-    midiChannels = {
-      '0': 'synth 1',
-      '1': 'synth 2',
-      '9': 'drum',
-      '15': 'session'
-    };
 
   function getMidiComponents() {
     var components = {
-      'synth 1': getComponentSettings(0, synth.midiComponents),
-      'synth 2': getComponentSettings(1, synth.midiComponents),
-      'drum 1': getComponentSettings(9, drum.midiComponents[0]),
-      'drum 2': getComponentSettings(9, drum.midiComponents[1]),
-      'drum 3': getComponentSettings(9, drum.midiComponents[2]),
-      'drum 4': getComponentSettings(9, drum.midiComponents[3]),
-      'session': getComponentSettings(15, session.midiComponents)
+      'synth 1': getComponentSettings(0, cc.midiComponents.synth),
+      'synth 2': getComponentSettings(1, cc.midiComponents.synth),
+      'drum 1': getComponentSettings(9, cc.midiComponents.drums[0]),
+      'drum 2': getComponentSettings(9, cc.midiComponents.drums[1]),
+      'drum 3': getComponentSettings(9, cc.midiComponents.drums[2]),
+      'drum 4': getComponentSettings(9, cc.midiComponents.drums[3]),
+      'session': getComponentSettings(15, cc.midiComponents.session)
     };
-    var componentsKeys = Object.keys(components);
     var defaultPatch = new Map();
 
-    componentsKeys.forEach(function (key) {
+    Object.keys(components).forEach(function (key) {
       var value = components[key];
       var componentValues = new Map();
 
@@ -63,16 +58,15 @@
     return defaultPatch;
   }
 
-  function getDrumComponents(drumComponents) {
-    return drumComponents.map(function (component) { return component.settings; });
+  function getDrumComponents() {
+    return cc.midiComponents.drums.map(function (component) { return component.settings; });
   }
 
-  function getComponentSettings(midiChannel, midiCCObject) {
-    var midiCCObjectKeys = Object.keys(midiCCObject),
-      componentSettings = new Map();
+  function getComponentSettings(midiChannel, component) {
+    var componentSettings = new Map();
 
-    midiCCObjectKeys.forEach(function (key) {
-      componentSettings.set(key, getMidiSettings(midiChannel, midiCCObject[key]));
+    Object.keys(component).forEach(function (key) {
+      componentSettings.set(key, getMidiSettings(midiChannel, component[key]));
     });
 
     return componentSettings;
@@ -97,13 +91,13 @@
     switch (midiChannel) {
       case 0:
       case 1:
-        circuitCCValues = midiCCs.synth[midiCCNumber];
+        circuitCCValues = cc.midiCCs.synth[midiCCNumber];
         break;
       case 9:
-        circuitCCValues = midiCCs.drum[midiCCNumber];
+        circuitCCValues = cc.midiCCs.drums[midiCCNumber];
         break;
       case 15:
-        circuitCCValues = midiCCs.session[midiCCNumber];
+        circuitCCValues = cc.midiCCs.session[midiCCNumber];
         break;
     }
 
@@ -152,7 +146,7 @@
   }
 
   module.exports = {
-    midiCCs: midiCCs,
+    midiCCs: cc.midiCCs,
     midiComponents: midiComponents,
     midiDrumCCs: midiDrumCCs,
     midiChannels: midiChannels,
