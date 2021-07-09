@@ -14,8 +14,6 @@
       enabled: false
     };
 
-  console.log({ circuitMidiApp });
-
   showEditorTest();
 
   function showEditorTest() {

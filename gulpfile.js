@@ -17,7 +17,7 @@ gulp.task('browserify', function () {
 
       bundle
         .pipe(source(outputName))
-        .pipe(streamify(uglify()))
+        // .pipe(streamify(uglify()))
         .pipe(gulp.dest('./dist/js/'));
     }));
 });

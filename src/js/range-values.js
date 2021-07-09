@@ -6,6 +6,7 @@
   var modMatrix;
   var lfo;
   var osc;
+  var synth;
 
   distortion = {
     'driveType': [
@@ -24,7 +25,15 @@
       'Normal',
       'Osc 1 bypasses the filter',
       'Osc 1 + Osc 2 bypasses the filter',
-    ]
+    ],
+    'type': [
+      'low pass 12dB',
+      'low pass 24dB',
+      'band pass 6dB',
+      'band pass 12dB',
+      'high pass 12dB',
+      'high pass 24dB'
+    ],
   };
 
   lfo = {
@@ -149,11 +158,48 @@
     ]
   };
 
+  synth = {
+    'polyphonyMode': ['Mono', 'Mono AG', 'Poly'],
+    'waveforms': [
+      'sine',
+      'triangle',
+      'sawtooth',
+      'saw 9:1 PW',
+      'saw 8:2 PW',
+      'saw 7:3 PW',
+      'saw 6:4 PW',
+      'saw 5:5 PW',
+      'saw 4:6 PW',
+      'saw 3:7 PW',
+      'saw 2:8 PW',
+      'saw 1:9 PW',
+      'pulse width',
+      'square',
+      'sine table',
+      'analogue pulse',
+      'analogue sync',
+      'triangle-saw blend',
+      'digital nasty 1',
+      'digital nasty 2',
+      'digital saw-square',
+      'digital vocal 1',
+      'digital vocal 2',
+      'digital vocal 3',
+      'digital vocal 4',
+      'digital vocal 5',
+      'digital vocal 6',
+      'random collection 1',
+      'random collection 2',
+      'random collection 3'
+    ],
+  };
+
   module.exports = {
     distortion: distortion,
     filter: filter,
     lfo: lfo,
     modMatrix: modMatrix,
-    osc: osc
+    osc: osc,
+    synth: synth
   };
 })();
