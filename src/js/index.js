@@ -4,9 +4,6 @@
   var cc = require('./cc/');
   var midiNRPNs = require('./nrpn/');
 
-  console.log(cc);
-  console.log(midiNRPNs);
-
   var midiComponents = getMidiComponents();
   var midiDrumCCs = getDrumComponents();
   var midiChannels = {
@@ -15,6 +12,11 @@
     '9': 'drum',
     '15': 'session'
   };
+
+  console.log(cc);
+  console.log(midiNRPNs);
+  console.log(midiComponents);
+  console.log(midiDrumCCs);
 
   function getMidiComponents() {
     var components = {

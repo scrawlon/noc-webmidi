@@ -1,15 +1,13 @@
-(function () {
-  var session = require('./session.js');
-  var synth = require('./synth.js');
+var session = require('./session');
+var synth = require('./synth');
 
-  module.exports = {
-    midiNRPNs: {
-      session: session.midiNRPNs,
-      synth: synth.midiNRPNs
-    },
-    midiComponents: {
-      session: session.midiComponents,
-      synth: synth.midiComponents
-    }
-  };
-})();
+module.exports = {
+  midiNRPNs: {
+    synth: synth.midiNRPNs,
+    session: session.midiNRPNs
+  },
+  midiComponents: {
+    synth: synth.midiComponents,
+    session: session.midiComponents
+  }
+};
