@@ -3,7 +3,13 @@
   var synth = require('./synth.js');
 
   module.exports = {
-    session: session.midiNRPNs,
-    synth: synth.midiNRPNs
+    midiNRPNs: {
+      session: session.midiNRPNs,
+      synth: synth.midiNRPNs
+    },
+    midiComponents: {
+      session: session.midiComponents,
+      synth: synth.midiComponents
+    }
   };
 })();
