@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  var circuitMidiApp = require('./index.js');
+  var nocWebMidi = require('./index.js');
 
-  window.circuitMidiApp = circuitMidiApp;
+  window.nocWebMidi = nocWebMidi;
 })();

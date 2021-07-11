@@ -1,9 +1,9 @@
 (function () {
+  const midiCCs = nocWebMidi.midiCCs;
+  const midiChannels = nocWebMidi.midiChannels;
+  const midiComponents = nocWebMidi.midiComponents;
+
   var midiPatch = {},
-    // midiCCs = circuitMidiApp.midiCCs,
-    midiChannels = circuitMidiApp.midiChannels,
-    midiComponents = circuitMidiApp.midiComponents,
-    // midiDrumCCs = circuitMidiApp.midiDrumCCs,
     midi = false,
     midiDevices = {},
     // inputID = false,
@@ -13,6 +13,8 @@
       channel: 0,
       enabled: false
     };
+
+  console.log({ midiCCs });
 
   showEditorTest();
 
@@ -40,7 +42,6 @@
           thisMidiChannel = channelKey;
         }
       });
-      console.log({ key, value });
 
       outputHTML += "<div id='" + keyHyphen + "' class='component-section'>"
         + "<h2>" + key
@@ -85,7 +86,6 @@
         + "<h3>" + key + "</h3>";
 
       value.forEach(function (el) {
-        console.log({ el });
         outputHTML += "<div id='" + el.name.replace(' ', '-') + "' class='component-value'>";
         outputHTML += el.name + ": " + getComponentRangeDescriptionText(el.range) + "<br />";
         outputHTML += getComponentRangeInput(midiChannel, el.cc, el.name, el.default, el.range);
@@ -321,9 +321,9 @@
   }
 
   function activatePatchButtonLoad(button) {
-    var buttonData = getPatchButtonData(button),
-      isDrum = buttonData.patchType === 'drum',
-      drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false;
+    var buttonData = getPatchButtonData(button);
+    // var isDrum = buttonData.patchType === 'drum',
+    // var drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false;
 
     if (buttonData.patchSelected) {
       var cachedPatches = getCache(buttonData.patchType),
@@ -333,9 +333,9 @@
           ? getPatchMidiChannel(buttonData.patchType)
           : getPatchMidiChannel(buttonData.buttonComponent);
 
-      if (isDrum) {
-        patch = buildDrumPatch(patch, drumNumber);
-      }
+      // if (isDrum) {
+      //   patch = buildDrumPatch(patch, drumNumber);
+      // }
 
       if (patch) {
         updatePatchValues(midiChannel, patch, buttonData.buttonComponent);
@@ -347,23 +347,23 @@
     }
   }
 
-  function buildDrumPatch(drumPatch, drumNumber) {
-    var patch = {},
-      drumPatchCount = drumPatch.length,
-      drumComponent = midiDrumCCs[drumNumber],
-      drumMidiCC = '',
-      drumMidiCCName = '';
+  // function buildDrumPatch(drumPatch, drumNumber) {
+  //   var patch = {},
+  //     drumPatchCount = drumPatch.length,
+  //     drumComponent = midiDrumCCs[drumNumber],
+  //     drumMidiCC = '',
+  //     drumMidiCCName = '';
 
-    for (var i = 0; i < drumPatchCount; i++) {
-      if (drumPatch[i]) {
-        drumMidiCC = circuitMidiApp.getCircuitMidiCC(9, drumComponent[i]);
-        drumMidiCCName = drumMidiCC.name.replace(/[0-9]\s/g, '');
-        patch[drumComponent[i]] = { value: drumPatch[i], name: drumMidiCCName };
-      }
-    }
+  //   for (var i = 0; i < drumPatchCount; i++) {
+  //     if (drumPatch[i]) {
+  //       drumMidiCC = circuitMidiApp.getCircuitMidiCC(9, drumComponent[i]);
+  //       drumMidiCCName = drumMidiCC.name.replace(/[0-9]\s/g, '');
+  //       patch[drumComponent[i]] = { value: drumPatch[i], name: drumMidiCCName };
+  //     }
+  //   }
 
-    return patch;
-  }
+  //   return patch;
+  // }
 
   function getPatchMidiChannel(patchComponent) {
     var midiChannelsKeys = Object.keys(midiChannels),
