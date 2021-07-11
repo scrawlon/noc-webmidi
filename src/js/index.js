@@ -5,7 +5,7 @@
   var midiNRPNs = require('./nrpn/');
 
   var midiComponents = getMidiComponents();
-  var midiDrumCCs = getDrumComponents();
+  // var midiDrumCCs = getDrumComponents();
   var midiChannels = {
     '0': 'synth 1',
     '1': 'synth 2',
@@ -16,16 +16,16 @@
   console.log(cc);
   console.log(midiNRPNs);
   console.log(midiComponents);
-  console.log(midiDrumCCs);
+  // console.log(midiDrumCCs);
 
   function getMidiComponents() {
     var components = {
       'synth 1': getComponentSettings(0, cc.midiComponents.synth),
       'synth 2': getComponentSettings(1, cc.midiComponents.synth),
-      'drum 1': getComponentSettings(9, cc.midiComponents.drums[0]),
-      'drum 2': getComponentSettings(9, cc.midiComponents.drums[1]),
-      'drum 3': getComponentSettings(9, cc.midiComponents.drums[2]),
-      'drum 4': getComponentSettings(9, cc.midiComponents.drums[3]),
+      // 'drum 1': getComponentSettings(9, cc.midiComponents.drums[0]),
+      // 'drum 2': getComponentSettings(9, cc.midiComponents.drums[1]),
+      // 'drum 3': getComponentSettings(9, cc.midiComponents.drums[2]),
+      // 'drum 4': getComponentSettings(9, cc.midiComponents.drums[3]),
       'session': getComponentSettings(15, cc.midiComponents.session)
     };
     var defaultPatch = new Map();
@@ -34,10 +34,14 @@
       var value = components[key];
       var componentValues = new Map();
 
+      console.log('key', key);
+
       value.forEach(function (v, k) {
         var midiParameters = Object.keys(v),
           componentArray = [],
           componentType = "";
+
+        console.log('v', v, 'k', k);
 
         midiParameters.forEach(function (parameter) {
           if (!componentType) {
@@ -54,6 +58,7 @@
 
         componentValues.set(componentType, componentArray);
         defaultPatch.set(key, componentValues);
+        console.log(componentValues, defaultPatch);
       });
     });
 
@@ -107,16 +112,16 @@
   }
 
   function getMidiParameterName(parameter) {
-    return parameter.name ? parameter.name : false;
+    return parameter && parameter.name ? parameter.name : false;
   }
 
   function getMidiParameterDefault(parameter) {
-    return parameter.default ? parameter.default : false;
+    return parameter && parameter.default ? parameter.default : false;
   }
 
   function getMidiParameterRange(parameter) {
-    var range = parameter.hasOwnProperty('range') ? parameter.range : false,
-      rangeValues = parameter.hasOwnProperty('rangeValues') ? parameter.rangeValues : false;
+    var range = parameter && parameter.hasOwnProperty('range') ? parameter.range : false,
+      rangeValues = parameter && parameter.hasOwnProperty('rangeValues') ? parameter.rangeValues : false;
 
     return rangeValues ? getRangeValues(range, rangeValues) : getRange(range);
   }
@@ -150,7 +155,7 @@
   module.exports = {
     midiCCs: cc.midiCCs,
     midiComponents: midiComponents,
-    midiDrumCCs: midiDrumCCs,
+    // midiDrumCCs: midiDrumCCs,
     midiChannels: midiChannels,
     getCircuitMidiCC: getCircuitMidiCC,
     midiNRPNs: midiNRPNs
