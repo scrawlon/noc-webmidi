@@ -1,8 +1,5 @@
 
-var midiCCs = {};
-var midiComponents = {};
-
-midiCCs = {
+const midiCCs = {
 
   // Section: Mixer
   '51': {
@@ -39,16 +36,4 @@ midiCCs = {
   }
 };
 
-midiComponents = [
-  '51',
-  '52',
-  '54',
-  '56',
-  '58',
-  '59'
-];
-
-module.exports = {
-  midiCCs: midiCCs,
-  midiComponents: midiComponents
-}
+module.exports = midiCCs;

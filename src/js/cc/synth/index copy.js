@@ -1,15 +1,7 @@
 
-var rangeValues = require('../../range-values.js');
-var midiCCs = {};
-var midiComponents = {};
-
-midiCCs = {
+const rangeValues = require('../../range-values.js');
+const midiCCs = {
 
 };
 
-midiComponents = [];
-
-module.exports = {
-  midiCCs: midiCCs,
-  midiComponents: midiComponents
-}
+module.exports = midiCCs;

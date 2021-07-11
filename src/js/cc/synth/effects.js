@@ -1,8 +1,5 @@
 
-var midiCCs = {};
-var midiComponents = {};
-
-midiCCs = {
+const midiCCs = {
 
   // Section: Effects and EQ
   '91': {
@@ -17,12 +14,4 @@ midiCCs = {
   }
 };
 
-midiComponents = [
-  '91',
-  '93'
-];
-
-module.exports = {
-  midiCCs: midiCCs,
-  midiComponents: midiComponents
-}
+module.exports = midiCCs;

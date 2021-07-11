@@ -1,8 +1,5 @@
 
-var midiCCs = {};
-var midiComponents = {};
-
-midiCCs = {
+const midiCCs = {
 
   // Section: Macro Knob
   '80': {
@@ -47,18 +44,4 @@ midiCCs = {
   }
 }
 
-midiComponents = [
-  '80',
-  '81',
-  '82',
-  '83',
-  '84',
-  '85',
-  '86',
-  '87'
-];
-
-module.exports = {
-  midiCCs: midiCCs,
-  midiComponents: midiComponents
-}
+module.exports = midiCCs;

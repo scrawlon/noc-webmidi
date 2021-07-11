@@ -1,9 +1,6 @@
 
-var rangeValues = require('../../range-values.js');
-var midiCCs = {};
-var midiComponents = {};
-
-midiCCs = {
+const rangeValues = require('../../range-values.js');
+const midiCCs = {
 
   // Section: Voice
   '3': {
@@ -31,14 +28,4 @@ midiCCs = {
   }
 };
 
-midiComponents = [
-  '3',
-  '5',
-  '9',
-  '13'
-];
-
-module.exports = {
-  midiCCs: midiCCs,
-  midiComponents: midiComponents
-}
+module.exports = midiCCs;

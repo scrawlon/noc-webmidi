@@ -73,6 +73,7 @@
     var componentSettings = new Map();
 
     Object.keys(component).forEach(function (key) {
+      console.log('component', component, 'key', key);
       componentSettings.set(key, getMidiSettings(midiChannel, component[key]));
     });
 
