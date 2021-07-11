@@ -4,13 +4,17 @@ const synth = require('./synth');
 
 module.exports = {
   midiCCs: {
-    synth: synth.midiCCs,
-    // drums: drums.midiCCs,
-    session: session.midiCCs
+    ...synth.midiCCs,
+    ...drums.midiCCs,
+    ...session.midiCCs
   },
   midiComponents: {
-    synth: synth.midiComponents,
-    // drums: drums.midiComponents,
-    session: session.midiComponents
+    'synth 1': synth.midiComponents,
+    'synth 2': synth.midiComponents,
+    'drum 1': drums.midiComponents['1'],
+    'drum 2': drums.midiComponents['2'],
+    'drum 3': drums.midiComponents['3'],
+    'drum 4': drums.midiComponents['4'],
+    'session': session.midiComponents
   }
 };

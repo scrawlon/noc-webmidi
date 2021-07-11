@@ -20,12 +20,12 @@
 
   function getMidiComponents() {
     var components = {
-      'synth 1': getComponentSettings(0, cc.midiComponents.synth),
-      'synth 2': getComponentSettings(1, cc.midiComponents.synth),
-      // 'drum 1': getComponentSettings(9, cc.midiComponents.drums[0]),
-      // 'drum 2': getComponentSettings(9, cc.midiComponents.drums[1]),
-      // 'drum 3': getComponentSettings(9, cc.midiComponents.drums[2]),
-      // 'drum 4': getComponentSettings(9, cc.midiComponents.drums[3]),
+      'synth 1': getComponentSettings(0, cc.midiComponents['synth 1']),
+      'synth 2': getComponentSettings(1, cc.midiComponents['synth 2']),
+      'drum 1': getComponentSettings(9, cc.midiComponents['drum 1']),
+      'drum 2': getComponentSettings(9, cc.midiComponents['drum 2']),
+      'drum 3': getComponentSettings(9, cc.midiComponents['drum 3']),
+      'drum 4': getComponentSettings(9, cc.midiComponents['drum 4']),
       'session': getComponentSettings(15, cc.midiComponents.session)
     };
     var defaultPatch = new Map();
@@ -65,9 +65,9 @@
     return defaultPatch;
   }
 
-  function getDrumComponents() {
-    return cc.midiComponents.drums.map(function (component) { return component.settings; });
-  }
+  // function getDrumComponents() {
+  //   return cc.midiComponents.drums.map(function (component) { return component.settings; });
+  // }
 
   function getComponentSettings(midiChannel, component) {
     var componentSettings = new Map();
@@ -94,22 +94,24 @@
   }
 
   function getCircuitMidiCC(midiChannel, midiCCNumber) {
-    var circuitCCValues = false;
+    return cc.midiCCs[midiCCNumber];
+    // var circuitCCValues = false;
 
-    switch (midiChannel) {
-      case 0:
-      case 1:
-        circuitCCValues = cc.midiCCs.synth[midiCCNumber];
-        break;
-      case 9:
-        circuitCCValues = cc.midiCCs.drums[midiCCNumber];
-        break;
-      case 15:
-        circuitCCValues = cc.midiCCs.session[midiCCNumber];
-        break;
-    }
 
-    return circuitCCValues;
+    // switch (midiChannel) {
+    //   case 0:
+    //   case 1:
+    //     circuitCCValues = cc.midiCCs.synth[midiCCNumber];
+    //     break;
+    //   case 9:
+    //     circuitCCValues = cc.midiCCs.drums[midiCCNumber];
+    //     break;
+    //   case 15:
+    //     circuitCCValues = cc.midiCCs.session[midiCCNumber];
+    //     break;
+    // }
+
+    // return circuitCCValues;
   }
 
   function getMidiParameterName(parameter) {

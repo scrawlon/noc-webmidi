@@ -1,12 +1,12 @@
 (function () {
   var midiPatch = {},
-    midiCCs = circuitMidiApp.midiCCs,
+    // midiCCs = circuitMidiApp.midiCCs,
     midiChannels = circuitMidiApp.midiChannels,
     midiComponents = circuitMidiApp.midiComponents,
-    midiDrumCCs = circuitMidiApp.midiDrumCCs,
+    // midiDrumCCs = circuitMidiApp.midiDrumCCs,
     midi = false,
     midiDevices = {},
-    inputID = false,
+    // inputID = false,
     outputID = false,
     browserLocalStorageEnabled = localStorageSupport(),
     midiIn = {
@@ -40,6 +40,7 @@
           thisMidiChannel = channelKey;
         }
       });
+      console.log({ key, value });
 
       outputHTML += "<div id='" + keyHyphen + "' class='component-section'>"
         + "<h2>" + key
@@ -84,6 +85,7 @@
         + "<h3>" + key + "</h3>";
 
       value.forEach(function (el) {
+        console.log({ el });
         outputHTML += "<div id='" + el.name.replace(' ', '-') + "' class='component-value'>";
         outputHTML += el.name + ": " + getComponentRangeDescriptionText(el.range) + "<br />";
         outputHTML += getComponentRangeInput(midiChannel, el.cc, el.name, el.default, el.range);
