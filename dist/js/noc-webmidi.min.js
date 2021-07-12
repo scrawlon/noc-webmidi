@@ -774,21 +774,43 @@ module.exports = midiCCs;
 
   function getMidiComponents() {
     var components = {
-      'synth 1': getComponentSettings(cc.midiComponents['synth 1'], cc.midiCCs.synth),
-      'synth 2': getComponentSettings(cc.midiComponents['synth 2'], cc.midiCCs.synth),
-      'drum 1': getComponentSettings(cc.midiComponents['drum 1'], cc.midiCCs.drums),
-      'drum 2': getComponentSettings(cc.midiComponents['drum 2'], cc.midiCCs.drums),
-      'drum 3': getComponentSettings(cc.midiComponents['drum 3'], cc.midiCCs.drums),
-      'drum 4': getComponentSettings(cc.midiComponents['drum 4'], cc.midiCCs.drums),
-      'session': getComponentSettings(cc.midiComponents.session, cc.midiCCs.session)
+      'synth 1': {
+        midiChannel: 0,
+        parameters: getComponentSettings(cc.midiComponents['synth 1'], cc.midiCCs.synth)
+      },
+      'synth 2': {
+        midiChannel: 1,
+        parameters: getComponentSettings(cc.midiComponents['synth 2'], cc.midiCCs.synth)
+      },
+      'drum 1': {
+        midiChannel: 9,
+        parameters: getComponentSettings(cc.midiComponents['drum 1'], cc.midiCCs.drums)
+      },
+      'drum 2': {
+        midiChannel: 9,
+        parameters: getComponentSettings(cc.midiComponents['drum 2'], cc.midiCCs.drums)
+      },
+      'drum 3': {
+        midiChannel: 9,
+        parameters: getComponentSettings(cc.midiComponents['drum 3'], cc.midiCCs.drums)
+      },
+      'drum 4': {
+        midiChannel: 9,
+        parameters: getComponentSettings(cc.midiComponents['drum 4'], cc.midiCCs.drums)
+      },
+      'session': {
+        midiChannel: 15,
+        parameters: getComponentSettings(cc.midiComponents.session, cc.midiCCs.session)
+      }
     };
     var defaultPatch = new Map();
 
     Object.keys(components).forEach(function (key) {
-      var component = components[key];
+      const { midiChannel, parameters } = components[key];
+
       var componentValues = new Map();
 
-      component.forEach(function (v, k) {
+      parameters.forEach(function (v, k) {
         var midiParameters = Object.keys(v);
         var componentArray = [];
         var componentType = "";
@@ -807,7 +829,11 @@ module.exports = midiCCs;
         });
 
         componentValues.set(componentType, componentArray);
-        defaultPatch.set(key, componentValues);
+      });
+
+      defaultPatch.set(key, {
+        midiChannel: midiChannel,
+        parameters: componentValues
       });
     });
 
@@ -825,8 +851,8 @@ module.exports = midiCCs;
   }
 
   function getMidiSettings(midiCCArray, midiCCs) {
-    var midiCCArrayLength = midiCCArray.length,
-      midiSettings = [];
+    var midiCCArrayLength = midiCCArray.length;
+    var midiSettings = [];
 
     for (var i = 0; i < midiCCArrayLength; i++) {
       var thisSetting = midiCCs[midiCCArray[i]];

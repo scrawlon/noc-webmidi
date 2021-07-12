@@ -3,50 +3,55 @@
   const midiChannels = nocWebMidi.midiChannels;
   const midiComponents = nocWebMidi.midiComponents;
 
-  var midiPatch = {},
-    midi = false,
-    midiDevices = {},
-    // inputID = false,
-    outputID = false,
-    browserLocalStorageEnabled = localStorageSupport(),
-    midiIn = {
-      channel: 0,
-      enabled: false
-    };
+  var midiPatch = {};
+  var midi = false;
+  var midiDevices = {};
+  // inputID = false,
+  var outputID = false;
+  var browserLocalStorageEnabled = localStorageSupport();
+  var midiIn = {
+    channel: 0,
+    enabled: false
+  };
 
   console.log({ midiCCs });
+  console.log({ midiChannels });
 
   showEditorTest();
 
   function showEditorTest() {
-    var midiChannelsKeys = Object.keys(midiChannels);
+    // var midiChannelsKeys = Object.keys(midiChannels);
 
     // Load Circuit Components HTML
-    buildMidiComponents(midiChannelsKeys);
+    buildMidiComponents();
 
     // Load Web MIDI
     getWebMidi();
   }
 
   // Begin Circuit Editor HTML code
-  function buildMidiComponents(midiChannelsKeys) {
+  function buildMidiComponents() {
     var circuitWebMidiTestDiv = document.getElementById("circuit-web-midi-test");
 
-    midiComponents.forEach(function (value, key) {
-      var thisMidiChannel = 0,
-        outputHTML = "",
-        keyHyphen = key.replace(' ', '-');
+    midiComponents.forEach(function (component, componentType) {
+      let { midiChannel, parameters } = component;
+      // var thisMidiChannel = 0;
+      var outputHTML = "";
+      var keyHyphen = componentType.replace(' ', '-');
 
-      midiChannelsKeys.forEach(function (channelKey) {
-        if (key === midiChannels[channelKey] || key.split(' ')[0] === midiChannels[channelKey]) {
-          thisMidiChannel = channelKey;
-        }
-      });
+      console.log({ parameters, componentType });
+
+      // Object.keys(midiChannels).forEach(function (channelKey) {
+      //   console.log({ channelKey });
+      //   if (componentType === midiChannels[channelKey] || componentType.split(' ')[0] === midiChannels[channelKey]) {
+      //     thisMidiChannel = channelKey;
+      //   }
+      // });
 
       outputHTML += "<div id='" + keyHyphen + "' class='component-section'>"
-        + "<h2>" + key
+        + "<h2>" + componentType
         + "<button type='submit' class='activate-midi-in' data-midi-channel='"
-        + thisMidiChannel + "' data-midi-enabled=''>MIDI IN</button>"
+        + midiChannel + "' data-midi-enabled=''>MIDI IN</button>"
         + "<button type='submit' class='randomizer' data-component-section='"
         + keyHyphen + "'>randomize</button>"
         + "</h2>"
@@ -56,17 +61,17 @@
         + "<option value=''></option>"
         + "</select>"
         + "<button type='submit' class='patch-load' data-component-section='"
-        + key + "'>load</button>"
+        + componentType + "'>load</button>"
         + "<button type='submit' class='patch-save' data-component-section='"
-        + key + "'>save</button>"
+        + componentType + "'>save</button>"
         + "<button type='submit' class='patch-delete' data-component-section='"
-        + key + "'>delete</button>"
+        + componentType + "'>delete</button>"
         + "<button type='submit' class='patch-export' data-component-section='"
-        + key + "'>export</button>"
+        + componentType + "'>export</button>"
         + "<button type='submit' class='patch-import' data-component-section='"
-        + key + "'>import</button>"
+        + componentType + "'>import</button>"
         + "</div>";
-      outputHTML += getComponentValueString(value, thisMidiChannel);
+      outputHTML += getComponentValueString(parameters, midiChannel);
       outputHTML += "</div>";
       circuitWebMidiTestDiv.innerHTML = circuitWebMidiTestDiv.innerHTML + outputHTML;
     });
