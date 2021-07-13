@@ -5,12 +5,12 @@
   const midiNRPNs = require('./nrpn/');
 
   const midiComponents = getMidiComponents();
-  const midiChannels = {
-    '0': 'synth 1',
-    '1': 'synth 2',
-    '9': 'drum',
-    '15': 'session'
-  };
+  // const midiChannels = {
+  //   '0': 'synth 1',
+  //   '1': 'synth 2',
+  //   '9': 'drum',
+  //   '15': 'session'
+  // };
 
   console.log(cc);
   console.log(midiNRPNs);
@@ -165,7 +165,7 @@
   module.exports = {
     midiCCs: cc.midiCCs,
     midiComponents: midiComponents,
-    midiChannels: midiChannels,
+    // midiChannels: midiChannels,
     // getCircuitMidiCC: getCircuitMidiCC,
     midiNRPNs: midiNRPNs
   }

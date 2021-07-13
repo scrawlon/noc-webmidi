@@ -35,45 +35,35 @@
 
     midiComponents.forEach(function (component, componentType) {
       let { midiChannel, parameters } = component;
-      // var thisMidiChannel = 0;
-      var outputHTML = "";
-      var keyHyphen = componentType.replace(' ', '-');
+      let componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
 
-      console.log({ parameters, componentType });
+      console.log({ parameters, componentType, componentTypeSlug });
 
-      // Object.keys(midiChannels).forEach(function (channelKey) {
-      //   console.log({ channelKey });
-      //   if (componentType === midiChannels[channelKey] || componentType.split(' ')[0] === midiChannels[channelKey]) {
-      //     thisMidiChannel = channelKey;
-      //   }
-      // });
+      let componentHtml = `
+        <div id='${componentTypeSlug}' class='component-section'> 
+          <h2>${componentType}</h2>
+          <button type='submit' class='activate-midi-in' data-midi-channel='${midiChannel}' data-midi-enabled=''>
+            MIDI IN
+          </button> 
+          <button type='submit' class='randomizer' data-component-section='${componentTypeSlug}'>
+            randomize
+          </button>
+          <div class='button-bar'> 
+            <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
+            <select id='${componentTypeSlug}-patch-select'>
+              <option value=''></option>
+            </select>
+            <button type='submit' class='patch-load' data-component-section='${componentType}'>load</button>
+            <button type='submit' class='patch-save' data-component-section='${componentType}'>save</button>
+            <button type='submit' class='patch-delete' data-component-section='${componentType}'>delete</button>
+            <button type='submit' class='patch-export' data-component-section='${componentType}'>export</button>
+            <button type='submit' class='patch-import' data-component-section='${componentType}'>import</button>
+          </div>
+          ${getComponentValueString(parameters, midiChannel)}
+        </div>
+      `;
 
-      outputHTML += "<div id='" + keyHyphen + "' class='component-section'>"
-        + "<h2>" + componentType
-        + "<button type='submit' class='activate-midi-in' data-midi-channel='"
-        + midiChannel + "' data-midi-enabled=''>MIDI IN</button>"
-        + "<button type='submit' class='randomizer' data-component-section='"
-        + keyHyphen + "'>randomize</button>"
-        + "</h2>"
-        + "<div class='button-bar'>"
-        + "<label for='" + keyHyphen + "-patch-select'>Patch Select: </label>"
-        + "<select id='" + keyHyphen + "-patch-select'>"
-        + "<option value=''></option>"
-        + "</select>"
-        + "<button type='submit' class='patch-load' data-component-section='"
-        + componentType + "'>load</button>"
-        + "<button type='submit' class='patch-save' data-component-section='"
-        + componentType + "'>save</button>"
-        + "<button type='submit' class='patch-delete' data-component-section='"
-        + componentType + "'>delete</button>"
-        + "<button type='submit' class='patch-export' data-component-section='"
-        + componentType + "'>export</button>"
-        + "<button type='submit' class='patch-import' data-component-section='"
-        + componentType + "'>import</button>"
-        + "</div>";
-      outputHTML += getComponentValueString(parameters, midiChannel);
-      outputHTML += "</div>";
-      circuitWebMidiTestDiv.innerHTML = circuitWebMidiTestDiv.innerHTML + outputHTML;
+      circuitWebMidiTestDiv.innerHTML = circuitWebMidiTestDiv.innerHTML + componentHtml;
     });
 
     populatePatchSelectMenu();
@@ -84,23 +74,29 @@
   }
 
   function getComponentValueString(component, midiChannel) {
-    var outputHTML = "";
+    let componentHtml = "";
 
-    component.forEach(function (value, key) {
-      outputHTML += "<div class='component'>"
-        + "<h3>" + key + "</h3>";
+    component.forEach(function (parameters, parameterName) {
+      let parameterHtml = "";
 
-      value.forEach(function (el) {
-        outputHTML += "<div id='" + el.name.replace(' ', '-') + "' class='component-value'>";
-        outputHTML += el.name + ": " + getComponentRangeDescriptionText(el.range) + "<br />";
-        outputHTML += getComponentRangeInput(midiChannel, el.cc, el.name, el.default, el.range);
-        outputHTML += "</div>";
+      parameters.forEach(function (parameter) {
+        parameterHtml += `
+          <div id='${parameter.name.toLowerCase().replace(' ', '-')}' class='component-value'> 
+            ${parameter.name}: ${getComponentRangeDescriptionText(parameter.range)} <br />
+            ${getComponentRangeInput(midiChannel, parameter.cc, parameter.name, parameter.default, parameter.range)}
+          </div> 
+        `;
       });
 
-      outputHTML += "</div>";
+      componentHtml += `
+        <div class='component'>
+          <h3>${parameterName}</h3>
+          ${parameterHtml}
+        </div>
+      `;
     });
 
-    return outputHTML;
+    return componentHtml;
   }
 
   function getComponentRangeDescriptionText(range) {
@@ -115,39 +111,46 @@
   }
 
   function getComponentRangeInput(midiChannel, midiCCNumber, name, defaultValue, range) {
-    var rangeKeys = Object.keys(range),
-      rangeKeysLength = rangeKeys.length,
-      outputHTML = "";
+    var rangeKeys = Object.keys(range);
+    var rangeKeysLength = rangeKeys.length;
 
     if (range[rangeKeys[0]] !== parseInt(range[rangeKeys[0]])) {
-      outputHTML = getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys);
+      return getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys);
     } else {
-      outputHTML = getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength);
+      return getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength);
     }
-
-    return outputHTML;
   }
 
   function getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys) {
-    var outputHTML = "<select name='" + name + "'>";
+    let componentValueSelect = ``;
 
     rangeKeys.forEach(function (key) {
-      var selected = defaultValue == key ? "selected" : "";
-      outputHTML += "<option value='" + key + "' " + selected
-        + " data-midi-channel='" + midiChannel + "' "
-        + " data-midi-cc='" + midiCCNumber + "' "
-        + ">" + range[key] + "</option>";
+      let selected = defaultValue == key ? "selected" : "";
+
+      componentValueSelect += `
+        <option value='${key}' ${selected} data-midi-channel='${midiChannel}' data-midi-cc='${midiCCNumber}'>
+          ${range[key]}
+        </option>
+      `;
     });
 
-    outputHTML += "</select>";
-    return outputHTML;
+    return `
+      <select name='${name}'>
+        ${componentValueSelect}
+      </select>
+    `;
   }
 
   function getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength) {
-    return "<input type='range' min='" + rangeKeys[0] + "' max='" + rangeKeys[rangeKeysLength - 1] + "' "
-      + " data-midi-channel='" + midiChannel + "' "
-      + " data-midi-cc='" + midiCCNumber + "' "
-      + " />";
+    return `
+      <input 
+        type='range' 
+        min='${rangeKeys[0]}' 
+        max='${rangeKeys[rangeKeysLength - 1]}' 
+        data-midi-channel='${midiChannel}'
+        data-midi-cc='${midiCCNumber}'
+      /> 
+    `;
   }
 
   function addSynthEditorEvents() {
@@ -667,6 +670,7 @@
   }
 
   function isChanged(midiChannel, midiCC) {
+    console.log({ midiChannel, midiCC });
     if (!midiPatch[midiChannels[midiChannel]]
       || (midiPatch[midiChannels[midiChannel]]
         && !midiPatch[midiChannels[midiChannel]][midiCC])) {
