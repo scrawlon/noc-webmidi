@@ -3,13 +3,13 @@
   const midiChannels = nocWebMidi.midiChannels;
   const midiComponents = nocWebMidi.midiComponents;
 
-  var midiPatch = {};
-  var midi = false;
-  var midiDevices = {};
+  let midiPatch = {};
+  let midi = false;
+  let midiDevices = {};
   // inputID = false,
-  var outputID = false;
-  var browserLocalStorageEnabled = localStorageSupport();
-  var midiIn = {
+  let outputID = false;
+  let browserLocalStorageEnabled = localStorageSupport();
+  let midiIn = {
     channel: 0,
     enabled: false
   };
@@ -31,7 +31,7 @@
 
   // Begin Circuit Editor HTML code
   function buildMidiComponents() {
-    var circuitWebMidiTestDiv = document.getElementById("circuit-web-midi-test");
+    let circuitWebMidiTestDiv = document.getElementById("circuit-web-midi-test");
 
     midiComponents.forEach(function (component, componentType) {
       let { midiChannel, parameters } = component;
@@ -100,19 +100,19 @@
   }
 
   function getComponentRangeDescriptionText(range) {
-    var rangeKeys = Object.keys(range),
-      rangeKeysLength = rangeKeys.length;
+    let rangeKeys = Object.keys(range);
+    let rangeKeysLength = rangeKeys.length;
 
     if (range[rangeKeys[0]] === parseInt(range[rangeKeys[0]])) {
-      return "(" + range[rangeKeys[0]] + " - " + range[rangeKeys[rangeKeysLength - 1]] + ")";
+      return `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeysLength - 1]]})`;
     }
 
     return "";
   }
 
   function getComponentRangeInput(midiChannel, midiCCNumber, name, defaultValue, range) {
-    var rangeKeys = Object.keys(range);
-    var rangeKeysLength = rangeKeys.length;
+    let rangeKeys = Object.keys(range);
+    let rangeKeysLength = rangeKeys.length;
 
     if (range[rangeKeys[0]] !== parseInt(range[rangeKeys[0]])) {
       return getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys);
@@ -159,13 +159,13 @@
   }
 
   function selectMidiEvents() {
-    var selects = document.getElementsByTagName("select"),
-      selectsCount = selects.length;
+    let selects = document.getElementsByTagName("select");
+    let selectsCount = selects.length;
 
-    for (var i = 0; i < selectsCount; i++) {
+    for (let i = 0; i < selectsCount; i++) {
       if (!selects[i].id.endsWith('-patch-select')) {
         selects[i].addEventListener('change', function () {
-          var selectedOption = this.options[this.selectedIndex];
+          let selectedOption = this.options[this.selectedIndex];
 
           handlePatchChanges(selectedOption, this);
         });
@@ -174,9 +174,9 @@
   }
 
   function handlePatchChanges(changedOption, control) {
-    var selectedMidiChannel = parseInt(changedOption.dataset.midiChannel),
-      selectedMidiCC = changedOption.dataset.midiCc,
-      selectedMidiCCValue = changedOption.value;
+    let selectedMidiChannel = parseInt(changedOption.dataset.midiChannel);
+    let selectedMidiCC = changedOption.dataset.midiCc;
+    let selectedMidiCCValue = changedOption.value;
 
     markControlChange(selectedMidiChannel, selectedMidiCC, control);
     updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
@@ -184,8 +184,8 @@
   }
 
   function sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
-    var selectedMidiChannelHex = selectedMidiChannel.toString(16),
-      output = false;
+    let selectedMidiChannelHex = selectedMidiChannel.toString(16);
+    let output = false;
 
     if (midi && midi.outputs && outputID) {
       output = midi.outputs.get(outputID);
@@ -194,8 +194,8 @@
   }
 
   function rangeMidiEvents() {
-    var ranges = document.getElementsByTagName("input"),
-      rangesCount = ranges.length;
+    let ranges = document.getElementsByTagName("input");
+    let rangesCount = ranges.length;
 
     for (var i = 0; i < rangesCount; i++) {
       if (ranges[i].type === 'range') {
@@ -206,23 +206,22 @@
     }
   }
 
-
   function populatePatchSelectMenu() {
-    var patchSelects = document.querySelectorAll('[id$=patch-select]'),
-      patchSelectsCount = patchSelects.length;
+    let patchSelects = document.querySelectorAll('[id$=patch-select]');
+    let patchSelectsCount = patchSelects.length;
 
-    for (var i = 0; i < patchSelectsCount; i++) {
-      var selectId = patchSelects[i].id,
-        selectComponent = selectId.split('-')[0];
+    for (let i = 0; i < patchSelectsCount; i++) {
+      let selectId = patchSelects[i].id;
+      let selectComponent = selectId.split('-')[0];
 
       addPatchSelectOptions(patchSelects[i], selectComponent);
     }
   }
 
   function addPatchSelectOptions(selectElement, component) {
-    var patches = getCache(component),
-      patchNames = patches ? Object.keys(patches) : {},
-      patchNamesCount = patchNames.length;
+    let patches = getCache(component);
+    let patchNames = patches ? Object.keys(patches) : {};
+    let patchNamesCount = patchNames.length;
 
     if (patchNamesCount) {
       patchNames.sort(function (a, b) {
@@ -230,8 +229,8 @@
       });
     }
 
-    for (var i = 0; i < patchNamesCount; i++) {
-      var option = document.createElement('option');
+    for (let i = 0; i < patchNamesCount; i++) {
+      let option = document.createElement('option');
 
       option.value = patchNames[i];
       option.innerHTML = patchNames[i];
@@ -240,26 +239,26 @@
   }
 
   function activateMidiInButtons() {
-    var midiInButtons = document.getElementsByClassName("activate-midi-in"),
-      midiInButtonsCount = midiInButtons.length;
+    let midiInButtons = document.getElementsByClassName("activate-midi-in");
+    let midiInButtonsCount = midiInButtons.length;
 
-    for (var i = 0; i < midiInButtonsCount; i++) {
+    for (let i = 0; i < midiInButtonsCount; i++) {
       midiInButtons[i].addEventListener('click', function () {
-        var midiInChannel = this.getAttribute('data-midi-channel'),
-          midiInEnabled = this.getAttribute('data-midi-enabled'),
-          buttonClass = this.className;
+        let midiInChannel = this.getAttribute('data-midi-channel');
+        let midiInEnabled = this.getAttribute('data-midi-enabled');
+        let buttonClass = this.className;
 
         if (midiInEnabled) {
           this.dataset.midiEnabled = '';
 
-          for (var j = 0; j < midiInButtonsCount; j++) {
+          for (let j = 0; j < midiInButtonsCount; j++) {
             midiInButtons[j].className = removeClass(buttonClass, 'active-midi-in');
           }
 
           midiIn.enabled = false;
         } else {
 
-          for (var j = 0; j < midiInButtonsCount; j++) {
+          for (let j = 0; j < midiInButtonsCount; j++) {
             midiInButtons[j].className = removeClass(buttonClass, 'active-midi-in');
 
             if (midiInButtons[j].getAttribute('data-midi-channel') === midiInChannel) {
@@ -276,8 +275,8 @@
   }
 
   function removeClass(classListString, classToRemove) {
-    var classList = classListString.split(' '),
-      classInList = classList.indexOf(classToRemove);
+    let classList = classListString.split(' ');
+    let classInList = classList.indexOf(classToRemove);
 
     if (classInList !== -1) {
       return classList.splice(classInList - 1, 1);
@@ -287,15 +286,15 @@
   }
 
   function activatePatchManagementButtons() {
-    var buttons = {
+    let buttons = {
       load: document.getElementsByClassName("patch-load"),
       save: document.getElementsByClassName("patch-save"),
       delete: document.getElementsByClassName("patch-delete"),
       export: document.getElementsByClassName("patch-export"),
       import: document.getElementsByClassName("patch-import")
-    },
-      buttonTypes = Object.keys(buttons),
-      buttonTypesCount = buttonTypes.length;
+    };
+    let buttonTypes = Object.keys(buttons);
+    let buttonTypesCount = buttonTypes.length;
 
     for (var i = 0; i < buttonTypesCount; i++) {
       activatePatchButtonsByType(buttonTypes[i], buttons[buttonTypes[i]]);
@@ -303,9 +302,9 @@
   }
 
   function activatePatchButtonsByType(buttonType, buttons) {
-    var buttonsCount = buttons.length;
+    let buttonsCount = buttons.length;
 
-    for (var i = 0; i < buttonsCount; i++) {
+    for (let i = 0; i < buttonsCount; i++) {
       buttons[i].addEventListener('click', function () {
         switch (buttonType) {
           case 'load':
@@ -329,17 +328,17 @@
   }
 
   function activatePatchButtonLoad(button) {
-    var buttonData = getPatchButtonData(button);
+    let buttonData = getPatchButtonData(button);
     // var isDrum = buttonData.patchType === 'drum',
     // var drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false;
 
     if (buttonData.patchSelected) {
-      var cachedPatches = getCache(buttonData.patchType),
-        patch = cachedPatches[buttonData.patchSelected]
-          ? cachedPatches[buttonData.patchSelected] : {},
-        midiChannel = isDrum
-          ? getPatchMidiChannel(buttonData.patchType)
-          : getPatchMidiChannel(buttonData.buttonComponent);
+      let cachedPatches = getCache(buttonData.patchType);
+      let patch = cachedPatches[buttonData.patchSelected] ? cachedPatches[buttonData.patchSelected] : {};
+      let midiChannel = getPatchMidiChannel(buttonData.buttonComponent);
+      // let midiChannel = isDrum
+      //     ? getPatchMidiChannel(buttonData.patchType)
+      //     : getPatchMidiChannel(buttonData.buttonComponent);
 
       // if (isDrum) {
       //   patch = buildDrumPatch(patch, drumNumber);
@@ -348,7 +347,7 @@
       if (patch) {
         updatePatchValues(midiChannel, patch, buttonData.buttonComponent);
       } else {
-        alert('Ooops. Something ain\'t right');
+        alert(`Ooops. Something ain't right`);
       }
     } else {
       alert('select a patch from the dropdown menu');
@@ -364,7 +363,7 @@
 
   //   for (var i = 0; i < drumPatchCount; i++) {
   //     if (drumPatch[i]) {
-  //       drumMidiCC = circuitMidiApp.getCircuitMidiCC(9, drumComponent[i]);
+  //       drumMidiCC = nocWebMidi.getCircuitMidiCC(9, drumComponent[i]);
   //       drumMidiCCName = drumMidiCC.name.replace(/[0-9]\s/g, '');
   //       patch[drumComponent[i]] = { value: drumPatch[i], name: drumMidiCCName };
   //     }
@@ -374,10 +373,10 @@
   // }
 
   function getPatchMidiChannel(patchComponent) {
-    var midiChannelsKeys = Object.keys(midiChannels),
-      midiChannelsKeysCount = midiChannelsKeys.length;
+    let midiChannelsKeys = Object.keys(midiChannels);
+    let midiChannelsKeysCount = midiChannelsKeys.length;
 
-    for (var i = 0; i < midiChannelsKeysCount; i++) {
+    for (let i = 0; i < midiChannelsKeysCount; i++) {
       if (midiChannels[midiChannelsKeys[i]] === patchComponent) {
         return midiChannelsKeys[i];
       }
@@ -385,13 +384,14 @@
   }
 
   function updatePatchValues(midiChannel, patch, selectedMidiComponent) {
-    var midiCCNumbers = Object.keys(patch),
-      midiCCNumbersCount = midiCCNumbers.length;
+    let midiCCNumbers = Object.keys(patch);
+    let midiCCNumbersCount = midiCCNumbers.length;
 
-    for (var i = 0; i < midiCCNumbersCount; i++) {
-      var options = document.querySelectorAll("[data-midi-channel='" + midiChannel + "']"
-        + "[data-midi-cc='" + midiCCNumbers[i] + "']"),
-        event = new Event('change');
+    for (let i = 0; i < midiCCNumbersCount; i++) {
+      let options = document.querySelectorAll(`[data-midi-channel='${midiChannel}'] [data-midi-cc='${midiCCNumbers[i]}']`);
+      // var options = document.querySelectorAll("[data-midi-channel='" + midiChannel + "']"
+      //   + "[data-midi-cc='" + midiCCNumbers[i] + "']"),
+      let event = new Event('change');
 
       if (options) {
         if (options[0].tagName.toLowerCase() === 'option') {
@@ -406,18 +406,18 @@
   }
 
   function activatePatchButtonSave(button) {
-    var buttonData = getPatchButtonData(button),
-      isDrum = buttonData.patchType === 'drum',
-      drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false,
-      patchData = midiPatch[buttonData.buttonComponent],
-      newPatchName = "";
+    let buttonData = getPatchButtonData(button);
+    // let isDrum = buttonData.patchType === 'drum';
+    // let drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false;
+    let patchData = midiPatch[buttonData.buttonComponent];
+    let newPatchName = "";
 
-    if (isDrum) {
-      patchData = midiPatch[buttonData.patchType][drumNumber];
-    }
+    // if (isDrum) {
+    //   patchData = midiPatch[buttonData.patchType][drumNumber];
+    // }
 
     if (!patchData) {
-      alert('There\'s nothing to save');
+      alert(`There's nothing to save`);
       return false;
     }
 
@@ -430,18 +430,19 @@
   }
 
   function updatePatchSelectOptions(addRemove, patchName, selectElements, activeElementId) {
-    var selectElementsCount = selectElements.length;
+    let selectElementsCount = selectElements.length;
 
     if (addRemove === 'add') {
-      for (var i = 0; i < selectElementsCount; i++) {
-        var matchedElement = document.querySelector(
-          "#" + selectElements[i].id + " option[value='" + patchName + "']"
-        ),
-          selectedIndex = selectElements[i].selectedIndex;
+      for (let i = 0; i < selectElementsCount; i++) {
+        let matcheElement = document.querySelector(`#${selectElements[i].id} option[value='${patchName}']`);
+        // var matchedElement = document.querySelector(
+        //   "#" + selectElements[i].id + " option[value='" + patchName + "']"
+        // ),
+        // let selectedIndex = selectElements[i].selectedIndex;
 
         if (!matchedElement) {
-          var option = document.createElement('option'),
-            currentSelection = selectElements[i].options[selectElements[i].selectedIndex];
+          let option = document.createElement('option');
+          let currentSelection = selectElements[i].options[selectElements[i].selectedIndex];
 
           option.value = patchName;
           option.innerHTML = patchName;
@@ -456,12 +457,12 @@
         }
       }
     } else if (addRemove === 'delete') {
-      for (var i = 0; i < selectElementsCount; i++) {
-        var options = selectElements[i].options,
-          optionsCount = options.length;
+      for (let i = 0; i < selectElementsCount; i++) {
+        let options = selectElements[i].options;
+        let optionsCount = options.length;
 
         if (options) {
-          for (var j = 0; j < optionsCount; j++) {
+          for (let j = 0; j < optionsCount; j++) {
             if (options[j] && options[j].value === patchName) {
               selectElements[i].remove(j);
             }
@@ -472,9 +473,9 @@
   }
 
   function sortPatchSelectOptions(selectElement) {
-    var optionsArray = [];
+    let optionsArray = [];
 
-    for (var i = selectElement.options.length - 1; i > 0; i--) {
+    for (let i = selectElement.options.length - 1; i > 0; i--) {
       if (optionsArray.indexOf(selectElement.options[i]) === -1) {
         optionsArray.push(selectElement.removeChild(selectElement.options[i]));
       }
@@ -485,8 +486,8 @@
     });
 
     while (optionsArray.length) {
-      var nextOption = optionsArray.shift(),
-        option = document.createElement('option');
+      let nextOption = optionsArray.shift();
+      let option = document.createElement('option');
 
       option.value = nextOption.value;
       option.text = nextOption.text;
@@ -495,10 +496,10 @@
   }
 
   function updateActiveSelectOption(selectElement, patchName) {
-    var options = selectElement.options,
-      optionsCount = options.length;
+    let options = selectElement.options;
+    let optionsCount = options.length;
 
-    for (var i = 0; i < optionsCount; i++) {
+    for (let i = 0; i < optionsCount; i++) {
       if (options[i].value === patchName) {
         selectElement.selectedIndex = i;
         return false;
@@ -507,15 +508,15 @@
   }
 
   function activatePatchButtonDelete(button) {
-    var buttonData = getPatchButtonData(button);
+    let buttonData = getPatchButtonData(button);
 
     if (buttonData.patchSelected) {
-      var cachedPatches = getCache(buttonData.patchType),
-        patchType = buttonData.patchType,
-        patchName = buttonData.patchSelected;
+      let cachedPatches = getCache(buttonData.patchType);
+      let patchType = buttonData.patchType;
+      let patchName = buttonData.patchSelected;
 
       if (cachedPatches[patchName]) {
-        var confirm = window.confirm('Delete ' + patchName + '?');
+        let confirm = window.confirm('Delete ' + patchName + '?');
 
         if (confirm) {
           deletePatch(patchType, patchName);
@@ -523,7 +524,7 @@
           updateActiveSelectOption(buttonData.patchSelect, '');
         }
       } else {
-        alert('Ooops. Something ain\'t right');
+        alert(`Ooops. Something ain't right`);
       }
     } else {
       alert('select a patch from the dropdown menu');
@@ -531,14 +532,13 @@
   }
 
   function getPatchButtonData(button) {
-    var buttonComponent = button.getAttribute('data-component-section'),
-      buttonComponentArray = buttonComponent.split(' '),
-      patchType = buttonComponentArray[0],
-      patchSelectId = buttonComponentArray.join('-') + '-patch-select',
-      patchSelect = document.getElementById(patchSelectId),
-      patchSelects = document
-        .querySelectorAll("[id^='" + patchType + "']" + "[id$='-patch-select']"),
-      patchSelected = patchSelect.options[patchSelect.selectedIndex].text
+    let buttonComponent = button.getAttribute('data-component-section');
+    let buttonComponentArray = buttonComponent.split(' ');
+    let patchType = buttonComponentArray[0];
+    let patchSelectId = buttonComponentArray.join('-') + '-patch-select';
+    let patchSelect = document.getElementById(patchSelectId);
+    let patchSelects = document.querySelectorAll(`[id^='${patchType}'] [id$='-patch-select']`);
+    let patchSelected = patchSelect.options[patchSelect.selectedIndex].text;
 
     return {
       buttonComponent: buttonComponent,
@@ -551,20 +551,17 @@
   }
 
   function activatePatchButtonExport(button) {
-    var buttonData = getPatchButtonData(button),
-      isDrum = buttonData.patchType === 'drum',
-      drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false,
-      patchName = '',
-      exportPatch = {},
-      patchExportHolder = document.createElement("textarea");
+    let buttonData = getPatchButtonData(button);
+    // let isDrum = buttonData.patchType === 'drum';
+    // let drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false;
+    let patchName = '';
+    let exportPatch = {};
+    let patchExportHolder = document.createElement("textarea");
 
     if (buttonData.patchSelected) {
-      var cachedPatches = getCache(buttonData.patchType),
-        patch = cachedPatches[buttonData.patchSelected]
-          ? cachedPatches[buttonData.patchSelected] : {},
-        midiChannel = isDrum
-          ? getPatchMidiChannel(buttonData.patchType)
-          : getPatchMidiChannel(buttonData.buttonComponent);
+      let cachedPatches = getCache(buttonData.patchType);
+      let patch = cachedPatches[buttonData.patchSelected] ? cachedPatches[buttonData.patchSelected] : {};
+      // let midiChannel = getPatchMidiChannel(buttonData.buttonComponent);
 
       if (patch) {
         patchName = buttonData.patchSelected;
@@ -576,13 +573,12 @@
         patchExportHolder.select();
 
         if (document.execCommand('copy')) {
-          alert(buttonData.patchType.toUpperCase()
-            + ' patch "' + patchName + '" has been copied to the clipboard.');
+          alert(`${buttonData.patchType.toUpperCase()} patch ${patchName} has been copied to the clipboard.`);
         } else {
           alert('ERROR: the patch could not be exported');
         }
       } else {
-        alert('Ooops. Something ain\'t right');
+        alert(`Ooops. Something ain't right`);
       }
     } else {
       alert('select a patch from the dropdown menu');
@@ -590,15 +586,14 @@
   }
 
   function activatePatchButtonImport(button) {
-    var buttonData = getPatchButtonData(button),
-      importPatchString = prompt('PATCH IMPORT: Paste new '
-        + buttonData.patchType.toUpperCase() + ' patch below.'),
-      importPatch = JSON.parse(importPatchString),
-      importPatchData = {},
-      isDrum = buttonData.patchType === 'drum',
-      drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false,
-      patchData = midiPatch[buttonData.buttonComponent],
-      newPatchName = "";
+    let buttonData = getPatchButtonData(button);
+    let importPatchString = prompt(`PATCH IMPORT: Paste new ${buttonData.patchType.toUpperCase()} patch below.`);
+    let importPatch = JSON.parse(importPatchString);
+    let importPatchData = {};
+    // let isDrum = buttonData.patchType === 'drum';
+    // let drumNumber = isDrum ? parseInt(buttonData.buttonComponent.split(' ')[1]) - 1 : false;
+    // let patchData = midiPatch[buttonData.buttonComponent];
+    let newPatchName = "";
 
     if (importPatch && importPatch[buttonData.patchType] !== undefined) {
       importPatchData = getImportPatchData(importPatch[buttonData.patchType]);
@@ -614,8 +609,8 @@
   }
 
   function getImportPatchData(data) {
-    var dataKeys = Object.keys(data),
-      patchData = {};
+    let dataKeys = Object.keys(data);
+    let patchData = {};
 
     dataKeys.forEach(function (patchName) {
       patchData.patchName = patchName;
@@ -626,15 +621,15 @@
   }
 
   function activateRandomizeButtons() {
-    var randomizeButtons = document.getElementsByClassName("randomizer"),
-      randomizeButtonsCount = randomizeButtons.length;
+    let randomizeButtons = document.getElementsByClassName("randomizer");
+    let randomizeButtonsCount = randomizeButtons.length;
 
-    for (var i = 0; i < randomizeButtonsCount; i++) {
+    for (let i = 0; i < randomizeButtonsCount; i++) {
       randomizeButtons[i].addEventListener('click', function () {
-        var targetComponentId = this.getAttribute('data-component-section'),
-          targetComponent = document.getElementById(targetComponentId),
-          targetSelects = targetComponent.getElementsByTagName('select'),
-          targetSliders = targetComponent.getElementsByTagName('input');
+        let targetComponentId = this.getAttribute('data-component-section');
+        let targetComponent = document.getElementById(targetComponentId);
+        let targetSelects = targetComponent.getElementsByTagName('select');
+        let targetSliders = targetComponent.getElementsByTagName('input');
 
         updateRandomSliderValues(targetSliders);
         updateRandomSelectValues(targetSelects);
@@ -643,18 +638,18 @@
   }
 
   function updateRandomSliderValues(sliders) {
-    var slidersCount = sliders.length,
-      randomMaximum = 0,
-      randomMinimum = 0,
-      randomValue = 0,
-      event = new Event('change');
+    // let slidersCount = sliders.length;
+    // let randomMaximum = 0;
+    // let randomMinimum = 0;
+    // let randomValue = 0;
+    let event = new Event('change');
 
-    for (var i = 0; i < slidersCount; i++) {
-      sliderMinimum = Math.ceil(sliders[i].getAttribute('min'));
-      sliderMaximum = Math.floor(sliders[i].getAttribute('max'));
-      randomValue = Math.floor(Math.random() * (sliderMaximum - sliderMinimum)) + sliderMinimum,
-        midiChannel = sliders[i].getAttribute('data-midi-channel'),
-        midiCCNumber = sliders[i].getAttribute('data-midi-cc');
+    for (let i = 0; i < sliders.length; i++) {
+      let sliderMinimum = Math.ceil(sliders[i].getAttribute('min'));
+      let sliderMaximum = Math.floor(sliders[i].getAttribute('max'));
+      let randomValue = Math.floor(Math.random() * (sliderMaximum - sliderMinimum)) + sliderMinimum;
+      let midiChannel = sliders[i].getAttribute('data-midi-channel');
+      let midiCCNumber = sliders[i].getAttribute('data-midi-cc');
 
       sliders[i].value = randomValue;
       sliders[i].dispatchEvent(event);
@@ -682,68 +677,76 @@
   }
 
   function updateMidiPatch(midiChannel, midiCCNumber, midiCCValue) {
-    var circuitMidiCCValues = circuitMidiApp
-      .getCircuitMidiCC(parseInt(midiChannel), parseInt(midiCCNumber)),
-      patchType = midiChannels[midiChannel],
-      selectedMidiComponent = midiComponents[patchType],
-      drumIndex = 0;
+    let circuitMidiCCValues = nocWebMidi.getCircuitMidiCC(parseInt(midiChannel), parseInt(midiCCNumber));
+    let patchType = midiChannels[midiChannel];
+    // let selectedMidiComponent = midiComponents[patchType];
+    // let drumIndex = 0;
 
-    if (!midiPatch[patchType] && patchType === 'drum') {
-      midiPatch[patchType] = new Array(4);
-    } else if (!midiPatch[patchType]) {
+    if (!midiPatch[patchType]) {
       midiPatch[patchType] = {};
     }
 
-    if (patchType === 'drum') {
-      drumIndex = getDrumIndex(midiCCNumber);
+    midiPatch[patchType][midiCCNumber] = {
+      name: circuitMidiCCValues.name,
+      value: midiCCValue
+    };
 
-      if (!midiPatch[patchType][drumIndex[0]]) {
-        midiPatch[patchType][drumIndex[0]] = new Array(6);
-      }
+    // if (!midiPatch[patchType] && patchType === 'drum') {
+    //   midiPatch[patchType] = new Array(4);
+    // } else if (!midiPatch[patchType]) {
+    //   midiPatch[patchType] = {};
+    // }
 
-      midiPatch[patchType][drumIndex[0]][drumIndex[1]] = midiCCValue;
-    } else {
-      midiPatch[patchType][midiCCNumber] = {
-        name: circuitMidiCCValues.name,
-        value: midiCCValue
-      }
-    }
+    // if (patchType === 'drum') {
+    //   drumIndex = getDrumIndex(midiCCNumber);
+
+    //   if (!midiPatch[patchType][drumIndex[0]]) {
+    //     midiPatch[patchType][drumIndex[0]] = new Array(6);
+    //   }
+
+    //   midiPatch[patchType][drumIndex[0]][drumIndex[1]] = midiCCValue;
+    // } else {
+    //   midiPatch[patchType][midiCCNumber] = {
+    //     name: circuitMidiCCValues.name,
+    //     value: midiCCValue
+    //   }
+    // }
   }
 
-  function getDrumIndex(midiCCNumber) {
-    var drumNumber = 0,
-      controlNumber = 0;
+  // function getDrumIndex(midiCCNumber) {
+  //   var drumNumber = 0,
+  //     controlNumber = 0;
 
-    midiDrumCCs.forEach(function (component, index) {
-      controlIndex = component.indexOf(midiCCNumber);
+  //   midiDrumCCs.forEach(function (component, index) {
+  //     controlIndex = component.indexOf(midiCCNumber);
 
-      if (controlIndex !== -1) {
-        controlNumber = controlIndex;
-        drumNumber = index;
-        return true;
-      }
-    });
+  //     if (controlIndex !== -1) {
+  //       controlNumber = controlIndex;
+  //       drumNumber = index;
+  //       return true;
+  //     }
+  //   });
 
-    return [drumNumber, controlNumber];
-  }
+  //   return [drumNumber, controlNumber];
+  // }
 
   function updateRandomSelectValues(selects) {
-    var selectsCount = selects.length,
-      randomOptions = [],
-      randomOptionsCount = 0,
-      randomOptionNumber = 0,
-      midiChannel = 0,
-      midiCCNumber = 0,
-      event = new Event('change');
+    // let selectsCount = selects.length;
+    // let randomOptions = [];
+    // let randomOptionsCount = 0;
+    // let randomOptionNumber = 0;
+    // let midiChannel = 0;
+    // let midiCCNumber = 0;
+    let event = new Event('change');
 
-    for (var i = 0; i < selectsCount; i++) {
-      randomOptions = selects[i].getElementsByTagName('option');
+    for (let i = 0; i < selects.length; i++) {
+      let randomOptions = selects[i].getElementsByTagName('option');
 
       if (randomOptions && randomOptions[0] && randomOptions[0].getAttribute('data-midi-channel')) {
-        randomOptionsCount = randomOptions.length,
-          randomOptionNumber = Math.floor(Math.random() * (randomOptionsCount));
-        midiChannel = randomOptions[randomOptionNumber].getAttribute('data-midi-channel');
-        midiCCNumber = randomOptions[randomOptionNumber].getAttribute('data-midi-cc');
+        let randomOptionsCount = randomOptions.length;
+        let randomOptionNumber = Math.floor(Math.random() * (randomOptionsCount));
+        let midiChannel = randomOptions[randomOptionNumber].getAttribute('data-midi-channel');
+        let midiCCNumber = randomOptions[randomOptionNumber].getAttribute('data-midi-cc');
 
         selects[i].selectedIndex = randomOptionNumber;
         selects[i].dispatchEvent(event);
@@ -754,7 +757,7 @@
   }
 
   function setCache(component, patchName, patchData) {
-    var savedComponent = {};
+    let savedComponent = {};
 
     if (browserLocalStorageEnabled) {
       savedComponent = getCache(component) ? getCache(component) : {};
@@ -765,7 +768,7 @@
   }
 
   function getCache(component) {
-    var cachedItem = {};
+    let cachedItem = {};
 
     if (browserLocalStorageEnabled) {
       cachedItem = localStorage.getItem(component);
@@ -776,7 +779,8 @@
 
   function deletePatch(component, patchName) {
     if (browserLocalStorageEnabled) {
-      savedComponent = getCache(component) ? getCache(component) : {};
+      let savedComponent = getCache(component) ? getCache(component) : {};
+
       delete savedComponent[patchName];
 
       localStorage.setItem(component, JSON.stringify(savedComponent));
@@ -784,7 +788,7 @@
   }
 
   function localStorageSupport() {
-    var mod = 'test';
+    let mod = 'test';
 
     try {
       localStorage.setItem(mod, mod);
@@ -807,12 +811,14 @@
   function onMIDISuccess(MIDIAccess) {
     midi = MIDIAccess;
     midiDevices.inputs = getMidiDevices(midi, 'inputs');
-    midiDevices.outputs = getMidiDevices(midi, 'outputs'),
-      errorMessage = 'unknown error';
+    midiDevices.outputs = getMidiDevices(midi, 'outputs');
+    let errorMessage = 'unknown error';
 
     if (!midiDevices.inputs.size) {
-      errorMessage = 'Novation Circuit&trade; device not detected on MIDI in<br />'
-        + 'Make sure your Circuit&trade; is connected and reload this page.';
+      errorMessage = `
+        Novation Circuit&trade; device not detected on MIDI in<br />
+        Make sure your Circuit&trade; is connected and reload this page.
+      `;
       printErrorMessage(errorMessage);
     } else {
       midiDevices.inputs.forEach(function (device) {
@@ -824,8 +830,10 @@
     }
 
     if (!midiDevices.outputs.size) {
-      errorMessage = 'Novation Circuit&trade; device not detected on MIDI out<br />'
-        + 'Make sure your Circuit&trade; is connected and reload this page.';
+      errorMessage = `
+        Novation Circuit&trade; device not detected on MIDI out<br />
+        Make sure your Circuit&trade; is connected and reload this page.
+      `;
       printErrorMessage(errorMessage);
     } else {
       midiDevices.outputs.forEach(function (device) {
@@ -843,19 +851,19 @@
   }
 
   function printErrorMessage(message) {
-    var messageHolder = document.getElementById('message-holder');
-    messageHolder.innerHTML += '<p>' + message + '</p>';
+    let messageHolder = document.getElementById('message-holder');
+    messageHolder.innerHTML += `<p>${message}</p>`;
   }
 
   function onMIDIMessage(event) {
     if (midiIn && midiIn.enabled) {
-      var str = "",
-        eventMidiChannel = event.data && event.data[0] ? (event.data[0] & 0x0F) : false;
-      eventMidiCC = event.data && event.data[1] ? event.data[1] : false,
-        eventMidiCCValue = event.data && event.data[2] ? event.data[2] : false;
+      // let str = "";
+      let eventMidiChannel = event.data && event.data[0] ? (event.data[0] & 0x0F) : false;
+      let eventMidiCC = event.data && event.data[1] ? event.data[1] : false;
+      let eventMidiCCValue = event.data && event.data[2] ? event.data[2] : false;
 
       if ((eventMidiChannel === midiIn.channel) && eventMidiCC && eventMidiCCValue) {
-        var eventType = event.data[0] & 0xf0;
+        let eventType = event.data[0] & 0xf0;
 
         if (eventType === 0xB0) {
           updateSliderValue(eventMidiChannel, eventMidiCC, eventMidiCCValue);
@@ -866,16 +874,16 @@
   }
 
   function updateSliderValue(midiChannel, midiCC, midiCCValue) {
-    var slider = document
-      .querySelectorAll("[data-midi-channel='" + midiChannel + "'][data-midi-cc='" + midiCC + "']")[0];
+    let slider = document.querySelectorAll(`[data-midi-channel='${midiChannel}'][data-midi-cc='${midiCC}']`)[0];
 
     slider.value = midiCCValue;
 
     markControlChange(midiChannel, midiCC, slider);
   }
+
   function sendMiddleC(midi, portID) {
-    var noteOnMessage = [0x90, 60, 63];
-    var output = midi.outputs.get(portID);
+    let noteOnMessage = [0x90, 60, 63];
+    let output = midi.outputs.get(portID);
     output.send(noteOnMessage);
     output.send([0x80, 60, 0x40], window.performance.now() + 1000.0);
   }
@@ -885,7 +893,7 @@
   }
 
   function getCircuitDevices(midiDevices) {
-    var circuits = [];
+    let circuits = [];
 
     midiDevices.forEach(function (device) {
       if (device.name.toLowerCase() === 'circuit') {
@@ -899,13 +907,14 @@
   // Limit real-time slider imput to avoid page crash
   function throttle(fn, threshhold, scope) {
     threshhold || (threshhold = 250);
-    var last,
-      deferTimer;
-    return function () {
-      var context = scope || this;
+    let last;
+    let deferTimer;
 
-      var now = +new Date,
-        args = arguments;
+    return function () {
+      let context = scope || this;
+      let now = +new Date;
+      let args = arguments;
+
       if (last && now < last + threshhold) {
         // hold on to it
         clearTimeout(deferTimer);
@@ -921,9 +930,11 @@
   }
 
   function debounce(fn, delay) {
-    var timer = null;
+    let timer = null;
+
     return function () {
-      var context = this, args = arguments;
+      let context = this, args = arguments;
+
       clearTimeout(timer);
       timer = setTimeout(function () {
         fn.apply(context, args);
