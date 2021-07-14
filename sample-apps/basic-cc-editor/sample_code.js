@@ -40,12 +40,12 @@
       console.log({ parameters, componentType, componentTypeSlug });
 
       let componentHtml = `
-        <div id='${componentTypeSlug}' class='component-section'> 
+        <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
           <h2>${componentType}</h2>
-          <button type='submit' class='activate-midi-in' data-midi-channel='${midiChannel}' data-midi-enabled=''>
+          <button type='button' class='activate-midi-in' data-midi-enabled=''>
             MIDI IN
           </button> 
-          <button type='submit' class='randomizer' data-component-section='${componentTypeSlug}'>
+          <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
             randomize
           </button>
           <div class='button-bar'> 
@@ -53,22 +53,29 @@
             <select id='${componentTypeSlug}-patch-select'>
               <option value=''></option>
             </select>
-            <button type='submit' class='patch-load' data-component-section='${componentType}'>load</button>
-            <button type='submit' class='patch-save' data-component-section='${componentType}'>save</button>
-            <button type='submit' class='patch-delete' data-component-section='${componentType}'>delete</button>
-            <button type='submit' class='patch-export' data-component-section='${componentType}'>export</button>
-            <button type='submit' class='patch-import' data-component-section='${componentType}'>import</button>
+            <button type='button' class='patch-load' data-component-section='${componentType}'>load</button>
+            <button type='button' class='patch-save' data-component-section='${componentType}'>save</button>
+            <button type='button' class='patch-delete' data-component-section='${componentType}'>delete</button>
+            <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
+            <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
           </div>
           ${getComponentValueString(parameters, midiChannel)}
         </div>
       `;
+
+      // console.log({ componentHtml });
 
       circuitWebMidiTestDiv.innerHTML = circuitWebMidiTestDiv.innerHTML + componentHtml;
     });
 
     populatePatchSelectMenu();
     activatePatchManagementButtons();
-    addSynthEditorEvents();
+
+
+    initDropdowns();
+    initSliders();
+
+    // addSynthEditorEvents();
     activateMidiInButtons()
     activateRandomizeButtons();
   }
@@ -81,9 +88,9 @@
 
       parameters.forEach(function (parameter) {
         parameterHtml += `
-          <div id='${parameter.name.toLowerCase().replace(' ', '-')}' class='component-value'> 
+          <div class='component-value' data-midi-cc='${parameter.cc}'> 
             ${parameter.name}: ${getComponentRangeDescriptionText(parameter.range)} <br />
-            ${getComponentRangeInput(midiChannel, parameter.cc, parameter.name, parameter.default, parameter.range)}
+            ${getComponentRangeInput(parameter)}
           </div> 
         `;
       });
@@ -95,6 +102,8 @@
         </div>
       `;
     });
+
+    // console.log({ componentHtml });
 
     return componentHtml;
   }
@@ -110,59 +119,52 @@
     return "";
   }
 
-  function getComponentRangeInput(midiChannel, midiCCNumber, name, defaultValue, range) {
-    let rangeKeys = Object.keys(range);
-    let rangeKeysLength = rangeKeys.length;
+  function getComponentRangeInput(parameter) {
+    let rangeKeys = Object.keys(parameter.range);
+    let nameSlug = parameter.name.toLowerCase().replace(' ', '-');
 
-    if (range[rangeKeys[0]] !== parseInt(range[rangeKeys[0]])) {
-      return getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys);
+    if (parameter.range[rangeKeys[0]] !== parseInt(parameter.range[rangeKeys[0]])) {
+      return getComponentValueSelect(nameSlug, parameter.default, parameter.range, rangeKeys);
     } else {
-      return getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength);
+      return getComponentValueSlider(nameSlug, rangeKeys);
     }
   }
 
-  function getComponentValueSelect(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys) {
+  function getComponentValueSelect(nameSlug, defaultValue, range, rangeKeys) {
     let componentValueSelect = ``;
 
     rangeKeys.forEach(function (key) {
       let selected = defaultValue == key ? "selected" : "";
 
       componentValueSelect += `
-        <option value='${key}' ${selected} data-midi-channel='${midiChannel}' data-midi-cc='${midiCCNumber}'>
+        <option value='${key}' ${selected}>
           ${range[key]}
         </option>
       `;
     });
 
     return `
-      <select name='${name}'>
+      <select name='${nameSlug}'>
         ${componentValueSelect}
       </select>
     `;
   }
 
-  function getComponentValueSlider(midiChannel, midiCCNumber, name, defaultValue, range, rangeKeys, rangeKeysLength) {
+  function getComponentValueSlider(nameSlug, rangeKeys) {
     return `
-      <input 
-        type='range' 
-        min='${rangeKeys[0]}' 
-        max='${rangeKeys[rangeKeysLength - 1]}' 
-        data-midi-channel='${midiChannel}'
-        data-midi-cc='${midiCCNumber}'
-      /> 
+      <input name='${nameSlug}' type='range' min='${rangeKeys[0]}' max='${rangeKeys[rangeKeys.length - 1]}' /> 
     `;
   }
 
-  function addSynthEditorEvents() {
-    selectMidiEvents();
-    rangeMidiEvents();
-  }
+  // function addSynthEditorEvents() {
+  //   initDropdowns();
+  //   initSliders();
+  // }
 
-  function selectMidiEvents() {
+  function initDropdowns() {
     let selects = document.getElementsByTagName("select");
-    let selectsCount = selects.length;
 
-    for (let i = 0; i < selectsCount; i++) {
+    for (let i = 0; i < selects.length; i++) {
       if (!selects[i].id.endsWith('-patch-select')) {
         selects[i].addEventListener('change', function () {
           let selectedOption = this.options[this.selectedIndex];
@@ -177,6 +179,9 @@
     let selectedMidiChannel = parseInt(changedOption.dataset.midiChannel);
     let selectedMidiCC = changedOption.dataset.midiCc;
     let selectedMidiCCValue = changedOption.value;
+
+    console.log({ changedOption, control });
+    console.log({ parent: control.parentElement.closest('component-section') });
 
     markControlChange(selectedMidiChannel, selectedMidiCC, control);
     updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
@@ -193,11 +198,10 @@
     }
   }
 
-  function rangeMidiEvents() {
+  function initSliders() {
     let ranges = document.getElementsByTagName("input");
-    let rangesCount = ranges.length;
 
-    for (var i = 0; i < rangesCount; i++) {
+    for (var i = 0; i < ranges.length; i++) {
       if (ranges[i].type === 'range') {
         ranges[i].addEventListener('change', function () {
           handlePatchChanges(this, this);
@@ -665,7 +669,7 @@
   }
 
   function isChanged(midiChannel, midiCC) {
-    console.log({ midiChannel, midiCC });
+    console.log({ midiPatch, midiChannel, midiCC });
     if (!midiPatch[midiChannels[midiChannel]]
       || (midiPatch[midiChannels[midiChannel]]
         && !midiPatch[midiChannels[midiChannel]][midiCC])) {

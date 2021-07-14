@@ -11,12 +11,12 @@ const midiCCs = {
       '=0': 'OFF',
       '>64': 'High Pass'
     },
-    'default': 64
+    'defaultValue': 64
   },
   '71': {
     'name': 'resonance',
     'range': [0, 127],
-    'default': 30
+    'defaultValue': 30
   }
 };
 
