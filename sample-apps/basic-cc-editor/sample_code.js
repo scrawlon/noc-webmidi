@@ -1,43 +1,43 @@
 (function () {
   const midiCCs = nocWebMidi.midiCCs;
-  const midiChannels = nocWebMidi.midiChannels;
   const midiComponents = nocWebMidi.midiComponents;
 
-  let midiPatch = {};
-  let midi = false;
+  // Circuit Editor Globals
+  let midiChannels = {};
   let midiDevices = {};
-  // inputID = false,
-  let outputID = false;
-  let browserLocalStorageEnabled = localStorageSupport();
+  let midiPatch = {};
+
+  // Web Midi GLobals
+  let midi = false;
   let midiIn = {
     channel: 0,
     enabled: false
   };
+  let inputID = false;
+  let outputID = false;
 
-  console.log({ midiCCs });
-  console.log({ midiChannels });
+  let localStorageEnabled = localStorageSupport();
 
-  showEditorTest();
+  circuitMidi();
 
-  function showEditorTest() {
-    // var midiChannelsKeys = Object.keys(midiChannels);
-
+  function circuitMidi() {
     // Load Circuit Components HTML
-    buildMidiComponents();
+    getCircuitEditorHtml();
 
     // Load Web MIDI
     getWebMidi();
   }
 
   // Begin Circuit Editor HTML code
-  function buildMidiComponents() {
-    let circuitWebMidiTestDiv = document.getElementById("circuit-web-midi-test");
+  function getCircuitEditorHtml() {
+    let circuitWebMidiTestDiv = document.getElementById("circuit-midi-editor");
 
     midiComponents.forEach(function (component, componentType) {
-      let { midiChannel, parameters } = component;
-      let componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
+      const { midiChannel, parameters } = component;
+      const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
+      const midiComponentHtml = getMidiComponentHtml(parameters);
 
-      console.log({ parameters, componentType, componentTypeSlug });
+      // console.log({ parameters, componentType, componentTypeSlug });
 
       let componentHtml = `
         <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
@@ -59,7 +59,7 @@
             <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
             <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
           </div>
-          ${getComponentValueString(parameters, midiChannel)}
+          ${midiComponentHtml}
         </div>
       `;
 
@@ -80,17 +80,21 @@
     activateRandomizeButtons();
   }
 
-  function getComponentValueString(component, midiChannel) {
-    let componentHtml = "";
+  function getMidiComponentHtml(component) {
+    let componentHtml = '';
 
     component.forEach(function (parameters, parameterName) {
-      let parameterHtml = "";
+      let parameterHtml = '';
 
       parameters.forEach(function (parameter) {
+        const { cc, name, range } = parameter;
+        const componentDescription = getComponentDescription(range);
+        const componentInput = getComponentInput(parameter);
+
         parameterHtml += `
-          <div class='component-value' data-midi-cc='${parameter.cc}'> 
-            ${parameter.name}: ${getComponentRangeDescriptionText(parameter.range)} <br />
-            ${getComponentRangeInput(parameter)}
+          <div class='component-value' data-midi-cc='${cc}'> 
+            ${name}: ${componentDescription} <br />
+            ${componentInput}
           </div> 
         `;
       });
@@ -108,33 +112,35 @@
     return componentHtml;
   }
 
-  function getComponentRangeDescriptionText(range) {
-    let rangeKeys = Object.keys(range);
-    let rangeKeysLength = rangeKeys.length;
+  function getComponentDescription(range) {
+    const rangeKeys = Object.keys(range);
+    const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
 
-    if (range[rangeKeys[0]] === parseInt(range[rangeKeys[0]])) {
-      return `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeysLength - 1]]})`;
-    }
-
-    return "";
+    return isInt ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
   }
 
-  function getComponentRangeInput(parameter) {
-    let rangeKeys = Object.keys(parameter.range);
-    let nameSlug = parameter.name.toLowerCase().replace(' ', '-');
+  function getComponentInput(parameter) {
+    const { name, defaultValue, range } = parameter;
+    const rangeKeys = Object.keys(range);
+    const nameSlug = name.toLowerCase().replace(' ', '-');
+    const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
 
-    if (parameter.range[rangeKeys[0]] !== parseInt(parameter.range[rangeKeys[0]])) {
-      return getComponentValueSelect(nameSlug, parameter.default, parameter.range, rangeKeys);
-    } else {
-      return getComponentValueSlider(nameSlug, rangeKeys);
-    }
+    return isInt
+      ? getComponentSliderInput(nameSlug, defaultValue, rangeKeys)
+      : getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys);
   }
 
-  function getComponentValueSelect(nameSlug, defaultValue, range, rangeKeys) {
+  function getComponentSliderInput(nameSlug, defaultValue, rangeKeys) {
+    return `
+      <input name='${nameSlug}' type='range' min='${rangeKeys[0]}' max='${rangeKeys[rangeKeys.length - 1]}' value='${defaultValue}' /> 
+    `;
+  }
+
+  function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
     let componentValueSelect = ``;
 
     rangeKeys.forEach(function (key) {
-      let selected = defaultValue == key ? "selected" : "";
+      const selected = defaultValue == key ? "selected" : "";
 
       componentValueSelect += `
         <option value='${key}' ${selected}>
@@ -147,12 +153,6 @@
       <select name='${nameSlug}'>
         ${componentValueSelect}
       </select>
-    `;
-  }
-
-  function getComponentValueSlider(nameSlug, rangeKeys) {
-    return `
-      <input name='${nameSlug}' type='range' min='${rangeKeys[0]}' max='${rangeKeys[rangeKeys.length - 1]}' /> 
     `;
   }
 
@@ -763,7 +763,7 @@
   function setCache(component, patchName, patchData) {
     let savedComponent = {};
 
-    if (browserLocalStorageEnabled) {
+    if (localStorageEnabled) {
       savedComponent = getCache(component) ? getCache(component) : {};
       savedComponent[patchName] = patchData;
 
@@ -774,7 +774,7 @@
   function getCache(component) {
     let cachedItem = {};
 
-    if (browserLocalStorageEnabled) {
+    if (localStorageEnabled) {
       cachedItem = localStorage.getItem(component);
     }
 
@@ -782,7 +782,7 @@
   }
 
   function deletePatch(component, patchName) {
-    if (browserLocalStorageEnabled) {
+    if (localStorageEnabled) {
       let savedComponent = getCache(component) ? getCache(component) : {};
 
       delete savedComponent[patchName];

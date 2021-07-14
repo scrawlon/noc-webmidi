@@ -67,7 +67,7 @@
           componentArray.push({
             'cc': parameter,
             'name': v[parameter] && v[parameter].name,
-            'default': v[parameter] && v[parameter].default,
+            'defaultValue': v[parameter] && v[parameter].defaultValue,
             'range': getMidiParameterRange(v[parameter])
           });
         });
