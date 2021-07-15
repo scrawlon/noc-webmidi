@@ -1,4 +1,8 @@
+
+import { renderEditor } from './patch-editor/index.js';
+
 (function () {
+  // Import MIDI CC data from nocWebMidi.js library
   const midiCCs = nocWebMidi.midiCCs;
   const midiComponents = nocWebMidi.midiComponents;
 
@@ -22,7 +26,7 @@
 
   function circuitMidi() {
     // Load Circuit Components HTML
-    getCircuitEditorHtml();
+    renderEditor();
 
     populatePatchSelectMenu();
     activatePatchManagementButtons();
@@ -40,121 +44,121 @@
   }
 
   // Begin Circuit Editor HTML code
-  function getCircuitEditorHtml() {
-    const circuitMidiEditor = document.getElementById("circuit-midi-editor");
+  // function getCircuitEditorHtml() {
+  //   const circuitMidiEditor = document.getElementById("circuit-midi-editor");
 
-    midiComponents.forEach(function (component, componentType) {
-      const componentSectionHtml = getMidiComponentSectionHtml(component, componentType);
+  //   midiComponents.forEach(function (component, componentType) {
+  //     const componentSectionHtml = getMidiComponentSectionHtml(component, componentType);
 
-      circuitMidiEditor.innerHTML = circuitMidiEditor.innerHTML + componentSectionHtml;
-    });
-  }
+  //     circuitMidiEditor.innerHTML = circuitMidiEditor.innerHTML + componentSectionHtml;
+  //   });
+  // }
 
-  function getMidiComponentSectionHtml(component, componentType) {
-    const { midiChannel, parameters } = component;
-    const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
-    const midiComponentHtml = getMidiComponentHtml(parameters);
+  // function getMidiComponentSectionHtml(component, componentType) {
+  //   const { midiChannel, parameters } = component;
+  //   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
+  //   const midiComponentHtml = getMidiComponentHtml(parameters);
 
-    return `
-        <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
-          <h2>${componentType}</h2>
-          <button type='button' class='activate-midi-in' data-midi-enabled=''>
-            MIDI IN
-          </button> 
-          <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
-            randomize
-          </button>
-          <div class='button-bar'> 
-            <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
-            <select id='${componentTypeSlug}-patch-select'>
-              <option value='default'>Default Patch</option>
-            </select>
-            <button type='button' class='patch-load' data-component-section='${componentType}'>load</button>
-            <button type='button' class='patch-save' data-component-section='${componentType}'>save</button>
-            <button type='button' class='patch-delete' data-component-section='${componentType}'>delete</button>
-            <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
-            <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
-          </div>
-          ${midiComponentHtml}
-        </div>
-      `;
-  }
+  //   return `
+  //       <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
+  //         <h2>${componentType}</h2>
+  //         <button type='button' class='activate-midi-in' data-midi-enabled=''>
+  //           MIDI IN
+  //         </button> 
+  //         <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
+  //           randomize
+  //         </button>
+  //         <div class='button-bar'> 
+  //           <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
+  //           <select id='${componentTypeSlug}-patch-select'>
+  //             <option value='default'>Default Patch</option>
+  //           </select>
+  //           <button type='button' class='patch-load' data-component-section='${componentType}'>load</button>
+  //           <button type='button' class='patch-save' data-component-section='${componentType}'>save</button>
+  //           <button type='button' class='patch-delete' data-component-section='${componentType}'>delete</button>
+  //           <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
+  //           <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
+  //         </div>
+  //         ${midiComponentHtml}
+  //       </div>
+  //     `;
+  // }
 
-  function getMidiComponentHtml(component) {
-    let componentHtml = '';
+  // function getMidiComponentHtml(component) {
+  //   let componentHtml = '';
 
-    component.forEach(function (parameters, parameterName) {
-      let parameterHtml = '';
+  //   component.forEach(function (parameters, parameterName) {
+  //     let parameterHtml = '';
 
-      parameters.forEach(function (parameter) {
-        const { cc, name, range } = parameter;
-        const nameSlug = name.toLowerCase().replace(' ', '-');
-        const componentDescription = getComponentDescription(range);
-        const componentInput = getComponentInput(parameter);
+  //     parameters.forEach(function (parameter) {
+  //       const { cc, name, range } = parameter;
+  //       const nameSlug = name.toLowerCase().replace(' ', '-');
+  //       const componentDescription = getComponentDescription(range);
+  //       const componentInput = getComponentInput(parameter);
 
-        parameterHtml += `
-            <div class='component-value' data-midi-cc='${cc}'> 
-              <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
-              ${componentInput}
-            </div> 
-          `;
-      });
+  //       parameterHtml += `
+  //           <div class='component-value' data-midi-cc='${cc}'> 
+  //             <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
+  //             ${componentInput}
+  //           </div> 
+  //         `;
+  //     });
 
-      componentHtml += `
-          <div class='component'>
-            <h3>${parameterName}</h3>
-            ${parameterHtml}
-          </div>
-        `;
-    });
+  //     componentHtml += `
+  //         <div class='component'>
+  //           <h3>${parameterName}</h3>
+  //           ${parameterHtml}
+  //         </div>
+  //       `;
+  //   });
 
-    // console.log({ componentHtml });
+  //   // console.log({ componentHtml });
 
-    return componentHtml;
-  }
+  //   return componentHtml;
+  // }
 
-  function getComponentDescription(range) {
-    const rangeKeys = Object.keys(range);
-    const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
+  // function getComponentDescription(range) {
+  //   const rangeKeys = Object.keys(range);
+  //   const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
 
-    return isInt ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
-  }
+  //   return isInt ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
+  // }
 
-  function getComponentInput(parameter) {
-    const { name, defaultValue, range } = parameter;
-    const rangeKeys = Object.keys(range);
-    const nameSlug = name.toLowerCase().replace(' ', '-');
-    const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
+  // function getComponentInput(parameter) {
+  //   const { name, defaultValue, range } = parameter;
+  //   const rangeKeys = Object.keys(range);
+  //   const nameSlug = name.toLowerCase().replace(' ', '-');
+  //   const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
 
-    return isInt
-      ? getComponentSliderInput(nameSlug, defaultValue, rangeKeys)
-      : getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys);
-  }
+  //   return isInt
+  //     ? getComponentSliderInput(nameSlug, defaultValue, rangeKeys)
+  //     : getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys);
+  // }
 
-  function getComponentSliderInput(nameSlug, defaultValue, rangeKeys) {
-    const rangeMin = rangeKeys[0];
-    const rangeMax = rangeKeys.pop();
+  // function getComponentSliderInput(nameSlug, defaultValue, rangeKeys) {
+  //   const rangeMin = rangeKeys[0];
+  //   const rangeMax = rangeKeys.pop();
 
-    return `<input name='${nameSlug}' type='range' min='${rangeMin}' max='${rangeMax}' value='${defaultValue}' />`;
-  }
+  //   return `<input name='${nameSlug}' type='range' min='${rangeMin}' max='${rangeMax}' value='${defaultValue}' />`;
+  // }
 
-  function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
-    const componentValues = rangeKeys.map(function (key) {
-      const selected = defaultValue == key ? "selected" : "";
+  // function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
+  //   const componentValues = rangeKeys.map(function (key) {
+  //     const selected = defaultValue == key ? "selected" : "";
 
-      return `
-            <option value='${key}' ${selected}>
-              ${range[key]}
-            </option>
-        `;
-    });
+  //     return `
+  //           <option value='${key}' ${selected}>
+  //             ${range[key]}
+  //           </option>
+  //       `;
+  //   });
 
-    return `
-        <select name='${nameSlug}'>
-          ${componentValues}
-        </select>
-      `;
-  }
+  //   return `
+  //       <select name='${nameSlug}'>
+  //         ${componentValues}
+  //       </select>
+  //     `;
+  // }
 
   // function addSynthEditorEvents() {
   //   initDropdowns();
