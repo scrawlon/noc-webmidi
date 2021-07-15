@@ -56,28 +56,28 @@
     const midiComponentHtml = getMidiComponentHtml(parameters);
 
     return `
-      <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
-        <h2>${componentType}</h2>
-        <button type='button' class='activate-midi-in' data-midi-enabled=''>
-          MIDI IN
-        </button> 
-        <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
-          randomize
-        </button>
-        <div class='button-bar'> 
-          <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
-          <select id='${componentTypeSlug}-patch-select'>
-            <option value='default'>Default Patch</option>
-          </select>
-          <button type='button' class='patch-load' data-component-section='${componentType}'>load</button>
-          <button type='button' class='patch-save' data-component-section='${componentType}'>save</button>
-          <button type='button' class='patch-delete' data-component-section='${componentType}'>delete</button>
-          <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
-          <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
+        <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
+          <h2>${componentType}</h2>
+          <button type='button' class='activate-midi-in' data-midi-enabled=''>
+            MIDI IN
+          </button> 
+          <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
+            randomize
+          </button>
+          <div class='button-bar'> 
+            <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
+            <select id='${componentTypeSlug}-patch-select'>
+              <option value='default'>Default Patch</option>
+            </select>
+            <button type='button' class='patch-load' data-component-section='${componentType}'>load</button>
+            <button type='button' class='patch-save' data-component-section='${componentType}'>save</button>
+            <button type='button' class='patch-delete' data-component-section='${componentType}'>delete</button>
+            <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
+            <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
+          </div>
+          ${midiComponentHtml}
         </div>
-        ${midiComponentHtml}
-      </div>
-    `;
+      `;
   }
 
   function getMidiComponentHtml(component) {
@@ -93,19 +93,19 @@
         const componentInput = getComponentInput(parameter);
 
         parameterHtml += `
-          <div class='component-value' data-midi-cc='${cc}'> 
-            <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
-            ${componentInput}
-          </div> 
-        `;
+            <div class='component-value' data-midi-cc='${cc}'> 
+              <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
+              ${componentInput}
+            </div> 
+          `;
       });
 
       componentHtml += `
-        <div class='component'>
-          <h3>${parameterName}</h3>
-          ${parameterHtml}
-        </div>
-      `;
+          <div class='component'>
+            <h3>${parameterName}</h3>
+            ${parameterHtml}
+          </div>
+        `;
     });
 
     // console.log({ componentHtml });
@@ -143,17 +143,17 @@
       const selected = defaultValue == key ? "selected" : "";
 
       return `
-          <option value='${key}' ${selected}>
-            ${range[key]}
-          </option>
-      `;
+            <option value='${key}' ${selected}>
+              ${range[key]}
+            </option>
+        `;
     });
 
     return `
-      <select name='${nameSlug}'>
-        ${componentValues}
-      </select>
-    `;
+        <select name='${nameSlug}'>
+          ${componentValues}
+        </select>
+      `;
   }
 
   // function addSynthEditorEvents() {
@@ -820,9 +820,9 @@
 
     if (!midiDevices.inputs.size) {
       errorMessage = `
-        Novation Circuit&trade; device not detected on MIDI in<br />
-        Make sure your Circuit&trade; is connected and reload this page.
-      `;
+          Novation Circuit&trade; device not detected on MIDI in<br />
+          Make sure your Circuit&trade; is connected and reload this page.
+        `;
       printErrorMessage(errorMessage);
     } else {
       midiDevices.inputs.forEach(function (device) {
@@ -835,9 +835,9 @@
 
     if (!midiDevices.outputs.size) {
       errorMessage = `
-        Novation Circuit&trade; device not detected on MIDI out<br />
-        Make sure your Circuit&trade; is connected and reload this page.
-      `;
+          Novation Circuit&trade; device not detected on MIDI out<br />
+          Make sure your Circuit&trade; is connected and reload this page.
+        `;
       printErrorMessage(errorMessage);
     } else {
       midiDevices.outputs.forEach(function (device) {
