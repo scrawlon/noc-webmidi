@@ -1,5 +1,5 @@
 
-import { renderEditor } from './patch-editor/index.js';
+import { renderEditor, initEditorEvents } from './patch-editor/index.js';
 
 (function () {
   // Import MIDI CC data from nocWebMidi.js library
@@ -7,9 +7,7 @@ import { renderEditor } from './patch-editor/index.js';
   const midiComponents = nocWebMidi.midiComponents;
 
   // Circuit Editor Globals
-  let midiChannels = {};
   let midiDevices = {};
-  let midiPatch = {};
 
   // Web Midi GLobals
   let midi = false;
@@ -27,13 +25,14 @@ import { renderEditor } from './patch-editor/index.js';
   function circuitMidi() {
     // Load Circuit Components HTML
     renderEditor();
+    initEditorEvents();
 
     populatePatchSelectMenu();
     activatePatchManagementButtons();
 
 
-    initDropdowns();
-    initSliders();
+    // initDropdowns();
+    // initSliders();
 
     // addSynthEditorEvents();
     activateMidiInButtons()
@@ -43,176 +42,6 @@ import { renderEditor } from './patch-editor/index.js';
     getWebMidi();
   }
 
-  // Begin Circuit Editor HTML code
-  // function getCircuitEditorHtml() {
-  //   const circuitMidiEditor = document.getElementById("circuit-midi-editor");
-
-  //   midiComponents.forEach(function (component, componentType) {
-  //     const componentSectionHtml = getMidiComponentSectionHtml(component, componentType);
-
-  //     circuitMidiEditor.innerHTML = circuitMidiEditor.innerHTML + componentSectionHtml;
-  //   });
-  // }
-
-  // function getMidiComponentSectionHtml(component, componentType) {
-  //   const { midiChannel, parameters } = component;
-  //   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
-  //   const midiComponentHtml = getMidiComponentHtml(parameters);
-
-  //   return `
-  //       <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
-  //         <h2>${componentType}</h2>
-  //         <button type='button' class='activate-midi-in' data-midi-enabled=''>
-  //           MIDI IN
-  //         </button> 
-  //         <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
-  //           randomize
-  //         </button>
-  //         <div class='button-bar'> 
-  //           <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
-  //           <select id='${componentTypeSlug}-patch-select'>
-  //             <option value='default'>Default Patch</option>
-  //           </select>
-  //           <button type='button' class='patch-load' data-component-section='${componentType}'>load</button>
-  //           <button type='button' class='patch-save' data-component-section='${componentType}'>save</button>
-  //           <button type='button' class='patch-delete' data-component-section='${componentType}'>delete</button>
-  //           <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
-  //           <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
-  //         </div>
-  //         ${midiComponentHtml}
-  //       </div>
-  //     `;
-  // }
-
-  // function getMidiComponentHtml(component) {
-  //   let componentHtml = '';
-
-  //   component.forEach(function (parameters, parameterName) {
-  //     let parameterHtml = '';
-
-  //     parameters.forEach(function (parameter) {
-  //       const { cc, name, range } = parameter;
-  //       const nameSlug = name.toLowerCase().replace(' ', '-');
-  //       const componentDescription = getComponentDescription(range);
-  //       const componentInput = getComponentInput(parameter);
-
-  //       parameterHtml += `
-  //           <div class='component-value' data-midi-cc='${cc}'> 
-  //             <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
-  //             ${componentInput}
-  //           </div> 
-  //         `;
-  //     });
-
-  //     componentHtml += `
-  //         <div class='component'>
-  //           <h3>${parameterName}</h3>
-  //           ${parameterHtml}
-  //         </div>
-  //       `;
-  //   });
-
-  //   // console.log({ componentHtml });
-
-  //   return componentHtml;
-  // }
-
-  // function getComponentDescription(range) {
-  //   const rangeKeys = Object.keys(range);
-  //   const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
-
-  //   return isInt ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
-  // }
-
-  // function getComponentInput(parameter) {
-  //   const { name, defaultValue, range } = parameter;
-  //   const rangeKeys = Object.keys(range);
-  //   const nameSlug = name.toLowerCase().replace(' ', '-');
-  //   const isInt = Number.isInteger(parseInt(range[rangeKeys[0]]));
-
-  //   return isInt
-  //     ? getComponentSliderInput(nameSlug, defaultValue, rangeKeys)
-  //     : getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys);
-  // }
-
-  // function getComponentSliderInput(nameSlug, defaultValue, rangeKeys) {
-  //   const rangeMin = rangeKeys[0];
-  //   const rangeMax = rangeKeys.pop();
-
-  //   return `<input name='${nameSlug}' type='range' min='${rangeMin}' max='${rangeMax}' value='${defaultValue}' />`;
-  // }
-
-  // function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
-  //   const componentValues = rangeKeys.map(function (key) {
-  //     const selected = defaultValue == key ? "selected" : "";
-
-  //     return `
-  //           <option value='${key}' ${selected}>
-  //             ${range[key]}
-  //           </option>
-  //       `;
-  //   });
-
-  //   return `
-  //       <select name='${nameSlug}'>
-  //         ${componentValues}
-  //       </select>
-  //     `;
-  // }
-
-  // function addSynthEditorEvents() {
-  //   initDropdowns();
-  //   initSliders();
-  // }
-
-  function initDropdowns() {
-    let selects = document.getElementsByTagName("select");
-
-    for (let i = 0; i < selects.length; i++) {
-      if (!selects[i].id.endsWith('-patch-select')) {
-        selects[i].addEventListener('change', function () {
-          let selectedOption = this.options[this.selectedIndex];
-
-          handlePatchChanges(selectedOption, this);
-        });
-      }
-    }
-  }
-
-  function handlePatchChanges(changedOption, control) {
-    let selectedMidiChannel = parseInt(changedOption.dataset.midiChannel);
-    let selectedMidiCC = changedOption.dataset.midiCc;
-    let selectedMidiCCValue = changedOption.value;
-
-    console.log({ changedOption, control });
-    console.log({ parent: control.parentElement.closest('component-section') });
-
-    markControlChange(selectedMidiChannel, selectedMidiCC, control);
-    updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
-    sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
-  }
-
-  function sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
-    let selectedMidiChannelHex = selectedMidiChannel.toString(16);
-    let output = false;
-
-    if (midi && midi.outputs && outputID) {
-      output = midi.outputs.get(outputID);
-      output.send(["0xB" + selectedMidiChannelHex, selectedMidiCC, selectedMidiCCValue]);
-    }
-  }
-
-  function initSliders() {
-    let ranges = document.getElementsByTagName("input");
-
-    for (var i = 0; i < ranges.length; i++) {
-      if (ranges[i].type === 'range') {
-        ranges[i].addEventListener('change', function () {
-          handlePatchChanges(this, this);
-        });
-      }
-    }
-  }
 
   function populatePatchSelectMenu() {
     let patchSelects = document.querySelectorAll('[id$=patch-select]');
@@ -666,60 +495,10 @@ import { renderEditor } from './patch-editor/index.js';
     }
   }
 
-  function markControlChange(midiChannel, midiCC, control) {
-    if (!isChanged(midiChannel, midiCC)) {
-      control.parentNode.className += " midi-patch-value";
-    }
-  }
 
-  function isChanged(midiChannel, midiCC) {
-    console.log({ midiPatch, midiChannel, midiCC });
-    if (!midiPatch[midiChannels[midiChannel]]
-      || (midiPatch[midiChannels[midiChannel]]
-        && !midiPatch[midiChannels[midiChannel]][midiCC])) {
 
-      return false;
-    }
 
-    return true;
-  }
 
-  function updateMidiPatch(midiChannel, midiCCNumber, midiCCValue) {
-    let circuitMidiCCValues = nocWebMidi.getCircuitMidiCC(parseInt(midiChannel), parseInt(midiCCNumber));
-    let patchType = midiChannels[midiChannel];
-    // let selectedMidiComponent = midiComponents[patchType];
-    // let drumIndex = 0;
-
-    if (!midiPatch[patchType]) {
-      midiPatch[patchType] = {};
-    }
-
-    midiPatch[patchType][midiCCNumber] = {
-      name: circuitMidiCCValues.name,
-      value: midiCCValue
-    };
-
-    // if (!midiPatch[patchType] && patchType === 'drum') {
-    //   midiPatch[patchType] = new Array(4);
-    // } else if (!midiPatch[patchType]) {
-    //   midiPatch[patchType] = {};
-    // }
-
-    // if (patchType === 'drum') {
-    //   drumIndex = getDrumIndex(midiCCNumber);
-
-    //   if (!midiPatch[patchType][drumIndex[0]]) {
-    //     midiPatch[patchType][drumIndex[0]] = new Array(6);
-    //   }
-
-    //   midiPatch[patchType][drumIndex[0]][drumIndex[1]] = midiCCValue;
-    // } else {
-    //   midiPatch[patchType][midiCCNumber] = {
-    //     name: circuitMidiCCValues.name,
-    //     value: midiCCValue
-    //   }
-    // }
-  }
 
   // function getDrumIndex(midiCCNumber) {
   //   var drumNumber = 0,

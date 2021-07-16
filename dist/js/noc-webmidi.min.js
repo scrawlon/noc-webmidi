@@ -160,35 +160,35 @@ const midiCCs = {
 module.exports = midiCCs;
 },{}],5:[function(require,module,exports){
 
-const drum1 = require('./drum1');
-const drum2 = require('./drum2');
-const drum3 = require('./drum3');
-const drum4 = require('./drum4');
+const drums1 = require('./drums1');
+const drums2 = require('./drums2');
+const drums3 = require('./drums3');
+const drums4 = require('./drums4');
 
 module.exports = {
   midiCCs: {
-    ...drum1,
-    ...drum2,
-    ...drum3,
-    ...drum4
+    ...drums1,
+    ...drums2,
+    ...drums3,
+    ...drums4
   },
   midiComponents: {
     '1': {
-      'settings': Object.keys(drum1)
+      'settings': Object.keys(drums1)
     },
     '2': {
-      'settings': Object.keys(drum2)
+      'settings': Object.keys(drums2)
     },
     '3': {
-      'settings': Object.keys(drum3)
+      'settings': Object.keys(drums3)
     },
     '4': {
-      'settings': Object.keys(drum4)
+      'settings': Object.keys(drums4)
     }
   }
 };
 
-},{"./drum1":1,"./drum2":2,"./drum3":3,"./drum4":4}],6:[function(require,module,exports){
+},{"./drums1":1,"./drums2":2,"./drums3":3,"./drums4":4}],6:[function(require,module,exports){
 const drums = require('./drums');
 const session = require('./session');
 const synth = require('./synth');
@@ -202,11 +202,20 @@ module.exports = {
   midiComponents: {
     'synth 1': synth.midiComponents,
     'synth 2': synth.midiComponents,
-    'drum 1': drums.midiComponents['1'],
-    'drum 2': drums.midiComponents['2'],
-    'drum 3': drums.midiComponents['3'],
-    'drum 4': drums.midiComponents['4'],
+    'drums 1': drums.midiComponents['1'],
+    'drums 2': drums.midiComponents['2'],
+    'drums 3': drums.midiComponents['3'],
+    'drums 4': drums.midiComponents['4'],
     'session': session.midiComponents
+  },
+  midiChannels: {
+    'synth 1': 0,
+    'synth 2': 1,
+    'drums 1': 9,
+    'drums 2': 9,
+    'drums 3': 9,
+    'drums 4': 9,
+    'session': 15
   }
 };
 },{"./drums":5,"./session":8,"./synth":16}],7:[function(require,module,exports){
@@ -760,50 +769,28 @@ module.exports = midiCCs;
   const cc = require('./cc/');
   const midiNRPNs = require('./nrpn/');
 
+  const midiChannels = {};
   const midiComponents = getMidiComponents();
-  // const midiChannels = {
-  //   '0': 'synth 1',
-  //   '1': 'synth 2',
-  //   '9': 'drum',
-  //   '15': 'session'
-  // };
+
 
   console.log(cc);
   console.log(midiNRPNs);
   console.log(midiComponents);
 
   function getMidiComponents() {
-    var components = {
-      'synth 1': {
-        midiChannel: 0,
-        parameters: getComponentSettings(cc.midiComponents['synth 1'], cc.midiCCs.synth)
-      },
-      'synth 2': {
-        midiChannel: 1,
-        parameters: getComponentSettings(cc.midiComponents['synth 2'], cc.midiCCs.synth)
-      },
-      'drum 1': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 1'], cc.midiCCs.drums)
-      },
-      'drum 2': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 2'], cc.midiCCs.drums)
-      },
-      'drum 3': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 3'], cc.midiCCs.drums)
-      },
-      'drum 4': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 4'], cc.midiCCs.drums)
-      },
-      'session': {
-        midiChannel: 15,
-        parameters: getComponentSettings(cc.midiComponents.session, cc.midiCCs.session)
-      }
-    };
-    var defaultPatch = new Map();
+    const midiComponentTypes = Object.keys(cc.midiComponents);
+
+    let defaultPatch = new Map();
+    let components = {};
+
+    midiComponentTypes.forEach(function (componentType) {
+      const componentCCType = getCompenentCCType(componentType);
+
+      midiChannels[componentType] = cc.midiChannels[componentType];
+      components[componentType] = {
+        'parameters': getComponentSettings(cc.midiComponents[componentType], cc.midiCCs[componentCCType])
+      };
+    });
 
     Object.keys(components).forEach(function (key) {
       const { midiChannel, parameters } = components[key];
@@ -840,8 +827,23 @@ module.exports = midiCCs;
     return defaultPatch;
   }
 
+  function getCompenentCCType(componentType) {
+    const midiCCTypes = Object.keys(cc.midiCCs);
+    let componentCCType = '';
+
+    midiCCTypes.forEach(function (type) {
+      if (componentType.toLowerCase().includes(type)) {
+        componentCCType = type;
+      }
+    });
+
+    return componentCCType;
+  }
+
   function getComponentSettings(component, componentCCs) {
     var componentSettings = new Map();
+
+    console.log({ component, componentCCs });
 
     Object.keys(component).forEach(function (key) {
       componentSettings.set(key, getMidiSettings(component[key], componentCCs));
@@ -921,7 +923,7 @@ module.exports = midiCCs;
   module.exports = {
     midiCCs: cc.midiCCs,
     midiComponents: midiComponents,
-    // midiChannels: midiChannels,
+    midiChannels: midiChannels,
     // getCircuitMidiCC: getCircuitMidiCC,
     midiNRPNs: midiNRPNs
   }

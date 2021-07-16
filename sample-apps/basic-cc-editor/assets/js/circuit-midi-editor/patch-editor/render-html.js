@@ -4,7 +4,10 @@
   Includes Patch Management controls and MIDI CC controls.
 */
 
+
+const midiCCs = nocWebMidi.midiCCs;
 const midiComponents = nocWebMidi.midiComponents;
+const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
   const editorWrapper = document.getElementById("circuit-midi-editor");
@@ -28,13 +31,15 @@ function getEditorHtml() {
 }
 
 function getComponentSectionHtml(component, componentType) {
-  const { midiChannel, parameters } = component;
+  const { parameters } = component;
   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
+  const componentCCType = getCompenentCCType(componentType);
   const componentHtml = getComponentHtml(parameters);
+  const midiChannel = midiChannels[componentType];
 
   // HTML for each MIDI component section.
   return `
-    <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}'> 
+    <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}' data-midi-cc-type='${componentCCType}'> 
       <h2>${componentType}</h2>
       <button type='button' class='activate-midi-in' data-midi-enabled=''>
         MIDI IN
@@ -56,6 +61,19 @@ function getComponentSectionHtml(component, componentType) {
       ${componentHtml}
     </div>
   `;
+}
+
+function getCompenentCCType(componentType) {
+  const midiCCTypes = Object.keys(midiCCs);
+  let componentCCType = '';
+
+  midiCCTypes.forEach(function (type) {
+    if (componentType.toLowerCase().includes(type)) {
+      componentCCType = type;
+    }
+  });
+
+  return componentCCType;
 }
 
 function getComponentHtml(component) {

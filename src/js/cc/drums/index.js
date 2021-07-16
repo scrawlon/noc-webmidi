@@ -1,28 +1,28 @@
 
-const drum1 = require('./drum1');
-const drum2 = require('./drum2');
-const drum3 = require('./drum3');
-const drum4 = require('./drum4');
+const drums1 = require('./drums1');
+const drums2 = require('./drums2');
+const drums3 = require('./drums3');
+const drums4 = require('./drums4');
 
 module.exports = {
   midiCCs: {
-    ...drum1,
-    ...drum2,
-    ...drum3,
-    ...drum4
+    ...drums1,
+    ...drums2,
+    ...drums3,
+    ...drums4
   },
   midiComponents: {
     '1': {
-      'settings': Object.keys(drum1)
+      'settings': Object.keys(drums1)
     },
     '2': {
-      'settings': Object.keys(drum2)
+      'settings': Object.keys(drums2)
     },
     '3': {
-      'settings': Object.keys(drum3)
+      'settings': Object.keys(drums3)
     },
     '4': {
-      'settings': Object.keys(drum4)
+      'settings': Object.keys(drums4)
     }
   }
 };

@@ -4,50 +4,28 @@
   const cc = require('./cc/');
   const midiNRPNs = require('./nrpn/');
 
+  const midiChannels = {};
   const midiComponents = getMidiComponents();
-  // const midiChannels = {
-  //   '0': 'synth 1',
-  //   '1': 'synth 2',
-  //   '9': 'drum',
-  //   '15': 'session'
-  // };
+
 
   console.log(cc);
   console.log(midiNRPNs);
   console.log(midiComponents);
 
   function getMidiComponents() {
-    var components = {
-      'synth 1': {
-        midiChannel: 0,
-        parameters: getComponentSettings(cc.midiComponents['synth 1'], cc.midiCCs.synth)
-      },
-      'synth 2': {
-        midiChannel: 1,
-        parameters: getComponentSettings(cc.midiComponents['synth 2'], cc.midiCCs.synth)
-      },
-      'drum 1': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 1'], cc.midiCCs.drums)
-      },
-      'drum 2': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 2'], cc.midiCCs.drums)
-      },
-      'drum 3': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 3'], cc.midiCCs.drums)
-      },
-      'drum 4': {
-        midiChannel: 9,
-        parameters: getComponentSettings(cc.midiComponents['drum 4'], cc.midiCCs.drums)
-      },
-      'session': {
-        midiChannel: 15,
-        parameters: getComponentSettings(cc.midiComponents.session, cc.midiCCs.session)
-      }
-    };
-    var defaultPatch = new Map();
+    const midiComponentTypes = Object.keys(cc.midiComponents);
+
+    let defaultPatch = new Map();
+    let components = {};
+
+    midiComponentTypes.forEach(function (componentType) {
+      const componentCCType = getCompenentCCType(componentType);
+
+      midiChannels[componentType] = cc.midiChannels[componentType];
+      components[componentType] = {
+        'parameters': getComponentSettings(cc.midiComponents[componentType], cc.midiCCs[componentCCType])
+      };
+    });
 
     Object.keys(components).forEach(function (key) {
       const { midiChannel, parameters } = components[key];
@@ -84,8 +62,23 @@
     return defaultPatch;
   }
 
+  function getCompenentCCType(componentType) {
+    const midiCCTypes = Object.keys(cc.midiCCs);
+    let componentCCType = '';
+
+    midiCCTypes.forEach(function (type) {
+      if (componentType.toLowerCase().includes(type)) {
+        componentCCType = type;
+      }
+    });
+
+    return componentCCType;
+  }
+
   function getComponentSettings(component, componentCCs) {
     var componentSettings = new Map();
+
+    console.log({ component, componentCCs });
 
     Object.keys(component).forEach(function (key) {
       componentSettings.set(key, getMidiSettings(component[key], componentCCs));
@@ -165,7 +158,7 @@
   module.exports = {
     midiCCs: cc.midiCCs,
     midiComponents: midiComponents,
-    // midiChannels: midiChannels,
+    midiChannels: midiChannels,
     // getCircuitMidiCC: getCircuitMidiCC,
     midiNRPNs: midiNRPNs
   }
