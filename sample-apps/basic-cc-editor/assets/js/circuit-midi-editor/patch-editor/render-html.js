@@ -10,7 +10,7 @@ const midiComponents = nocWebMidi.midiComponents;
 const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
-  const editorWrapper = document.getElementById("circuit-midi-editor");
+  const editorWrapper = document.getElementById('circuit-midi-editor');
   let editorHtml = getEditorHtml();
 
   // Add MIDI editor HTML to editorWrapper element.
@@ -35,18 +35,25 @@ function getComponentSectionHtml(component, componentType) {
   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
   const componentCCType = getCompenentCCType(componentType);
   const componentHtml = getComponentHtml(parameters);
-  const midiChannel = midiChannels[componentType];
+  const componentMidiChannel = midiChannels[componentType];
+  const componentMidiChannelOptions = getComponentMidiChannelOptions(componentMidiChannel);
 
   // HTML for each MIDI component section.
   return `
-    <div id='${componentTypeSlug}' class='component-section' data-midi-channel='${midiChannel}' data-midi-cc-type='${componentCCType}'> 
+    <div id='${componentTypeSlug}' class='component-section' data-midi-cc-type='${componentCCType}'> 
       <h2>${componentType}</h2>
-      <button type='button' class='activate-midi-in' data-midi-enabled=''>
-        MIDI IN
-      </button> 
-      <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
-        randomize
-      </button>
+      <div class='midi-controls'>
+        <label for='${componentTypeSlug}-midi-channel'>Midi Channel</label> 
+        <select id='${componentTypeSlug}-midi-channel' name='${componentTypeSlug}-midi-channel' class='component-midi-channel'>
+          ${componentMidiChannelOptions}
+        </select>      
+        <button type='button' class='activate-midi-in' data-midi-enabled=''>
+          MIDI IN
+        </button> 
+        <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
+          randomize
+        </button>
+      </div>
       <div class='button-bar'> 
         <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
         <select id='${componentTypeSlug}-patch-select'>
@@ -98,7 +105,7 @@ function getComponentHtml(component) {
     });
 
     componentHtml += `
-        <div class='component'>
+        <div class='component' data-component-type='${parameterName}'>
           <h3>${parameterName}</h3>
           ${parameterHtml}
         </div>
@@ -106,6 +113,20 @@ function getComponentHtml(component) {
   });
 
   return componentHtml;
+}
+
+function getComponentMidiChannelOptions(midiChannel, componentTypeSlug) {
+  const midiChannelOptions = [...Array(16).keys()].map(function (channel) {
+    const selected = midiChannel == channel ? 'selected' : '';
+
+    return `
+      <option value='${channel}' ${selected}>
+        ${channel + 1}
+      </option>
+    `;
+  });
+
+  return midiChannelOptions.join('\n');
 }
 
 function getComponentDescription(range) {
@@ -137,7 +158,7 @@ function getComponentSliderInput(nameSlug, defaultValue, rangeKeys) {
 
 function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
   const componentValues = rangeKeys.map(function (key) {
-    const selected = defaultValue == key ? "selected" : "";
+    const selected = defaultValue == key ? 'selected' : '';
 
     // Generate HTML sor Select element.
     return `

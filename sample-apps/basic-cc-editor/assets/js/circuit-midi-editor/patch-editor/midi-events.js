@@ -42,16 +42,30 @@ function initSliderEvents() {
 }
 
 function handlePatchChanges(changedOption, control) {
-  let selectedMidiChannel = parseInt(changedOption.dataset.midiChannel);
-  let selectedMidiCC = changedOption.dataset.midiCc;
-  let selectedMidiCCValue = changedOption.value;
+  const selectedMidiCC = getComponentMidiCC(control);
+  const selectedMidiCCValue = changedOption.value;
+  const selectedMidiChannel = getComponentMidiChannel(control);
 
-  console.log({ changedOption, control });
-  console.log({ parent: control.parentElement.closest('component-section') });
+  // console.log({ changedOption, control });
+  // console.log({ parent: control.closest('.component-section') });
+  console.log({ selectedMidiChannel });
 
   markControlChange(selectedMidiChannel, selectedMidiCC, control);
-  updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
+  // updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
   sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
+}
+
+function getComponentMidiCC(control) {
+  const componentValue = control.closest('.component-value');
+
+  return componentValue.dataset.midiCc;
+}
+
+function getComponentMidiChannel(control) {
+  const componentSection = control.closest('.component-section');
+  const componentMidiChannel = componentSection.querySelector('[id$="-midi-channel"');
+
+  return componentMidiChannel.value;
 }
 
 function sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
