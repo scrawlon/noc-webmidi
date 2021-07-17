@@ -115,7 +115,7 @@ function getComponentHtml(component) {
   return componentHtml;
 }
 
-function getComponentMidiChannelOptions(midiChannel, componentTypeSlug) {
+function getComponentMidiChannelOptions(midiChannel) {
   const midiChannelOptions = [...Array(16).keys()].map(function (channel) {
     const selected = midiChannel == channel ? 'selected' : '';
 
@@ -160,7 +160,7 @@ function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
   const componentValues = rangeKeys.map(function (key) {
     const selected = defaultValue == key ? 'selected' : '';
 
-    // Generate HTML sor Select element.
+    // Generate HTML for Select options.
     return `
       <option value='${key}' ${selected}>
         ${range[key]}
@@ -168,6 +168,7 @@ function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
     `;
   });
 
+  // Generate HTML for Select element.
   return `
     <select name='${nameSlug}'>
       ${componentValues}

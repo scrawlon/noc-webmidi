@@ -4,6 +4,8 @@
   Includes Patch Management controls and MIDI CC controls.
 */
 
+import { initWebMidi, sendMidiEvent } from './web-midi.js';
+
 const midiCCs = nocWebMidi.midiCCs;
 const midiComponents = nocWebMidi.midiComponents;
 
@@ -11,6 +13,7 @@ let midiChannels = {};
 let midiPatch = {};
 
 function initEditorEvents() {
+  initWebMidi();
   initSelectEvents();
   initSliderEvents();
 }
@@ -66,16 +69,6 @@ function getComponentMidiChannel(control) {
   const componentMidiChannel = componentSection.querySelector('[id$="-midi-channel"');
 
   return componentMidiChannel.value;
-}
-
-function sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
-  let selectedMidiChannelHex = selectedMidiChannel.toString(16);
-  let output = false;
-
-  if (midi && midi.outputs && outputID) {
-    output = midi.outputs.get(outputID);
-    output.send(["0xB" + selectedMidiChannelHex, selectedMidiCC, selectedMidiCCValue]);
-  }
 }
 
 function markControlChange(midiChannel, midiCC, control) {

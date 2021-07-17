@@ -3,20 +3,12 @@ import { renderEditor, initEditorEvents } from './patch-editor/index.js';
 
 (function () {
   // Import MIDI CC data from nocWebMidi.js library
-  const midiCCs = nocWebMidi.midiCCs;
-  const midiComponents = nocWebMidi.midiComponents;
+  // const midiCCs = nocWebMidi.midiCCs;
+  // const midiComponents = nocWebMidi.midiComponents;
 
   // Circuit Editor Globals
-  let midiDevices = {};
 
   // Web Midi GLobals
-  let midi = false;
-  let midiIn = {
-    channel: 0,
-    enabled: false
-  };
-  let inputID = false;
-  let outputID = false;
 
   let localStorageEnabled = localStorageSupport();
 
@@ -27,19 +19,19 @@ import { renderEditor, initEditorEvents } from './patch-editor/index.js';
     renderEditor();
     initEditorEvents();
 
-    populatePatchSelectMenu();
-    activatePatchManagementButtons();
+    // populatePatchSelectMenu();
+    // activatePatchManagementButtons();
 
 
     // initDropdowns();
     // initSliders();
 
     // addSynthEditorEvents();
-    activateMidiInButtons()
-    activateRandomizeButtons();
+    // activateMidiInButtons()
+    // activateRandomizeButtons();
 
     // Load Web MIDI
-    getWebMidi();
+    // getWebMidi();
   }
 
 
@@ -585,110 +577,12 @@ import { renderEditor, initEditorEvents } from './patch-editor/index.js';
       return false;
     }
   }
-
-  // Begin Web Midi Code
-  function getWebMidi() {
-    if (navigator.requestMIDIAccess) {
-      navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-    } else {
-      onMIDIFailure('Your browser does not support web midi. This feature is currently only supported in Google Chrome.');
-    }
-  }
-
-  function onMIDISuccess(MIDIAccess) {
-    midi = MIDIAccess;
-    midiDevices.inputs = getMidiDevices(midi, 'inputs');
-    midiDevices.outputs = getMidiDevices(midi, 'outputs');
-    let errorMessage = 'unknown error';
-
-    if (!midiDevices.inputs.size) {
-      errorMessage = `
-          Novation Circuit&trade; device not detected on MIDI in<br />
-          Make sure your Circuit&trade; is connected and reload this page.
-        `;
-      printErrorMessage(errorMessage);
-    } else {
-      midiDevices.inputs.forEach(function (device) {
-        if (device.name.toLowerCase() === 'circuit') {
-          device.onmidimessage = onMIDIMessage;
-          inputID = device.id;
-        }
-      });
-    }
-
-    if (!midiDevices.outputs.size) {
-      errorMessage = `
-          Novation Circuit&trade; device not detected on MIDI out<br />
-          Make sure your Circuit&trade; is connected and reload this page.
-        `;
-      printErrorMessage(errorMessage);
-    } else {
-      midiDevices.outputs.forEach(function (device) {
-        if (device.name.toLowerCase() === 'circuit') {
-          outputID = device.id;
-        }
-      });
-    }
-  }
-
-  function getMidiDevices(midi, connectionType) {
-    if (midi && midi[connectionType] && midi.size !== 0) {
-      return midi[connectionType];
-    }
-  }
-
-  function printErrorMessage(message) {
-    let messageHolder = document.getElementById('message-holder');
-    messageHolder.innerHTML += `<p>${message}</p>`;
-  }
-
-  function onMIDIMessage(event) {
-    if (midiIn && midiIn.enabled) {
-      // let str = "";
-      let eventMidiChannel = event.data && event.data[0] ? (event.data[0] & 0x0F) : false;
-      let eventMidiCC = event.data && event.data[1] ? event.data[1] : false;
-      let eventMidiCCValue = event.data && event.data[2] ? event.data[2] : false;
-
-      if ((eventMidiChannel === midiIn.channel) && eventMidiCC && eventMidiCCValue) {
-        let eventType = event.data[0] & 0xf0;
-
-        if (eventType === 0xB0) {
-          updateSliderValue(eventMidiChannel, eventMidiCC, eventMidiCCValue);
-          updateMidiPatch(eventMidiChannel, eventMidiCC, eventMidiCCValue);
-        }
-      }
-    }
-  }
-
   function updateSliderValue(midiChannel, midiCC, midiCCValue) {
     let slider = document.querySelectorAll(`[data-midi-channel='${midiChannel}'][data-midi-cc='${midiCC}']`)[0];
 
     slider.value = midiCCValue;
 
     markControlChange(midiChannel, midiCC, slider);
-  }
-
-  function sendMiddleC(midi, portID) {
-    let noteOnMessage = [0x90, 60, 63];
-    let output = midi.outputs.get(portID);
-    output.send(noteOnMessage);
-    output.send([0x80, 60, 0x40], window.performance.now() + 1000.0);
-  }
-
-  function onMIDIFailure(msg) {
-    printErrorMessage('Failed to get MIDI access - ' + msg);
-  }
-
-  function getCircuitDevices(midiDevices) {
-    let circuits = [];
-
-    midiDevices.forEach(function (device) {
-      if (device.name.toLowerCase() === 'circuit') {
-        circuits.push(device);
-      }
-    });
-
-    return circuits;
   }
 
   // Limit real-time slider imput to avoid page crash
