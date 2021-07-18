@@ -11,14 +11,15 @@ const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
   const editorWrapper = document.getElementById('circuit-midi-editor');
-  let editorHtml = getEditorHtml();
+  const editorHtml = getEditorHtml();
 
   // Add MIDI editor HTML to editorWrapper element.
   editorWrapper.innerHTML = editorHtml;
 }
 
 function getEditorHtml() {
-  let editorHtml = '';
+  let webMidiControlHtml = getWebMidiControlHtml();
+  let editorHtml = webMidiControlHtml;
 
   // Loop through all MIDI Components and render HTML for each
   midiComponents.forEach(function (component, componentType) {
@@ -28,6 +29,15 @@ function getEditorHtml() {
   });
 
   return editorHtml;
+}
+
+function getWebMidiControlHtml() {
+  return `
+    <div class='web-midi-control'>
+      <div id="web-midi-connection-status"></div>
+      <button type='button' id='web-midi-connect-device'>click here to connect MIDI device</button>
+    </div>
+  `;
 }
 
 function getComponentSectionHtml(component, componentType) {

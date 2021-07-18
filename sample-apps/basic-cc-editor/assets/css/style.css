@@ -29,13 +29,22 @@
     font-weight: bold;
 }
 
-#message-holder {
+#web-midi-connection-status {
     width: 80%;
     margin: 20px auto;
     font-weight: bold;
     font-size: 22px;
-    color: #ff0000;
+    color: #000;
     text-align: center;
+}
+
+#web-midi-connection-status .error {
+    color: #ff0000;
+}
+
+#web-midi-connect-device {
+    margin: 0 auto;
+    display: block;
 }
 
 [id$='-patch-select'] {
