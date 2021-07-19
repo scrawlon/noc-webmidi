@@ -1,8 +1,5 @@
 
-var midiNRPNs = {};
-var midiComponents = {};
-
-midiNRPNs = {
+const midiNRPNs = {
   '0:0': [
     {
       'name': 'env 2 velocity',
@@ -76,19 +73,4 @@ midiNRPNs = {
   ],
 };
 
-midiComponents = [
-  '0:0',
-  '0:1',
-  '0:2',
-  '0:4',
-  '0:14',
-  '0:15',
-  '0:16',
-  '0:17',
-  '0:18'
-];
-
-module.exports = {
-  midiNRPNs: midiNRPNs,
-  midiComponents: midiComponents
-}
+module.exports = midiNRPNs;

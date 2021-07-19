@@ -1,9 +1,7 @@
 
-var rangeValues = require('../../range-values');
-var midiNRPNs = {};
-var midiComponents = {};
+const rangeValues = require('../../range-values');
 
-midiNRPNs = {
+const midiNRPNs = {
   '0:79': [
     {
       'name': 'lfo 2 waveform',
@@ -56,24 +54,4 @@ midiNRPNs = {
   ],
 };
 
-midiComponents = [
-  '0:104',
-  '0:105',
-  '0:106',
-  '0:107',
-  '0:108',
-  '0:109',
-  '1:0',
-  '1:1',
-  '1:24',
-  '1:25',
-  '1:26',
-  '1:27',
-  '1:28',
-  '1:29'
-];
-
-module.exports = {
-  midiNRPNs: midiNRPNs,
-  midiComponents: midiComponents
-}
+module.exports = midiNRPNs;
