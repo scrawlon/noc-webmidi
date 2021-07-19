@@ -134,7 +134,7 @@ function getCircuitDevices(midiDevices) {
   return circuits;
 }
 
-function sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
+function sendWebMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
   let selectedMidiChannelHex = parseInt(selectedMidiChannel).toString(16);
   let output = false;
 
@@ -143,12 +143,11 @@ function sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue)
 
     if (output) {
       output.send(["0xB" + selectedMidiChannelHex, selectedMidiCC, selectedMidiCCValue]);
-    } else {
-      initWebMidi();
     }
-  } else {
-    initWebMidi();
   }
+
+  // Always check/update MIDI status
+  initWebMidi();
 }
 
-export { initWebMidi, sendMidiEvent };
+export { initWebMidi, sendWebMidiEvent };
