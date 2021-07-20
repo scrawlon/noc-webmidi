@@ -1,8 +1,5 @@
 
-var midiNRPNs = {};
-var midiComponents = {};
-
-midiNRPNs = {
+const midiNRPNs = {
 
   // Side Chain
   '2:55': [
@@ -92,20 +89,6 @@ midiNRPNs = {
   ]
 };
 
-midiComponents = [
-  '2:55',
-  '2:56',
-  '2:57',
-  '2:58',
-  '2:59',
-  '2:65',
-  '2:66',
-  '2:67',
-  '2:68',
-  '1:69'
-];
-
 module.exports = {
-  midiNRPNs: midiNRPNs,
-  midiComponents: midiComponents
+  midiNRPNs: midiNRPNs
 }

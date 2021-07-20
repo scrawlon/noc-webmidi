@@ -2,29 +2,37 @@
   "use strict";
 
   const cc = require('./cc/');
-  const midiNRPNs = require('./nrpn/');
+  const nrpn = require('./nrpn/');
 
   const midiChannels = {};
   const midiComponents = getMidiComponents();
 
 
-  console.log(cc);
-  console.log(midiNRPNs);
-  console.log(midiComponents);
+  // console.log(cc);
+  // console.log(midiNRPNs);
+  // console.log(midiComponents);
 
   function getMidiComponents() {
-    const midiComponentTypes = Object.keys(cc.midiComponents);
+    const midiCcComponentTypes = Object.keys(cc.midiComponents);
+    const midiNrpnComponentTypes = Object.keys(nrpn.midiComponents);
+
+    // console.log({ midiCcComponentTypes, midiNrpnComponentTypes });
 
     let defaultPatch = new Map();
     let components = {};
 
-    midiComponentTypes.forEach(function (componentType) {
+    midiCcComponentTypes.forEach(function (componentType) {
       const componentCCType = getCompenentCCType(componentType);
 
       midiChannels[componentType] = cc.midiChannels[componentType];
       components[componentType] = {
         'parameters': getComponentSettings(cc.midiComponents[componentType], cc.midiCCs[componentCCType])
       };
+
+      // debug
+      if (midiNrpnComponentTypes.includes(componentType)) {
+        console.log(componentType, nrpn.midiComponents[componentType], 'nrpn', nrpn.midiNRPNs[componentCCType]);
+      }
     });
 
     Object.keys(components).forEach(function (key) {
@@ -160,6 +168,6 @@
     midiComponents: midiComponents,
     midiChannels: midiChannels,
     // getCircuitMidiCC: getCircuitMidiCC,
-    midiNRPNs: midiNRPNs
+    midiNRPNs: nrpn.midiNRPNs
   }
 })();

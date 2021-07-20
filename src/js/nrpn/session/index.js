@@ -5,15 +5,15 @@ var sidechain = require('./sidechain');
 
 module.exports = {
   midiNRPNs: {
-    reverb: reverb.midiNRPNs,
-    delay: delay.midiNRPNs,
-    sidechain: sidechain.midiNRPNs,
-    addtionalControls: addtionalControls.midiNRPNs
+    ...reverb.midiNRPNs,
+    ...delay.midiNRPNs,
+    ...sidechain.midiNRPNs,
+    ...addtionalControls.midiNRPNs
   },
   midiComponents: {
-    reverb: reverb.midiComponents,
-    delay: delay.midiComponents,
-    sidechain: sidechain.midiComponents,
-    addtionalControls: addtionalControls.midiComponents
+    'reverb': Object.keys(reverb.midiNRPNs),
+    'delay': Object.keys(delay.midiNRPNs),
+    'sidechain': Object.keys(sidechain.midiNRPNs),
+    'addtional controls': Object.keys(addtionalControls.midiNRPNs)
   }
 };

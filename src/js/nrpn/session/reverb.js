@@ -1,8 +1,5 @@
 
-var midiNRPNs = {};
-var midiComponents = {};
-
-midiNRPNs = {
+const midiNRPNs = {
 
   // Reverb
   '1:18': [
@@ -36,13 +33,6 @@ midiNRPNs = {
   ]
 };
 
-midiComponents = [
-  '1:18',
-  '1:19',
-  '1:20'
-];
-
 module.exports = {
-  midiNRPNs: midiNRPNs,
-  midiComponents: midiComponents
+  midiNRPNs: midiNRPNs
 }

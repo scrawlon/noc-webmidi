@@ -1,8 +1,5 @@
 
-var midiNRPNs = {};
-var midiComponents = {};
-
-midiNRPNs = {
+const midiNRPNs = {
 
   // Additional Controls
   '1:21': [
@@ -15,9 +12,6 @@ midiNRPNs = {
   ]
 };
 
-midiComponents = ['1:21'];
-
 module.exports = {
-  midiNRPNs: midiNRPNs,
-  midiComponents: midiComponents
+  midiNRPNs: midiNRPNs
 }

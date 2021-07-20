@@ -1,8 +1,5 @@
 
-var midiNRPNs = {};
-var midiComponents = {};
-
-midiNRPNs = {
+const midiNRPNs = {
 
   // Delay
   '1:6': [
@@ -64,16 +61,6 @@ midiNRPNs = {
   ]
 };
 
-midiComponents = [
-  '1:6',
-  '1:7',
-  '1:8',
-  '1:9',
-  '1:10',
-  '1:11'
-];
-
 module.exports = {
-  midiNRPNs: midiNRPNs,
-  midiComponents: midiComponents
+  midiNRPNs: midiNRPNs
 }
