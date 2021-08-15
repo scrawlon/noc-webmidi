@@ -51,7 +51,7 @@ function handlePatchChanges(changedOption, control) {
 
   // console.log({ changedOption, control });
   // console.log({ parent: control.closest('.component-section') });
-  console.log({ selectedMidiChannel });
+  // console.log({ selectedMidiChannel });
 
   markControlChange(selectedMidiChannel, selectedMidiCC, control);
   // updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
@@ -78,7 +78,7 @@ function markControlChange(midiChannel, midiCC, control) {
 }
 
 function isChanged(midiChannel, midiCC) {
-  console.log({ midiPatch, midiChannel, midiCC });
+  // console.log({ midiPatch, midiChannel, midiCC });
   if (!midiPatch[midiChannels[midiChannel]]
     || (midiPatch[midiChannels[midiChannel]]
       && !midiPatch[midiChannels[midiChannel]][midiCC])) {

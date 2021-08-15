@@ -8,7 +8,7 @@ module.exports = {
     'drums': drums.midiCCs,
     'session': session.midiCCs
   },
-  midiComponents: {
+  ccComponents: {
     'synth 1': synth.midiComponents,
     'synth 2': synth.midiComponents,
     'drums 1': drums.midiComponents['1'],
@@ -17,7 +17,7 @@ module.exports = {
     'drums 4': drums.midiComponents['4'],
     'session': session.midiComponents
   },
-  midiChannels: {
+  ccMidiChannels: {
     'synth 1': 0,
     'synth 2': 1,
     'drums 1': 9,

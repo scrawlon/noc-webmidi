@@ -119,7 +119,8 @@ function sendMiddleC(midi, portID) {
 }
 
 function onMIDIFailure(msg) {
-  console.log(`midi failure: ${Message} `);
+  alert(`midi failure: ${msg}`);
+  console.log(`midi failure: ${msg}`);
 }
 
 function getCircuitDevices(midiDevices) {

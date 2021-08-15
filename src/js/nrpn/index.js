@@ -6,7 +6,7 @@ module.exports = {
     'synth': synth.midiNRPNs,
     'session': session.midiNRPNs
   },
-  midiComponents: {
+  nrpnComponents: {
     'synth 1': synth.midiComponents,
     'synth 2': synth.midiComponents,
     'session': session.midiComponents

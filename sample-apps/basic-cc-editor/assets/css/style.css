@@ -22,6 +22,7 @@
 
 .component-value {
     margin: 5px 0;
+    padding: .25em 0;
 }
 
 .midi-patch-value {
