@@ -145,45 +145,47 @@ function getComponentHtml(ccComponentParameters, nrpnComponentParameters) {
     let ccParameterHtml = '';
     let nrpnParameterHtml = '';
 
-    ccParameters.forEach(function (parameter) {
-      const { values } = parameter;
+    ccParameters.forEach(function (values) {
+      console.log({ values });
+      // const { values } = parameter;
 
-      values.forEach(function (value) {
-        const { name, range, cc } = value;
-        const nameSlug = name && name.toLowerCase().replace(' ', '-');
-        const componentDescription = range && getComponentDescription(range);
+      // values.forEach(function (value) {
+      const { name, range, cc } = values;
+      const nameSlug = name && name.toLowerCase().replace(' ', '-');
+      const componentDescription = range && getComponentDescription(range);
 
-        const componentInput = getComponentInput(value);
+      const componentInput = getComponentInput(values);
 
-        ccParameterHtml += `
+      ccParameterHtml += `
             <div class='component-value' data-midi-cc='${cc}'> 
               <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
               ${componentInput}
             </div> 
           `;
-      });
+      // });
     });
 
     nrpnParameters && nrpnParameters.forEach(function (parameter) {
-      const { values } = parameter;
+      // const { values } = parameter;
 
       // console.log({ parameter, nrpn, values });
 
 
-      values.forEach(function (value) {
-        const { name, range, nrpn } = value;
-        const nameSlug = name && name.toLowerCase().replace(' ', '-');
-        const componentDescription = range && getComponentDescription(range);
+      // parameter.forEach(function (value) {
+      const { name, range, nrpn } = parameter;
+      const nameSlug = name && name.toLowerCase().replace(' ', '-');
+      const componentDescription = range && getComponentDescription(range);
+      const componentInput = getComponentInput(parameter);
 
-        const componentInput = getComponentInput(value);
+      console.log({ parameter });
 
-        nrpnParameterHtml += `
+      nrpnParameterHtml += `
           <div class='component-value' data-midi-nrpn='${nrpn}'> 
             <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
             ${componentInput}
           </div> 
         `;
-      });
+      // });
     });
 
     componentHtml += `

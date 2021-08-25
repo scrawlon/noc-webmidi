@@ -43,36 +43,23 @@ function getMidiComponents(midiControllerType) {
     componentSettings.forEach(function (parameters, parameterType) {
       let componentArray = [];
 
-      console.log({ parameters });
-
-      parameters.forEach(function (values, parameter) {
-        let componentObject = {
+      parameters.forEach(function (parameter) {
+        let values = [];
+        let valueObject = {
+          name: parameter.name,
+          default: parameter.defaultValue,
+          range: getMidiParameterRange(parameter),
           values: []
         };
 
-        let valueObject = {};
+        valueObject[midiType] = parameter[midiType];
 
-        if (!values) {
-          return componentObject;
-        }
-
-        // console.log({ values });
-
-        valueObject.cc = values.cc;
-        valueObject.nrpn = values.nrpn;
-        valueObject.name = values.name;
-        valueObject.default = values.defaultValue;
-        valueObject.range = getMidiParameterRange(values);
-        valueObject.values = values;
-
-        componentObject.values.push(valueObject);
-        componentArray.push(componentObject);
+        values.push(valueObject);
+        componentArray.push(valueObject);
       });
 
       componentValues.set(parameterType, componentArray);
     });
-
-    console.log({ componentValues });
 
     defaultPatch.set(componentTypeSpecific, {
       midiChannel: midiChannels[componentTypeSpecific],
@@ -98,7 +85,7 @@ function getComponentSettings(components, componentTypeSpecific, midiTypeValues)
   Object.keys(parameters).forEach(function (type) {
     console.log({ type, componentTypeValues });
     // console.log({ values, componentTypeValues });
-    componentSettings.set(type, getMidiSettings(parameters[type], componentTypeValues));
+    componentSettings.set(type, getParameterSettings(parameters[type], componentTypeValues));
   });
 
   console.log({ componentSettings });
@@ -124,36 +111,21 @@ function getComponentTypeValues(component, midiTypeValues) {
   return midiTypeValues[componentType];
 }
 
-function getMidiSettings(parameters, componentTypeValues) {
+function getParameterSettings(parameters, componentTypeValues) {
   var midiSettings = [];
-
-  console.log('TEST', parameters);
 
   parameters.forEach(function (parameter) {
     let componentTypeValue = componentTypeValues[parameter];
-    // console.log({ parameter, componentTypeValue });
+    let values = Array.isArray(componentTypeValue) ? componentTypeValue : [componentTypeValue];
 
-    if (midiType === 'nrpn') {
-      componentTypeValue[0].nrpn = parameter;
-    } else {
-      componentTypeValue.cc = parameter;
-    }
+    values.forEach(function (value) {
+      value[midiType] = parameter;
 
-    if (Array.isArray(componentTypeValue)) {
-      midiSettings.push(componentTypeValue[0]);
-    } else {
-      midiSettings.push(componentTypeValue);
-    }
+      console.log({ componentTypeValue });
 
+      midiSettings.push(value);
+    });
   });
-  // for (var i = 0; i < paramters.length; i++) {
-  //   var thisSetting = componentTypeValues[component[i]];
-  //   // var thisSetting = getCircuitMidiCC(midiChannel, component[i], componentTypeValues);
-
-  //   midiSettings[component[i]] = thisSetting;
-  // }
-
-  console.log({ midiSettings });
 
   return midiSettings;
 }
@@ -180,20 +152,21 @@ function getCircuitMidiCC(midiCCNumber, midiCCs) {
 }
 
 function getMidiParameterRange(values) {
-  var range = values && values.hasOwnProperty('range') ? values.range : false,
-    rangeValues = values && values.hasOwnProperty('rangeValues') ? values.rangeValues : false;
+  const range = values && values.hasOwnProperty('range') ? values.range : false;
+  const rangeValues = values && values.hasOwnProperty('rangeValues') ? values.rangeValues : false;
 
   return rangeValues ? getRangeValues(range, rangeValues) : getRange(range);
 }
 
 function getRangeValues(range, rangeValues) {
-  var values = {},
-    rangeStart = range[0],
-    rangeValuesStart = rangeValues[0],
-    rangeValuesType = typeof (rangeValues[0]),
-    rangeLength = range[1] - range[0];
+  const rangeStart = range[0];
+  const rangeValuesStart = rangeValues[0];
+  const rangeValuesType = typeof (rangeValues[0]);
+  const rangeLength = range[1] - range[0];
 
-  for (var i = 0; i < rangeLength + 1; i++) {
+  let values = {};
+
+  for (var i = 0; i <= rangeLength; i++) {
     values[rangeStart + i] = rangeValuesType === 'number' ? rangeValuesStart + i : rangeValues[i];
   }
 
@@ -201,11 +174,12 @@ function getRangeValues(range, rangeValues) {
 }
 
 function getRange(range) {
-  var values = {},
-    rangeValuesStart = range[0],
-    rangeLength = range[1];
+  const rangeValuesStart = range[0];
+  const rangeLength = range[1];
 
-  for (var i = 0; i < rangeLength + 1; i++) {
+  let values = {};
+
+  for (var i = 0; i <= rangeLength; i++) {
     values[rangeValuesStart + i] = rangeValuesStart + i;
   }
 
