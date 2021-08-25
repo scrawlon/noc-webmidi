@@ -7,7 +7,7 @@ const midiNRPNs = {
       'name': 'FX Bypass',
       'range': [0, 1],
       'rangeValues': ['OFF', 'ON'],
-      'default': 0
+      'defaultValue': 0
     }
   ]
 };

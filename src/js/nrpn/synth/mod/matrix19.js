@@ -8,7 +8,7 @@ const midiNRPNs = {
       'name': 'mod matrix 19 source 1',
       'range': [0, rangeValues.modMatrix.source.length - 1],
       'rangeValues': rangeValues.modMatrix.source,
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '2:47': [
@@ -16,7 +16,7 @@ const midiNRPNs = {
       'name': 'mod matrix 19 source 2',
       'range': [0, rangeValues.modMatrix.source.length - 1],
       'rangeValues': rangeValues.modMatrix.source,
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '2:48': [
@@ -24,7 +24,7 @@ const midiNRPNs = {
       'name': 'mod matrix 19 depth',
       'range': [0, 127],
       'rangeValues': [-64, 63],
-      'default': 64
+      'defaultValue': 64
     }
   ],
   '2:49': [
@@ -32,7 +32,7 @@ const midiNRPNs = {
       'name': 'mod matrix 19 destination',
       'range': [0, rangeValues.modMatrix.destination.length - 1],
       'rangeValues': rangeValues.modMatrix.destination,
-      'default': 0
+      'defaultValue': 0
     }
   ]
 };

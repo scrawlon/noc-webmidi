@@ -14,21 +14,21 @@ const midiNRPNs = {
         'Large Hall',
         'Great Hall'
       ],
-      'default': 127
+      'defaultValue': 127
     }
   ],
   '1:19': [
     {
       'name': 'decay',
       'range': [0, 127],
-      'default': 64
+      'defaultValue': 64
     }
   ],
   '1:20': [
     {
       'name': 'damping',
       'range': [0, 127],
-      'default': 64
+      'defaultValue': 64
     }
   ]
 };

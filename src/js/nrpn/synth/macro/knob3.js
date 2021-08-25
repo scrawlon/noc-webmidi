@@ -6,21 +6,21 @@ const midiNRPNs = {
     {
       'name': 'macro knob 3 destination A',
       'range': [0, 70],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:33': [
     {
       'name': 'macro knob 3 start position A',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:34': [
     {
       'name': 'macro knob 3 end position A',
       'range': [0, 127],
-      'default': 127
+      'defaultValue': 127
     }
   ],
   '3:35': [
@@ -28,7 +28,7 @@ const midiNRPNs = {
       'name': 'macro knob 3 depth A',
       'range': [0, 127],
       'rangeValues': [-64, 63],
-      'default': 0
+      'defaultValue': 0
     }
   ],
 
@@ -36,21 +36,21 @@ const midiNRPNs = {
     {
       'name': 'macro knob 3 destination B',
       'range': [0, 70],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:37': [
     {
       'name': 'macro knob 3 start position B',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:38': [
     {
       'name': 'macro knob 3 end position B',
       'range': [0, 127],
-      'default': 127
+      'defaultValue': 127
     }
   ],
   '3:39': [
@@ -58,7 +58,7 @@ const midiNRPNs = {
       'name': 'macro knob 3 depth B',
       'range': [0, 127],
       'rangeValues': [-64, 63],
-      'default': 0
+      'defaultValue': 0
     }
   ],
 
@@ -66,21 +66,21 @@ const midiNRPNs = {
     {
       'name': 'macro knob 3 destination C',
       'range': [0, 70],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:41': [
     {
       'name': 'macro knob 3 start position C',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:42': [
     {
       'name': 'macro knob 3 end position C',
       'range': [0, 127],
-      'default': 127
+      'defaultValue': 127
     }
   ],
   '3:43': [
@@ -88,7 +88,7 @@ const midiNRPNs = {
       'name': 'macro knob 3 depth C',
       'range': [0, 127],
       'rangeValues': [-64, 63],
-      'default': 0
+      'defaultValue': 0
     }
   ],
 
@@ -96,21 +96,21 @@ const midiNRPNs = {
     {
       'name': 'macro knob 3 destination D',
       'range': [0, 70],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:45': [
     {
       'name': 'macro knob 3 start position D',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '3:46': [
     {
       'name': 'macro knob 3 end position D',
       'range': [0, 127],
-      'default': 127
+      'defaultValue': 127
     }
   ],
   '3:47': [
@@ -118,7 +118,7 @@ const midiNRPNs = {
       'name': 'macro knob 3 depth D',
       'range': [0, 127],
       'rangeValues': [-64, 63],
-      'default': 0
+      'defaultValue': 0
     }
   ]
 };

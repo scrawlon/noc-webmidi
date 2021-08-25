@@ -3,60 +3,79 @@
 import { midiCCs, ccComponents, midiChannels } from './cc/';
 import { midiNRPNs, nrpnComponents } from './nrpn/';
 
-const midiComponents = getMidiComponents();
+let midiType;
 
-
-// console.log(cc);
-// console.log(midiNRPNs);
-// console.log(midiComponents);
-
-function getMidiComponents(type = 'cc') {
+function getMidiComponents(midiControllerType) {
+  let components;
   let componentTypes;
+  let midiTypeValues;
   let defaultPatch = new Map();
 
-  type = type.toLowerCase();
+  midiType = midiControllerType.toLowerCase();
 
-  switch (type) {
+  switch (midiType) {
     case 'cc':
-      componentTypes = Object.keys(ccComponents);
+      components = ccComponents;
+      midiTypeValues = midiCCs;
       break;
     case 'nrpn':
-      componentTypes = Object.keys(nrpnComponents);
+      components = nrpnComponents;
+      midiTypeValues = midiNRPNs;
       break;
     default:
       console.log('invalid Midi Component type');
       return false;
   }
 
-  componentTypes.forEach(function (component) {
-    const componentType = getComponentType(component);
-    const componentSettings = getComponentSettings(ccComponents[component], midiCCs[componentType]);
+  componentTypes = Object.keys(components);
+
+  // console.log({ components, componentTypes });
+
+  componentTypes.forEach(function (componentTypeSpecific) {
+    const componentSettings = getComponentSettings(components, componentTypeSpecific, midiTypeValues);
 
     let componentValues = new Map();
 
-    componentSettings.forEach(function (v, k) {
-      const parameters = Object.keys(v);
-      let componentArray = [];
-      let paramterType = "";
+    if (!componentSettings) {
+      return false;
+    }
 
-      parameters.forEach(function (parameter) {
-        if (!paramterType) {
-          paramterType = k;
+    componentSettings.forEach(function (parameters, parameterType) {
+      let componentArray = [];
+
+      console.log({ parameters });
+
+      parameters.forEach(function (values, parameter) {
+        let componentObject = {
+          values: []
+        };
+
+        let valueObject = {};
+
+        if (!values) {
+          return componentObject;
         }
 
-        componentArray.push({
-          type: parameter,
-          'name': v[parameter] && v[parameter].name,
-          'defaultValue': v[parameter] && v[parameter].defaultValue,
-          'range': getMidiParameterRange(v[parameter])
-        });
+        // console.log({ values });
+
+        valueObject.cc = values.cc;
+        valueObject.nrpn = values.nrpn;
+        valueObject.name = values.name;
+        valueObject.default = values.defaultValue;
+        valueObject.range = getMidiParameterRange(values);
+        valueObject.values = values;
+
+        componentObject.values.push(valueObject);
+        componentArray.push(componentObject);
       });
 
-      componentValues.set(paramterType, componentArray);
+      componentValues.set(parameterType, componentArray);
     });
 
-    defaultPatch.set(component, {
-      midiChannel: midiChannels[component],
+    console.log({ componentValues });
+
+    defaultPatch.set(componentTypeSpecific, {
+      midiChannel: midiChannels[componentTypeSpecific],
       parameters: componentValues
     });
   });
@@ -64,41 +83,77 @@ function getMidiComponents(type = 'cc') {
   return defaultPatch;
 }
 
-function getComponentType(component) {
-  const midiCCTypes = Object.keys(midiCCs);
-  let componentType = '';
+function getComponentSettings(components, componentTypeSpecific, midiTypeValues) {
+  const parameters = components[componentTypeSpecific];
+  const componentTypeValues = parameters && getComponentTypeValues(componentTypeSpecific, midiTypeValues);
 
-  midiCCTypes.forEach(function (type) {
+  let componentSettings = new Map();
+
+  if (!componentTypeValues) {
+    return componentSettings;
+  }
+
+  console.log({ parameters });
+
+  Object.keys(parameters).forEach(function (type) {
+    console.log({ type, componentTypeValues });
+    // console.log({ values, componentTypeValues });
+    componentSettings.set(type, getMidiSettings(parameters[type], componentTypeValues));
+  });
+
+  console.log({ componentSettings });
+
+  return componentSettings;
+}
+
+function getComponentTypeValues(component, midiTypeValues) {
+  const midiTypeKeys = Object.keys(midiTypeValues);
+
+  let componentType;
+
+  midiTypeKeys.forEach(function (type) {
     if (component.toLowerCase().includes(type)) {
       componentType = type;
     }
   });
 
-  return componentType;
+  // console.log(componentType, 'values', midiTypeValues[componentType]);
+
+  console.log({ 'midiTypeValue': midiTypeValues[componentType] });
+
+  return midiTypeValues[componentType];
 }
 
-function getComponentSettings(component, componentCCs) {
-  var componentSettings = new Map();
-
-  // console.log({ component, componentCCs });
-
-  Object.keys(component).forEach(function (key) {
-    componentSettings.set(key, getMidiSettings(component[key], componentCCs));
-  });
-
-  return componentSettings;
-}
-
-function getMidiSettings(midiCCArray, midiCCs) {
-  var midiCCArrayLength = midiCCArray.length;
+function getMidiSettings(parameters, componentTypeValues) {
   var midiSettings = [];
 
-  for (var i = 0; i < midiCCArrayLength; i++) {
-    var thisSetting = midiCCs[midiCCArray[i]];
-    // var thisSetting = getCircuitMidiCC(midiChannel, midiCCArray[i], midiCCs);
+  console.log('TEST', parameters);
 
-    midiSettings[midiCCArray[i]] = thisSetting;
-  }
+  parameters.forEach(function (parameter) {
+    let componentTypeValue = componentTypeValues[parameter];
+    // console.log({ parameter, componentTypeValue });
+
+    if (midiType === 'nrpn') {
+      componentTypeValue[0].nrpn = parameter;
+    } else {
+      componentTypeValue.cc = parameter;
+    }
+
+    if (Array.isArray(componentTypeValue)) {
+      midiSettings.push(componentTypeValue[0]);
+    } else {
+      midiSettings.push(componentTypeValue);
+    }
+
+  });
+  // for (var i = 0; i < paramters.length; i++) {
+  //   var thisSetting = componentTypeValues[component[i]];
+  //   // var thisSetting = getCircuitMidiCC(midiChannel, component[i], componentTypeValues);
+
+  //   midiSettings[component[i]] = thisSetting;
+  // }
+
+  console.log({ midiSettings });
 
   return midiSettings;
 }
@@ -124,9 +179,9 @@ function getCircuitMidiCC(midiCCNumber, midiCCs) {
   // return circuitCCValues;
 }
 
-function getMidiParameterRange(parameter) {
-  var range = parameter && parameter.hasOwnProperty('range') ? parameter.range : false,
-    rangeValues = parameter && parameter.hasOwnProperty('rangeValues') ? parameter.rangeValues : false;
+function getMidiParameterRange(values) {
+  var range = values && values.hasOwnProperty('range') ? values.range : false,
+    rangeValues = values && values.hasOwnProperty('rangeValues') ? values.rangeValues : false;
 
   return rangeValues ? getRangeValues(range, rangeValues) : getRange(range);
 }
@@ -157,6 +212,7 @@ function getRange(range) {
   return values;
 }
 
-console.log({ midiComponents });
-console.log({ midiChannels });
-export { midiCCs, midiNRPNs, midiComponents, midiChannels, getCircuitMidiCC };
+// console.log({ midiComponents });
+// console.log({ nrpnMidiComponents });
+// console.log({ midiChannels });
+export { midiCCs, midiNRPNs, midiChannels, getMidiComponents };

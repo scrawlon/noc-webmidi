@@ -6,7 +6,16 @@
 
 
 const midiCCs = nocWebMidi.midiCCs;
-const midiComponents = nocWebMidi.midiComponents;
+const midiComponents = {
+  cc: nocWebMidi.getMidiComponents('cc'),
+  nrpn: nocWebMidi.getMidiComponents('nrpn')
+};
+// const midiComponents = {
+//   cc: nocWebMidi.getMidiComponents('cc'),
+//   nrpn: nocWebMidi.getMidiComponents('nrpn')
+// };
+// const midiCCComponents = nocWebMidi.getMidiComponents('cc');
+// const midiNRPNComponents = nocWebMidi.getMidiComponents('nrpn');
 const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
@@ -21,14 +30,33 @@ function getEditorHtml() {
   let webMidiControlHtml = getWebMidiControlHtml();
   let editorHtml = webMidiControlHtml;
 
+  console.log({ midiComponents });
+
   // Loop through all MIDI Components and render HTML for each
-  midiComponents.forEach(function (component, componentType) {
-    const componentSectionHtml = getComponentSectionHtml(component, componentType);
+  midiComponents.cc.forEach(function (component, componentType) {
+    const nrpnComponent = getComponentByType(midiComponents.nrpn, componentType);
+    // const nrpnComponent = null;
+    // const nrpnComponent = midiComponents.nrpn.get(componentType) ? midiComponents.nrpn.get(componentType) : new Map();
+    const componentSectionHtml = getComponentSectionHtml(component, componentType, nrpnComponent);
+
+    console.log({ component, nrpnComponent });
 
     editorHtml += componentSectionHtml;
   });
 
   return editorHtml;
+}
+
+function getComponentByType(components, componentType) {
+  let match = {};
+
+  components.forEach(function (component, type) {
+    if (type === componentType) {
+      match = component;
+    }
+  });
+
+  return match;
 }
 
 function getWebMidiControlHtml() {
@@ -40,11 +68,13 @@ function getWebMidiControlHtml() {
   `;
 }
 
-function getComponentSectionHtml(component, componentType) {
-  const { parameters } = component;
+function getComponentSectionHtml(component, componentType, nrpnComponent) {
+  const { parameters: ccComponentParameters } = component;
+  // const nrpnComponentParameters = null;
+  const { parameters: nrpnComponentParameters } = nrpnComponent;
   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
-  const componentCCType = getCompenentCCType(componentType);
-  const componentHtml = getComponentHtml(parameters);
+  const componentCCType = getComponentCCType(componentType);
+  const componentHtml = getComponentHtml(ccComponentParameters, nrpnComponentParameters);
   const componentMidiChannel = midiChannels[componentType];
   const componentMidiChannelOptions = getComponentMidiChannelOptions(componentMidiChannel);
 
@@ -80,11 +110,11 @@ function getComponentSectionHtml(component, componentType) {
   `;
 }
 
-function getCompenentCCType(componentType) {
-  const midiCCTypes = Object.keys(midiCCs);
+function getComponentCCType(componentType) {
+  const componentCCTypes = Object.keys(midiCCs);
   let componentCCType = '';
 
-  midiCCTypes.forEach(function (type) {
+  componentCCTypes.forEach(function (type) {
     if (componentType.toLowerCase().includes(type)) {
       componentCCType = type;
     }
@@ -93,31 +123,74 @@ function getCompenentCCType(componentType) {
   return componentCCType;
 }
 
-function getComponentHtml(component) {
+function getComponentHtml(ccComponentParameters, nrpnComponentParameters) {
+  // if (!nrpnComponentParameters) {
+  //   return;
+  // }
+  // console.log('nrpn', nrpnComponentParameters[0].value);
+  // return;
+
   let componentHtml = '';
 
   // Loop through all MIDI CC parameter controls for each MIDI Component and generate HTML
-  component.forEach(function (parameters, parameterName) {
-    let parameterHtml = '';
+  ccComponentParameters.forEach(function (ccParameters, parameterName) {
+    const nrpnParameters = nrpnComponentParameters ? nrpnComponentParameters.get(parameterName) : [];
+    // console.log({ parameterName, nrpnParameters, nrpnComponentParameters });
 
-    parameters.forEach(function (parameter) {
-      const { cc, name, range } = parameter;
-      const nameSlug = name.toLowerCase().replace(' ', '-');
-      const componentDescription = getComponentDescription(range);
-      const componentInput = getComponentInput(parameter);
+    if (nrpnParameters) {
+      // console.log({ ccParameters, ccComponentParameters, parameterName });
+      // console.log({ nrpnParameters, nrpnComponentParameters, parameterName });
+    }
 
-      parameterHtml += `
-          <div class='component-value' data-midi-cc='${cc}'> 
+    let ccParameterHtml = '';
+    let nrpnParameterHtml = '';
+
+    ccParameters.forEach(function (parameter) {
+      const { values } = parameter;
+
+      values.forEach(function (value) {
+        const { name, range, cc } = value;
+        const nameSlug = name && name.toLowerCase().replace(' ', '-');
+        const componentDescription = range && getComponentDescription(range);
+
+        const componentInput = getComponentInput(value);
+
+        ccParameterHtml += `
+            <div class='component-value' data-midi-cc='${cc}'> 
+              <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
+              ${componentInput}
+            </div> 
+          `;
+      });
+    });
+
+    nrpnParameters && nrpnParameters.forEach(function (parameter) {
+      const { values } = parameter;
+
+      // console.log({ parameter, nrpn, values });
+
+
+      values.forEach(function (value) {
+        const { name, range, nrpn } = value;
+        const nameSlug = name && name.toLowerCase().replace(' ', '-');
+        const componentDescription = range && getComponentDescription(range);
+
+        const componentInput = getComponentInput(value);
+
+        nrpnParameterHtml += `
+          <div class='component-value' data-midi-nrpn='${nrpn}'> 
             <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
             ${componentInput}
           </div> 
         `;
+      });
     });
 
     componentHtml += `
         <div class='component' data-component-type='${parameterName}'>
           <h3>${parameterName}</h3>
-          ${parameterHtml}
+          ${ccParameterHtml}
+          ${nrpnParameterHtml}
         </div>
       `;
   });
@@ -149,9 +222,9 @@ function getComponentDescription(range) {
 
 function getComponentInput(parameter) {
   const { name, defaultValue, range } = parameter;
-  const rangeKeys = Object.keys(range);
-  const nameSlug = name.toLowerCase().replace(' ', '-');
-  const isSlider = Number.isInteger(parseInt(range[rangeKeys[0]]));
+  const rangeKeys = range && Object.keys(range);
+  const nameSlug = name && name.toLowerCase().replace(' ', '-');
+  const isSlider = rangeKeys && Number.isInteger(parseInt(range[rangeKeys[0]]));
 
   return isSlider
     ? getComponentSliderInput(nameSlug, defaultValue, rangeKeys)

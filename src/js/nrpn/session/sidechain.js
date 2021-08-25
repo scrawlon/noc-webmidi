@@ -13,35 +13,35 @@ const midiNRPNs = {
         'Drum 4',
         'OFF'
       ],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '2:56': [
     {
       'name': 'synth 1 attack',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '2:57': [
     {
       'name': 'synth 1 hold',
       'range': [0, 127],
-      'default': 50
+      'defaultValue': 50
     }
   ],
   '2:58': [
     {
       'name': 'synth 1 decay',
       'range': [0, 127],
-      'default': 70
+      'defaultValue': 70
     }
   ],
   '2:59': [
     {
       'name': 'synth 1 depth',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ],
 
@@ -56,35 +56,35 @@ const midiNRPNs = {
         'Drum 4',
         'OFF'
       ],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '2:66': [
     {
       'name': 'synth 2 attack',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ],
   '2:67': [
     {
       'name': 'synth 2 hold',
       'range': [0, 127],
-      'default': 50
+      'defaultValue': 50
     }
   ],
   '2:68': [
     {
       'name': 'synth 2 decay',
       'range': [0, 127],
-      'default': 70
+      'defaultValue': 70
     }
   ],
   '1:69': [
     {
       'name': 'synth 2 depth',
       'range': [0, 127],
-      'default': 0
+      'defaultValue': 0
     }
   ]
 };
