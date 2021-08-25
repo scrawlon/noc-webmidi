@@ -30,7 +30,7 @@ function getEditorHtml() {
   let webMidiControlHtml = getWebMidiControlHtml();
   let editorHtml = webMidiControlHtml;
 
-  console.log({ midiComponents });
+  // console.log({ midiComponents });
 
   // Loop through all MIDI Components and render HTML for each
   midiComponents.cc.forEach(function (component, componentType) {
@@ -124,69 +124,13 @@ function getComponentCCType(componentType) {
 }
 
 function getComponentHtml(ccComponentParameters, nrpnComponentParameters) {
-  // if (!nrpnComponentParameters) {
-  //   return;
-  // }
-  // console.log('nrpn', nrpnComponentParameters[0].value);
-  // return;
-
   let componentHtml = '';
 
   // Loop through all MIDI CC parameter controls for each MIDI Component and generate HTML
   ccComponentParameters.forEach(function (ccParameters, parameterName) {
     const nrpnParameters = nrpnComponentParameters ? nrpnComponentParameters.get(parameterName) : [];
-    // console.log({ parameterName, nrpnParameters, nrpnComponentParameters });
-
-    if (nrpnParameters) {
-      // console.log({ ccParameters, ccComponentParameters, parameterName });
-      // console.log({ nrpnParameters, nrpnComponentParameters, parameterName });
-    }
-
-    let ccParameterHtml = '';
-    let nrpnParameterHtml = '';
-
-    ccParameters.forEach(function (values) {
-      console.log({ values });
-      // const { values } = parameter;
-
-      // values.forEach(function (value) {
-      const { name, range, cc } = values;
-      const nameSlug = name && name.toLowerCase().replace(' ', '-');
-      const componentDescription = range && getComponentDescription(range);
-
-      const componentInput = getComponentInput(values);
-
-      ccParameterHtml += `
-            <div class='component-value' data-midi-cc='${cc}'> 
-              <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
-              ${componentInput}
-            </div> 
-          `;
-      // });
-    });
-
-    nrpnParameters && nrpnParameters.forEach(function (parameter) {
-      // const { values } = parameter;
-
-      // console.log({ parameter, nrpn, values });
-
-
-      // parameter.forEach(function (value) {
-      const { name, range, nrpn } = parameter;
-      const nameSlug = name && name.toLowerCase().replace(' ', '-');
-      const componentDescription = range && getComponentDescription(range);
-      const componentInput = getComponentInput(parameter);
-
-      console.log({ parameter });
-
-      nrpnParameterHtml += `
-          <div class='component-value' data-midi-nrpn='${nrpn}'> 
-            <label for='${nameSlug}'>${name}</label>: ${componentDescription} <br />
-            ${componentInput}
-          </div> 
-        `;
-      // });
-    });
+    const ccParameterHtml = getParameterHtml(ccParameters);
+    const nrpnParameterHtml = getParameterHtml(nrpnParameters);
 
     componentHtml += `
         <div class='component' data-component-type='${parameterName}'>
@@ -198,6 +142,31 @@ function getComponentHtml(ccComponentParameters, nrpnComponentParameters) {
   });
 
   return componentHtml;
+}
+
+function getParameterHtml(parameters) {
+  let parameterHtml = '';
+
+  if (!parameters) {
+    return parameterHtml;
+  }
+
+  parameters.forEach(function (parameter) {
+    const { name, range, cc, nrpn } = parameter;
+    const nameSlug = name && name.toLowerCase().replace(' ', '-');
+    const description = range && getParameterDescription(range);
+    const inputField = getParameterInput(parameter);
+    const controllerValue = cc ? `data-midi-cc='${cc}'` : `data-midi-nrpn='${nrpn}'`;
+
+    parameterHtml += `
+      <div class='component-value' ${controllerValue}> 
+        <label for='${nameSlug}'>${name}</label>: ${description} <br />
+        ${inputField}
+      </div> 
+    `;
+  });
+
+  return parameterHtml;
 }
 
 function getComponentMidiChannelOptions(midiChannel) {
@@ -214,7 +183,7 @@ function getComponentMidiChannelOptions(midiChannel) {
   return midiChannelOptions.join('\n');
 }
 
-function getComponentDescription(range) {
+function getParameterDescription(range) {
   const rangeKeys = Object.keys(range);
   const isSlider = Number.isInteger(parseInt(range[rangeKeys[0]]));
 
@@ -222,20 +191,18 @@ function getComponentDescription(range) {
   return isSlider ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
 }
 
-function getComponentInput(parameter) {
+function getParameterInput(parameter) {
   const { name, defaultValue, range } = parameter;
   const rangeKeys = range && Object.keys(range);
   const nameSlug = name && name.toLowerCase().replace(' ', '-');
   const isSlider = rangeKeys && Number.isInteger(parseInt(range[rangeKeys[0]]));
 
-  console.log({ defaultValue });
-
   return isSlider
-    ? getComponentSliderInput(nameSlug, defaultValue, rangeKeys)
-    : getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys);
+    ? getParameterSliderInput(nameSlug, defaultValue, rangeKeys)
+    : getParameterSelectInput(nameSlug, defaultValue, range, rangeKeys);
 }
 
-function getComponentSliderInput(nameSlug, defaultValue, rangeKeys) {
+function getParameterSliderInput(nameSlug, defaultValue, rangeKeys) {
   const rangeMin = rangeKeys[0];
   const rangeMax = rangeKeys.pop();
 
@@ -243,8 +210,8 @@ function getComponentSliderInput(nameSlug, defaultValue, rangeKeys) {
   return `<input name='${nameSlug}' type='range' min='${rangeMin}' max='${rangeMax}' value='${defaultValue}' />`;
 }
 
-function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
-  const componentValues = rangeKeys.map(function (key) {
+function getParameterSelectInput(nameSlug, defaultValue, range, rangeKeys) {
+  const values = rangeKeys.map(function (key) {
     const selected = defaultValue == key ? 'selected' : '';
 
     // Generate HTML for Select options.
@@ -258,7 +225,7 @@ function getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys) {
   // Generate HTML for Select element.
   return `
     <select name='${nameSlug}'>
-      ${componentValues}
+      ${values}
     </select>
   `;
 }

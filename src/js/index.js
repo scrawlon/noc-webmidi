@@ -80,7 +80,7 @@ function getComponentSettings(components, componentTypeSpecific, midiTypeValues)
     return componentSettings;
   }
 
-  console.log({ parameters });
+  // console.log({ parameters });
 
   Object.keys(parameters).forEach(function (type) {
     console.log({ type, componentTypeValues });
@@ -88,7 +88,7 @@ function getComponentSettings(components, componentTypeSpecific, midiTypeValues)
     componentSettings.set(type, getParameterSettings(parameters[type], componentTypeValues));
   });
 
-  console.log({ componentSettings });
+  // console.log({ componentSettings });
 
   return componentSettings;
 }
@@ -106,7 +106,7 @@ function getComponentTypeValues(component, midiTypeValues) {
 
   // console.log(componentType, 'values', midiTypeValues[componentType]);
 
-  console.log({ 'midiTypeValue': midiTypeValues[componentType] });
+  // console.log({ 'midiTypeValue': midiTypeValues[componentType] });
 
   return midiTypeValues[componentType];
 }
@@ -121,7 +121,7 @@ function getParameterSettings(parameters, componentTypeValues) {
     values.forEach(function (value) {
       value[midiType] = parameter;
 
-      console.log({ componentTypeValue });
+      // console.log({ componentTypeValue });
 
       midiSettings.push(value);
     });
