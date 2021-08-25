@@ -47,7 +47,7 @@ function getMidiComponents(midiControllerType) {
         let values = [];
         let valueObject = {
           name: parameter.name,
-          default: parameter.defaultValue,
+          defaultValue: parameter.defaultValue,
           range: getMidiParameterRange(parameter),
           values: []
         };

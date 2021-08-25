@@ -228,6 +228,8 @@ function getComponentInput(parameter) {
   const nameSlug = name && name.toLowerCase().replace(' ', '-');
   const isSlider = rangeKeys && Number.isInteger(parseInt(range[rangeKeys[0]]));
 
+  console.log({ defaultValue });
+
   return isSlider
     ? getComponentSliderInput(nameSlug, defaultValue, rangeKeys)
     : getComponentSelectInput(nameSlug, defaultValue, range, rangeKeys);
