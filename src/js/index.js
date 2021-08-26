@@ -7,7 +7,6 @@ let midiType;
 
 function getMidiComponents(midiControllerType) {
   let components;
-  let componentTypes;
   let midiTypeValues;
   let defaultPatch = new Map();
 
@@ -27,11 +26,7 @@ function getMidiComponents(midiControllerType) {
       return false;
   }
 
-  componentTypes = Object.keys(components);
-
-  // console.log({ components, componentTypes });
-
-  componentTypes.forEach(function (componentTypeSpecific) {
+  Object.keys(components).forEach(function (componentTypeSpecific) {
     const componentSettings = getComponentSettings(components, componentTypeSpecific, midiTypeValues);
 
     let componentValues = new Map();
@@ -39,8 +34,6 @@ function getMidiComponents(midiControllerType) {
     if (!componentSettings) {
       return false;
     }
-
-    console.log({ componentSettings });
 
     componentSettings.forEach(function (parameters, parameterType) {
       let componentArray = [];
@@ -50,8 +43,7 @@ function getMidiComponents(midiControllerType) {
         let valueObject = {
           name: parameter.name,
           defaultValue: parameter.defaultValue,
-          range: getMidiParameterRange(parameter),
-          values: []
+          range: getMidiParameterRange(parameter)
         };
 
         valueObject[midiType] = parameter[midiType].trim();
@@ -82,15 +74,9 @@ function getComponentSettings(components, componentTypeSpecific, midiTypeValues)
     return componentSettings;
   }
 
-  console.log({ componentTypeValues });
-
   Object.keys(parameters).forEach(function (type) {
-    console.log({ type, componentTypeValues });
-    // console.log({ values, componentTypeValues });
     componentSettings.set(type, getParameterSettings(parameters[type], componentTypeValues));
   });
-
-  // console.log({ componentSettings });
 
   return componentSettings;
 }
@@ -106,10 +92,6 @@ function getComponentTypeValues(component, midiTypeValues) {
     }
   });
 
-  // console.log(componentType, 'values', midiTypeValues[componentType]);
-
-  // console.log({ 'midiTypeValue': midiTypeValues[componentType] });
-
   return midiTypeValues[componentType];
 }
 
@@ -122,9 +104,6 @@ function getParameterSettings(parameters, componentTypeValues) {
 
     values.forEach(function (value) {
       value[midiType] = parameter;
-
-      // console.log({ componentTypeValue });
-
       midiSettings.push(value);
     });
   });
@@ -188,7 +167,4 @@ function getRange(range) {
   return values;
 }
 
-// console.log({ midiComponents });
-// console.log({ nrpnMidiComponents });
-// console.log({ midiChannels });
 export { midiCCs, midiNRPNs, midiChannels, getMidiComponents };

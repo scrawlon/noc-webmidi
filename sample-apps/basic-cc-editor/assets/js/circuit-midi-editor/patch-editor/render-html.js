@@ -10,12 +10,6 @@ const midiComponents = {
   cc: nocWebMidi.getMidiComponents('cc'),
   nrpn: nocWebMidi.getMidiComponents('nrpn')
 };
-// const midiComponents = {
-//   cc: nocWebMidi.getMidiComponents('cc'),
-//   nrpn: nocWebMidi.getMidiComponents('nrpn')
-// };
-// const midiCCComponents = nocWebMidi.getMidiComponents('cc');
-// const midiNRPNComponents = nocWebMidi.getMidiComponents('nrpn');
 const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
@@ -30,13 +24,9 @@ function getEditorHtml() {
   let webMidiControlHtml = getWebMidiControlHtml();
   let editorHtml = webMidiControlHtml;
 
-  // console.log({ midiComponents });
-
   // Loop through all MIDI Components and render HTML for each
   midiComponents.cc.forEach(function (component, componentType) {
     const nrpnComponent = getComponentByType(midiComponents.nrpn, componentType);
-    // const nrpnComponent = null;
-    // const nrpnComponent = midiComponents.nrpn.get(componentType) ? midiComponents.nrpn.get(componentType) : new Map();
     const componentSectionHtml = getComponentSectionHtml(component, componentType, nrpnComponent);
 
     console.log({ component, nrpnComponent });
@@ -70,7 +60,6 @@ function getWebMidiControlHtml() {
 
 function getComponentSectionHtml(component, componentType, nrpnComponent) {
   const { parameters: ccComponentParameters } = component;
-  // const nrpnComponentParameters = null;
   const { parameters: nrpnComponentParameters } = nrpnComponent;
   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
   const componentCCType = getComponentType(componentType);
