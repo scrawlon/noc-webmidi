@@ -14,24 +14,21 @@ const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
   const editorWrapper = document.getElementById('circuit-midi-editor');
-  const editorHtml = getEditorHtml();
 
-  // Add MIDI editor HTML to editorWrapper element.
-  editorWrapper.innerHTML = editorHtml;
+  editorWrapper.innerHTML = getEditorHtml();
 }
 
 function getEditorHtml() {
-  let webMidiControlHtml = getWebMidiControlHtml();
-  let editorHtml = webMidiControlHtml;
+  const ccKeys = Array.from(midiComponents.cc.keys());
+  const nrpnKeys = Array.from(midiComponents.nrpn.keys());
+  const midiKeys = [...new Set([...ccKeys, ...nrpnKeys])];
 
-  // Loop through all MIDI Components and render HTML for each
-  midiComponents.cc.forEach(function (component, componentType) {
-    const nrpnComponent = getComponentByType(midiComponents.nrpn, componentType);
-    const componentSectionHtml = getComponentSectionHtml(component, componentType, nrpnComponent);
+  let editorHtml = getWebMidiControlHtml();
 
-    console.log({ component, nrpnComponent });
+  console.log({ midiKeys });
 
-    editorHtml += componentSectionHtml;
+  midiKeys.forEach(function (componentType) {
+    editorHtml += getComponentSectionHtml(componentType);
   });
 
   return editorHtml;
@@ -58,18 +55,15 @@ function getWebMidiControlHtml() {
   `;
 }
 
-function getComponentSectionHtml(component, componentType, nrpnComponent) {
-  const { parameters: ccComponentParameters } = component;
-  const { parameters: nrpnComponentParameters } = nrpnComponent;
+function getComponentSectionHtml(componentType) {
   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
-  const componentCCType = getComponentType(componentType);
-  const componentHtml = getComponentHtml(ccComponentParameters, nrpnComponentParameters);
+  const componentHtml = getComponentHtml(componentType);
   const componentMidiChannel = midiChannels[componentType];
   const componentMidiChannelOptions = getComponentMidiChannelOptions(componentMidiChannel);
 
   // HTML for each MIDI component section.
   return `
-    <div id='${componentTypeSlug}' class='component-section' data-midi-cc-type='${componentCCType}'> 
+    <div id='${componentTypeSlug}' class='component-section'> 
       <h2>${componentType}</h2>
       <div class='midi-controls'>
         <label for='${componentTypeSlug}-midi-channel'>Midi Channel</label> 
@@ -112,22 +106,48 @@ function getComponentType(componentType) {
   return componentCCType;
 }
 
-function getComponentHtml(ccComponentParameters, nrpnComponentParameters) {
+function getComponentHtml(componentType) {
+  const ccComponent = midiComponents.cc.get(componentType);
+  const nrpnComponent = midiComponents.nrpn.get(componentType);
+
+  let componentParametersHtmlArrays = {};
   let componentHtml = '';
 
-  // Loop through all MIDI CC parameter controls for each MIDI Component and generate HTML
-  ccComponentParameters.forEach(function (ccParameters, parameterName) {
-    const nrpnParameters = nrpnComponentParameters ? nrpnComponentParameters.get(parameterName) : [];
-    const ccParameterHtml = getParameterHtml(ccParameters);
-    const nrpnParameterHtml = getParameterHtml(nrpnParameters);
+  console.log({ ccComponent, nrpnComponent });
 
+  if (ccComponent && ccComponent.parameters) {
+    ccComponent.parameters.forEach(function (parameters, parameterName) {
+      const parameterHtml = getParameterHtml(parameters);
+
+      if (!(parameterName in componentParametersHtmlArrays)) {
+        componentParametersHtmlArrays[parameterName] = [];
+      }
+
+      componentParametersHtmlArrays[parameterName].push(parameterHtml);
+    });
+  }
+
+  if (nrpnComponent && nrpnComponent.parameters) {
+    nrpnComponent.parameters.forEach(function (parameters, parameterName) {
+      const parameterHtml = getParameterHtml(parameters);
+
+      if (!(parameterName in componentParametersHtmlArrays)) {
+        componentParametersHtmlArrays[parameterName] = [];
+      }
+
+      componentParametersHtmlArrays[parameterName].push(parameterHtml);
+    });
+  }
+
+  console.log({ componentParametersHtmlArrays });
+
+  Object.keys(componentParametersHtmlArrays).forEach(function (parameterName) {
     componentHtml += `
-        <div class='component' data-component-type='${parameterName}'>
-          <h3>${parameterName}</h3>
-          ${ccParameterHtml}
-          ${nrpnParameterHtml}
-        </div>
-      `;
+      <div class='component' data-component-type='${parameterName}'>
+        <h3>${parameterName}</h3>
+        ${componentParametersHtmlArrays[parameterName].join('')}
+      </div>
+    `;
   });
 
   return componentHtml;
