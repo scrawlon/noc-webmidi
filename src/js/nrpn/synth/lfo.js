@@ -4,7 +4,7 @@ const rangeValues = require('../../range-values');
 const midiNRPNs = {
 
   // LFO 1
-  '0:70': [
+  ' 0:70': [
     {
       'name': 'lfo 1 waveform',
       'range': [0, rangeValues.lfo.wave.length - 1],
@@ -12,42 +12,42 @@ const midiNRPNs = {
       'defaultValue': 0
     }
   ],
-  '0:71': [
+  ' 0:71': [
     {
       'name': 'lfo 1 phase offset',
       'range': [0, 119],
       'defaultValue': 0
     }
   ],
-  '0:72': [
+  ' 0:72': [
     {
       'name': 'lfo 1 slew rate',
       'range': [0, 127],
       'defaultValue': 0
     }
   ],
-  '0:74': [
+  ' 0:74': [
     {
       'name': 'lfo 1 delay',
       'range': [0, 127],
       'defaultValue': 0
     }
   ],
-  '0:75': [
+  ' 0:75': [
     {
       'name': 'lfo 1 delay sync',
       'range': [0, 35],
       'defaultValue': 0
     }
   ],
-  '0:76': [
+  ' 0:76': [
     {
       'name': 'lfo 1 rate',
       'range': [0, 127],
       'defaultValue': 68
     }
   ],
-  '0:77': [
+  ' 0:77': [
     {
       'name': 'lfo 1 rate sync',
       'range': [0, 35],
@@ -56,7 +56,7 @@ const midiNRPNs = {
   ],
 
   // LFO 2
-  '0:79': [
+  ' 0:79': [
     {
       'name': 'lfo 2 waveform',
       'range': [0, rangeValues.lfo.wave.length - 1],
@@ -64,42 +64,42 @@ const midiNRPNs = {
       'defaultValue': 0
     }
   ],
-  '0:80': [
+  ' 0:80': [
     {
       'name': 'lfo 2 phase offset',
       'range': [0, 119],
       'defaultValue': 0
     }
   ],
-  '0:81': [
+  ' 0:81': [
     {
       'name': 'lfo 2 slew rate',
       'range': [0, 127],
       'defaultValue': 0
     }
   ],
-  '0:82': [
+  ' 0:82': [
     {
       'name': 'lfo 2 delay',
       'range': [0, 127],
       'defaultValue': 0
     }
   ],
-  '0:83': [
+  ' 0:83': [
     {
       'name': 'lfo 2 delay sync',
       'range': [0, 35],
       'defaultValue': 0
     }
   ],
-  '0:83': [
+  ' 0:83': [
     {
       'name': 'lfo 2 rate',
       'range': [0, 127],
       'defaultValue': 68
     }
   ],
-  '0:84': [
+  ' 0:84': [
     {
       'name': 'lfo 2 rate sync',
       'range': [0, 35],
@@ -108,7 +108,7 @@ const midiNRPNs = {
   ],
 
   // LFO 1 and 2
-  '0:122': [
+  ' 0:122': [
 
     // LFO 1
     {
@@ -162,7 +162,7 @@ const midiNRPNs = {
       'defaultValue': 18
     }
   ],
-  '0:123': [
+  ' 0:123': [
 
     // LFO 1
     {

@@ -2,35 +2,35 @@
 const midiNRPNs = {
 
   // Delay
-  '1:6': [
+  ' 1:6': [
     {
       'name': 'time',
       'range': [0, 127],
       'defaultValue': 64
     }
   ],
-  '1:7': [
+  ' 1:7': [
     {
       'name': 'time sync',
       'range': [0, 35],
       'defaultValue': 20
     }
   ],
-  '1:8': [
+  ' 1:8': [
     {
       'name': 'feedback',
       'range': [0, 127],
       'defaultValue': 64
     }
   ],
-  '1:9': [
+  ' 1:9': [
     {
       'name': 'width',
       'range': [0, 127],
       'defaultValue': 127
     }
   ],
-  '1:10': [
+  ' 1:10': [
     {
       'name': 'left-right ratio',
       'range': [0, 12],
@@ -52,7 +52,7 @@ const midiNRPNs = {
       'defaultValue': 4
     }
   ],
-  '1:11': [
+  ' 1:11': [
     {
       'name': 'slew rate',
       'range': [0, 127],

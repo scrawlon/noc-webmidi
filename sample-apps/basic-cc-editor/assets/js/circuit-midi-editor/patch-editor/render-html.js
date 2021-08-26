@@ -73,7 +73,7 @@ function getComponentSectionHtml(component, componentType, nrpnComponent) {
   // const nrpnComponentParameters = null;
   const { parameters: nrpnComponentParameters } = nrpnComponent;
   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
-  const componentCCType = getComponentCCType(componentType);
+  const componentCCType = getComponentType(componentType);
   const componentHtml = getComponentHtml(ccComponentParameters, nrpnComponentParameters);
   const componentMidiChannel = midiChannels[componentType];
   const componentMidiChannelOptions = getComponentMidiChannelOptions(componentMidiChannel);
@@ -110,11 +110,11 @@ function getComponentSectionHtml(component, componentType, nrpnComponent) {
   `;
 }
 
-function getComponentCCType(componentType) {
-  const componentCCTypes = Object.keys(midiCCs);
+function getComponentType(componentType) {
+  const componenTypes = Object.keys(midiCCs);
   let componentCCType = '';
 
-  componentCCTypes.forEach(function (type) {
+  componenTypes.forEach(function (type) {
     if (componentType.toLowerCase().includes(type)) {
       componentCCType = type;
     }

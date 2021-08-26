@@ -40,6 +40,8 @@ function getMidiComponents(midiControllerType) {
       return false;
     }
 
+    console.log({ componentSettings });
+
     componentSettings.forEach(function (parameters, parameterType) {
       let componentArray = [];
 
@@ -52,7 +54,7 @@ function getMidiComponents(midiControllerType) {
           values: []
         };
 
-        valueObject[midiType] = parameter[midiType];
+        valueObject[midiType] = parameter[midiType].trim();
 
         values.push(valueObject);
         componentArray.push(valueObject);
@@ -80,7 +82,7 @@ function getComponentSettings(components, componentTypeSpecific, midiTypeValues)
     return componentSettings;
   }
 
-  // console.log({ parameters });
+  console.log({ componentTypeValues });
 
   Object.keys(parameters).forEach(function (type) {
     console.log({ type, componentTypeValues });

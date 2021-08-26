@@ -2,7 +2,7 @@
 const midiNRPNs = {
 
   // Additional Controls
-  '1:21': [
+  ' 1:21': [
     {
       'name': 'FX Bypass',
       'range': [0, 1],

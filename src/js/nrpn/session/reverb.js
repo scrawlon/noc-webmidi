@@ -2,7 +2,7 @@
 const midiNRPNs = {
 
   // Reverb
-  '1:18': [
+  ' 1:18': [
     {
       'name': 'type',
       'range': [0, 5],
@@ -17,14 +17,14 @@ const midiNRPNs = {
       'defaultValue': 127
     }
   ],
-  '1:19': [
+  ' 1:19': [
     {
       'name': 'decay',
       'range': [0, 127],
       'defaultValue': 64
     }
   ],
-  '1:20': [
+  ' 1:20': [
     {
       'name': 'damping',
       'range': [0, 127],

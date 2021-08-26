@@ -3,7 +3,7 @@ const rangeValues = require('../../../range-values');
 const midiNRPNs = {
 
   // Mod Matrix 2
-  '1:88': [
+  ' 1:88': [
     {
       'name': 'mod matrix 2 source 1',
       'range': [0, rangeValues.modMatrix.source.length - 1],
@@ -11,7 +11,7 @@ const midiNRPNs = {
       'defaultValue': 0
     }
   ],
-  '1:89': [
+  ' 1:89': [
     {
       'name': 'mod matrix 2 source 2',
       'range': [0, rangeValues.modMatrix.source.length - 1],
@@ -19,7 +19,7 @@ const midiNRPNs = {
       'defaultValue': 0
     }
   ],
-  '1:91': [
+  ' 1:91': [
     {
       'name': 'mod matrix 2 depth',
       'range': [0, 127],
@@ -27,7 +27,7 @@ const midiNRPNs = {
       'defaultValue': 64
     }
   ],
-  '1:92': [
+  ' 1:92': [
     {
       'name': 'mod matrix 2 destination',
       'range': [0, rangeValues.modMatrix.destination.length - 1],
