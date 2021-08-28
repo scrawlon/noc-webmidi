@@ -5,7 +5,6 @@
 */
 
 
-const midiCCs = nocWebMidi.midiCCs;
 const midiComponents = {
   cc: nocWebMidi.getMidiComponents('cc'),
   nrpn: nocWebMidi.getMidiComponents('nrpn')
@@ -25,25 +24,11 @@ function getEditorHtml() {
 
   let editorHtml = getWebMidiControlHtml();
 
-  console.log({ midiKeys });
-
   midiKeys.forEach(function (componentType) {
     editorHtml += getComponentSectionHtml(componentType);
   });
 
   return editorHtml;
-}
-
-function getComponentByType(components, componentType) {
-  let match = {};
-
-  components.forEach(function (component, type) {
-    if (type === componentType) {
-      match = component;
-    }
-  });
-
-  return match;
 }
 
 function getWebMidiControlHtml() {
@@ -58,8 +43,7 @@ function getWebMidiControlHtml() {
 function getComponentSectionHtml(componentType) {
   const componentTypeSlug = componentType.toLowerCase().replace(' ', '-');
   const componentHtml = getComponentHtml(componentType);
-  const componentMidiChannel = midiChannels[componentType];
-  const componentMidiChannelOptions = getComponentMidiChannelOptions(componentMidiChannel);
+  const componentMidiChannelOptions = getComponentMidiChannelOptions(componentType);
 
   // HTML for each MIDI component section.
   return `
@@ -93,30 +77,20 @@ function getComponentSectionHtml(componentType) {
   `;
 }
 
-function getComponentType(componentType) {
-  const componenTypes = Object.keys(midiCCs);
-  let componentCCType = '';
-
-  componenTypes.forEach(function (type) {
-    if (componentType.toLowerCase().includes(type)) {
-      componentCCType = type;
-    }
-  });
-
-  return componentCCType;
-}
-
 function getComponentHtml(componentType) {
   const ccComponent = midiComponents.cc.get(componentType);
   const nrpnComponent = midiComponents.nrpn.get(componentType);
+  const components = [ccComponent, nrpnComponent];
 
   let componentParametersHtmlArrays = {};
   let componentHtml = '';
 
-  console.log({ ccComponent, nrpnComponent });
+  components.forEach(function (component) {
+    if (!component || !component.parameters) {
+      return;
+    }
 
-  if (ccComponent && ccComponent.parameters) {
-    ccComponent.parameters.forEach(function (parameters, parameterName) {
+    component.parameters.forEach(function (parameters, parameterName) {
       const parameterHtml = getParameterHtml(parameters);
 
       if (!(parameterName in componentParametersHtmlArrays)) {
@@ -125,21 +99,7 @@ function getComponentHtml(componentType) {
 
       componentParametersHtmlArrays[parameterName].push(parameterHtml);
     });
-  }
-
-  if (nrpnComponent && nrpnComponent.parameters) {
-    nrpnComponent.parameters.forEach(function (parameters, parameterName) {
-      const parameterHtml = getParameterHtml(parameters);
-
-      if (!(parameterName in componentParametersHtmlArrays)) {
-        componentParametersHtmlArrays[parameterName] = [];
-      }
-
-      componentParametersHtmlArrays[parameterName].push(parameterHtml);
-    });
-  }
-
-  console.log({ componentParametersHtmlArrays });
+  });
 
   Object.keys(componentParametersHtmlArrays).forEach(function (parameterName) {
     componentHtml += `
@@ -178,12 +138,14 @@ function getParameterHtml(parameters) {
   return parameterHtml;
 }
 
-function getComponentMidiChannelOptions(midiChannel) {
+function getComponentMidiChannelOptions(componentType) {
+  const midiChannel = midiChannels[componentType];
+
   const midiChannelOptions = [...Array(16).keys()].map(function (channel) {
-    const selected = midiChannel == channel ? 'selected' : '';
+    const selected = midiChannel == channel + 1 ? 'selected' : '';
 
     return `
-      <option value='${channel}' ${selected}>
+      <option value='${channel + 1}' ${selected}>
         ${channel + 1}
       </option>
     `;

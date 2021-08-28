@@ -18,12 +18,12 @@ module.exports = {
     'session': session.midiComponents
   },
   midiChannels: {
-    'synth 1': 0,
-    'synth 2': 1,
-    'drums 1': 9,
-    'drums 2': 9,
-    'drums 3': 9,
-    'drums 4': 9,
-    'session': 15
+    'synth 1': 1,
+    'synth 2': 2,
+    'drums 1': 10,
+    'drums 2': 10,
+    'drums 3': 10,
+    'drums 4': 10,
+    'session': 16
   }
 };
