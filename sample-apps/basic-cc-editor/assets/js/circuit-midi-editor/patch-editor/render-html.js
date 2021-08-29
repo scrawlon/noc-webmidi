@@ -13,8 +13,8 @@ const midiComponents = {
 const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
-  const ccComponentTypes = Array.from(midiComponents.cc.keys());
-  const nrpnComponentTypes = Array.from(midiComponents.nrpn.keys());
+  const ccComponentTypes = midiComponents.cc.keys();
+  const nrpnComponentTypes = midiComponents.nrpn.keys();
   const allComponentTypes = [...new Set([...ccComponentTypes, ...nrpnComponentTypes])];
 
   let editorHtml = '';
@@ -72,13 +72,10 @@ function getComponentHtml(componentType) {
   let componentHtml = '';
 
   components.forEach(function (sections) {
-    if (!sections || !sections.parameters) {
-      return;
-    }
-    console.log({ sections });
+    const { parameters = [] } = sections || {};
 
-    sections.parameters.forEach(function (parameters, parameterName) {
-      const parameterHtml = getParameterHtml(parameters);
+    parameters.forEach(function (parameter, parameterName) {
+      const parameterHtml = getParameterHtml(parameter);
 
       if (!(parameterName in componentSectionsHtmlArrays)) {
         componentSectionsHtmlArrays[parameterName] = [];

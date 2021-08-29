@@ -3,23 +3,23 @@
 import { midiCCs, ccComponents, midiChannels } from './cc/';
 import { midiNRPNs, nrpnComponents } from './nrpn/';
 
-let midiType;
+let midiMessageType;
 
-function getMidiComponents(midiControllerType) {
+function getMidiComponents(requestedMidiMessageType) {
   let components;
-  let midiTypeValues;
+  let midiMessageTypeValues;
   let defaultPatch = new Map();
 
-  midiType = midiControllerType.toLowerCase();
+  midiMessageType = requestedMidiMessageType.toLowerCase();
 
-  switch (midiType) {
+  switch (midiMessageType) {
     case 'cc':
       components = ccComponents;
-      midiTypeValues = midiCCs;
+      midiMessageTypeValues = midiCCs;
       break;
     case 'nrpn':
       components = nrpnComponents;
-      midiTypeValues = midiNRPNs;
+      midiMessageTypeValues = midiNRPNs;
       break;
     default:
       console.log('invalid Midi Component type');
@@ -27,7 +27,7 @@ function getMidiComponents(midiControllerType) {
   }
 
   Object.keys(components).forEach(function (componentTypeSpecific) {
-    const componentSettings = getComponentSettings(components, componentTypeSpecific, midiTypeValues);
+    const componentSettings = getComponentSettings(components, componentTypeSpecific, midiMessageTypeValues);
 
     let componentValues = new Map();
 
@@ -46,7 +46,7 @@ function getMidiComponents(midiControllerType) {
           range: getMidiParameterRange(parameter)
         };
 
-        valueObject[midiType] = parameter[midiType].trim();
+        valueObject[midiMessageType] = parameter[midiMessageType].trim();
 
         values.push(valueObject);
         componentArray.push(valueObject);
@@ -64,46 +64,46 @@ function getMidiComponents(midiControllerType) {
   return defaultPatch;
 }
 
-function getComponentSettings(components, componentTypeSpecific, midiTypeValues) {
-  const parameters = components[componentTypeSpecific];
-  const componentTypeValues = parameters && getComponentTypeValues(componentTypeSpecific, midiTypeValues);
+function getComponentSettings(components, componentTypeSpecific, midiMessageTypeValues) {
+  const sections = components[componentTypeSpecific];
+  const sectionParameterValues = getSectionParameterValues(componentTypeSpecific, midiMessageTypeValues);
 
   let componentSettings = new Map();
 
-  if (!componentTypeValues) {
+  if (!sections || !sectionParameterValues) {
     return componentSettings;
   }
 
-  Object.keys(parameters).forEach(function (type) {
-    componentSettings.set(type, getParameterSettings(parameters[type], componentTypeValues));
+  Object.keys(sections).forEach(function (parameter) {
+    componentSettings.set(parameter, getParameterSettings(sections[parameter], sectionParameterValues));
   });
 
   return componentSettings;
 }
 
-function getComponentTypeValues(component, midiTypeValues) {
-  const midiTypeKeys = Object.keys(midiTypeValues);
+function getSectionParameterValues(componentTypeSpecific, midiMessageTypeValues) {
+  const midiMessageTypeKeys = Object.keys(midiMessageTypeValues);
 
   let componentType;
 
-  midiTypeKeys.forEach(function (type) {
-    if (component.toLowerCase().includes(type)) {
+  midiMessageTypeKeys.forEach(function (type) {
+    if (componentTypeSpecific.toLowerCase().includes(type)) {
       componentType = type;
     }
   });
 
-  return midiTypeValues[componentType];
+  return midiMessageTypeValues[componentType];
 }
 
-function getParameterSettings(parameters, componentTypeValues) {
+function getParameterSettings(parameters, sectionParameterValues) {
   var midiSettings = [];
 
   parameters.forEach(function (parameter) {
-    let componentTypeValue = componentTypeValues[parameter];
+    let componentTypeValue = sectionParameterValues[parameter];
     let values = Array.isArray(componentTypeValue) ? componentTypeValue : [componentTypeValue];
 
     values.forEach(function (value) {
-      value[midiType] = parameter;
+      value[midiMessageType] = parameter;
       midiSettings.push(value);
     });
   });
