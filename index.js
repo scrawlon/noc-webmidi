@@ -1,3 +1,3 @@
-import { midiCCs, midiNRPNs, midiComponents, midiChannels } from "./lib";
+import { getMidiComponents, midiChannels, initWebMidi, sendWebMidiEvent } from "./lib";
 
-export { midiCCs, midiNRPNs, midiComponents, midiChannels };
+export { getMidiComponents, midiChannels, initWebMidi, sendWebMidiEvent };

@@ -1,6 +1,4 @@
 
-const midiConnectionStatusBox = document.querySelector('#web-midi-connection-status');
-
 let midi;
 let midiDevices = {
   inputs: [],
@@ -11,7 +9,13 @@ let midiIn = {
   enabled: false
 };
 
-function initWebMidi() {
+let midiConnectionStatusBox;
+
+function initWebMidi(webMidiConfig) {
+  const { midiConnectionStatusSelector } = webMidiConfig;
+
+  midiConnectionStatusBox = document.querySelector(midiConnectionStatusSelector);
+
   if (!navigator.requestMIDIAccess) {
     // Web Midi not supported, or user denied access
     onMIDIFailure('Your browser does not support web midi. See here for a list of supported browsers: https://caniuse.com/?search=web%20midi');
@@ -59,9 +63,11 @@ function updateMidiStatus(midi) {
     }
   });
 
-  midiConnectionStatusBox.innerHTML = `
-    MIDI IN: ( ${midiInText} ) | MIDI OUT: ( ${midiOutText} ) <br />
-  `;
+  if (midiConnectionStatusBox) {
+    midiConnectionStatusBox.innerHTML = `
+      MIDI IN: ( ${midiInText} ) | MIDI OUT: ( ${midiOutText} ) <br />
+    `;
+  }
 }
 
 function onMIDIFailure(msg) {
@@ -71,7 +77,6 @@ function onMIDIFailure(msg) {
 
 function onMIDIMessage(event) {
   if (midiIn && midiIn.enabled) {
-    // let str = "";
     const eventMidiChannel = event.data && event.data[0] ? (event.data[0] & 0x0F) : false;
     const eventMidiCC = event.data && event.data[1] ? event.data[1] : false;
     const eventMidiCCValue = event.data && event.data[2] ? event.data[2] : false;
@@ -87,25 +92,6 @@ function onMIDIMessage(event) {
   }
 }
 
-// function sendMiddleC(midi, portID) {
-//   let noteOnMessage = [0x90, 60, 63];
-//   let output = midi.outputs.get(portID);
-//   output.send(noteOnMessage);
-//   output.send([0x80, 60, 0x40], window.performance.now() + 1000.0);
-// }
-
-// function getCircuitDevices(midiDevices) {
-//   let circuits = [];
-
-//   midiDevices.forEach(function (device) {
-//     if (device.name.toLowerCase() === 'circuit') {
-//       circuits.push(device);
-//     }
-//   });
-
-//   return circuits;
-// }
-
 function sendWebMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
   let selectedMidiChannelHex = parseInt(selectedMidiChannel).toString(16);
   let output = false;
@@ -117,9 +103,6 @@ function sendWebMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCVal
       output.send(["0xB" + selectedMidiChannelHex, selectedMidiCC, selectedMidiCCValue]);
     }
   }
-
-  // Always check/update MIDI status
-  // initWebMidi();
 }
 
 export { initWebMidi, sendWebMidiEvent };

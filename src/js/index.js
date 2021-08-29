@@ -2,6 +2,8 @@
 
 import { midiCCs, ccComponents, midiChannels } from './cc/';
 import { midiNRPNs, nrpnComponents } from './nrpn/';
+import { initWebMidi, sendWebMidiEvent } from './web-midi/';
+
 
 let midiMessageType;
 
@@ -43,7 +45,7 @@ function getMidiComponents(requestedMidiMessageType) {
         let valueObject = {
           name: parameter.name,
           defaultValue: parameter.defaultValue,
-          range: getMidiParameterRange(parameter)
+          range: getParameterRangeValues(parameter)
         };
 
         valueObject[midiMessageType] = parameter[midiMessageType].trim();
@@ -111,28 +113,28 @@ function getParameterSettings(parameters, sectionParameterValues) {
   return midiSettings;
 }
 
-function getCircuitMidiCC(midiCCNumber, midiCCs) {
-  return midiCCs[midiCCNumber];
-  // var circuitCCValues = false;
+// function getCircuitMidiCC(midiCCNumber, midiCCs) {
+//   return midiCCs[midiCCNumber];
+//   // var circuitCCValues = false;
 
 
-  // switch (midiChannel) {
-  //   case 0:
-  //   case 1:
-  //     circuitCCValues = midiCCs.synth[midiCCNumber];
-  //     break;
-  //   case 9:
-  //     circuitCCValues = midiCCs.drums[midiCCNumber];
-  //     break;
-  //   case 15:
-  //     circuitCCValues = midiCCs.session[midiCCNumber];
-  //     break;
-  // }
+//   // switch (midiChannel) {
+//   //   case 0:
+//   //   case 1:
+//   //     circuitCCValues = midiCCs.synth[midiCCNumber];
+//   //     break;
+//   //   case 9:
+//   //     circuitCCValues = midiCCs.drums[midiCCNumber];
+//   //     break;
+//   //   case 15:
+//   //     circuitCCValues = midiCCs.session[midiCCNumber];
+//   //     break;
+//   // }
 
-  // return circuitCCValues;
-}
+//   // return circuitCCValues;
+// }
 
-function getMidiParameterRange(values) {
+function getParameterRangeValues(values) {
   const range = values && values.hasOwnProperty('range') ? values.range : false;
   const rangeValues = values && values.hasOwnProperty('rangeValues') ? values.rangeValues : false;
 
@@ -167,4 +169,4 @@ function getRange(range) {
   return values;
 }
 
-export { midiCCs, midiNRPNs, midiChannels, getMidiComponents };
+export { getMidiComponents, midiChannels, initWebMidi, sendWebMidiEvent };

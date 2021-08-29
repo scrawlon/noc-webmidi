@@ -4,15 +4,19 @@
   Includes Patch Management controls and MIDI CC controls.
 */
 
-import { initWebMidi, sendWebMidiEvent } from './web-midi.js';
+// import { initWebMidi, sendWebMidiEvent } from './web-midi.js';
 
 let midiChannels = nocWebMidi.midiChannels;
 let midiPatch = {};
 
 function initEditorEvents() {
-  initWebMidi();
-  initSelectEvents();
-  initSliderEvents();
+  const webMidiConfig = {
+    midiConnectionStatusSelector: '#web-midi-connection-status'
+  };
+
+  nocWebMidi.initWebMidi(webMidiConfig);
+  // initSelectEvents();
+  // initSliderEvents();
 }
 
 function initSelectEvents() {
