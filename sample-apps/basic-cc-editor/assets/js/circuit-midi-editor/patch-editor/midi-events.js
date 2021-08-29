@@ -9,14 +9,23 @@
 let midiChannels = nocWebMidi.midiChannels;
 let midiPatch = {};
 
-function initEditorEvents() {
-  const webMidiConfig = {
-    midiConnectionStatusSelector: '#web-midi-connection-status'
-  };
-
-  nocWebMidi.initWebMidi(webMidiConfig);
+function initEditorEvents(selectors) {
+  initWebMidi(selectors);
   // initSelectEvents();
   // initSliderEvents();
+}
+
+function initWebMidi(selectors) {
+  const { midiConnectionStatus } = selectors;
+  const config = {
+    midiConnectionStatusSelector: midiConnectionStatus
+  };
+
+  nocWebMidi.initWebMidi(config);
+}
+
+function initParamterChangeEvents() {
+
 }
 
 function initSelectEvents() {

@@ -14,7 +14,9 @@ let midiConnectionStatusBox;
 function initWebMidi(webMidiConfig) {
   const { midiConnectionStatusSelector } = webMidiConfig;
 
-  midiConnectionStatusBox = document.querySelector(midiConnectionStatusSelector);
+  if (midiConnectionStatusSelector) {
+    midiConnectionStatusBox = document.querySelector(midiConnectionStatusSelector);
+  }
 
   if (!navigator.requestMIDIAccess) {
     // Web Midi not supported, or user denied access

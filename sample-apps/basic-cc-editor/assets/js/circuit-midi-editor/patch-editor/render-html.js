@@ -5,17 +5,22 @@
 */
 
 
-const editorWrapper = document.getElementById('circuit-midi-editor');
 const midiComponents = {
   cc: nocWebMidi.getMidiComponents('cc'),
   nrpn: nocWebMidi.getMidiComponents('nrpn')
 };
 const midiChannels = nocWebMidi.midiChannels;
 
-function renderEditor() {
+function renderEditor(selectors) {
+  const { editorWrapper } = selectors;
+  const editorWrapperBox = document.querySelector(editorWrapper);
   const ccComponentTypes = midiComponents.cc.keys();
   const nrpnComponentTypes = midiComponents.nrpn.keys();
   const allComponentTypes = [...new Set([...ccComponentTypes, ...nrpnComponentTypes])];
+
+  if (!editorWrapperBox) {
+    return false;
+  }
 
   let editorHtml = '';
 
@@ -23,7 +28,7 @@ function renderEditor() {
     editorHtml += getComponentSectionHtml(componentType);
   });
 
-  editorWrapper.innerHTML = editorHtml;
+  editorWrapperBox.innerHTML = editorHtml;
 }
 
 function getComponentSectionHtml(componentType) {
