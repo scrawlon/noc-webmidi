@@ -6,13 +6,6 @@
 
 import { initWebMidi, sendWebMidiEvent } from './web-midi.js';
 
-const getCircuitMidiCC = nocWebMidi.getCircuitMidiCC;
-// const midiCCs = nocWebMidi.midiCCs;
-// const midiNRPNs = nocWebMidi.midiNRPNs;
-// const midiComponents = nocWebMidi.midiComponents;
-
-// console.log({ midiCCs, midiNRPNs });
-
 let midiChannels = nocWebMidi.midiChannels;
 let midiPatch = {};
 

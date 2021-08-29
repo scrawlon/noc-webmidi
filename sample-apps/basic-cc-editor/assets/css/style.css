@@ -8,19 +8,19 @@
     text-align: center;
 }
 
-.component-section {
+.component {
     clear: left;
     width: 100%;
 }
 
-.component {
+.section {
     min-height: 500px;
     float: left;
     width: 24%;
     margin: 1% 0 1% 1%;
 }
 
-.component-value {
+.parameter {
     margin: 5px 0;
     padding: .25em 0;
 }
@@ -71,7 +71,7 @@ button.active-midi-in {
         width: 96%;
     }
 
-    .component {
+    .section {
         width: 32%;
     }
 }
@@ -82,7 +82,7 @@ button.active-midi-in {
         width: 100%;
     }
 
-    .component {
+    .section {
         width: 49%;
     }
 }

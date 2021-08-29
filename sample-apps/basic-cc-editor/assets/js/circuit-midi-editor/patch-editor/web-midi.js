@@ -1,96 +1,72 @@
 
-let inputID = false;
-let outputID = false;
-let midi = false;
-let midiDevices = {};
+const midiConnectionStatusBox = document.querySelector('#web-midi-connection-status');
+
+let midi;
+let midiDevices = {
+  inputs: [],
+  outputs: []
+};
 let midiIn = {
   channel: 0,
   enabled: false
 };
-let midiStatus = {
-  input: false,
-  output: false
-};
 
 function initWebMidi() {
-  if (navigator.requestMIDIAccess) {
-    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-    initWebMidiEvents();
-  } else {
+  if (!navigator.requestMIDIAccess) {
     // Web Midi not supported, or user denied access
     onMIDIFailure('Your browser does not support web midi. See here for a list of supported browsers: https://caniuse.com/?search=web%20midi');
+
+    return false;
   }
+
+  navigator.requestMIDIAccess()
+    .then(function (access) {
+      midi = access;
+      updateMidiStatus(midi);
+
+      midi.onstatechange = function (e) {
+        updateMidiStatus(midi);
+
+        // Print information about the (dis)connected MIDI controller
+        console.log(e.port.name, e.port.manufacturer, e.port.state);
+      };
+    });
 }
 
-function initWebMidiEvents() {
-  const webMidiConnectButton = document.querySelector('#web-midi-connect-device');
+function updateMidiStatus(midi) {
+  const { inputs, outputs } = midi;
 
-  webMidiConnectButton.addEventListener('click', function () {
-    if (!midiStatus.input || !midiStatus.output) {
-      initWebMidi();
+  let midiInText = '<span class="error">x</span>';
+  let midiOutText = '<span class="error">x</span>';
+
+  // Get lists of available MIDI controllers
+  midiDevices.inputs = inputs;
+  midiDevices.outputs = outputs;
+
+  if (midiDevices.inputs.size) {
+    midiInText = '&#10003;'
+  }
+
+  if (midiDevices.outputs.size) {
+    midiOutText = '&#10003;'
+  }
+
+  midiDevices.inputs.forEach((input) => {
+    console.log(input.name); /* inherited property from MIDIPort */
+
+    input.onmidimessage = function (message) {
+      console.log(message.data);
     }
   });
-}
 
-function onMIDISuccess(MIDIAccess) {
-  midi = MIDIAccess;
-  midiDevices.inputs = getMidiDevices(midi, 'inputs');
-  midiDevices.outputs = getMidiDevices(midi, 'outputs');
-
-  if (!midiDevices.inputs.size) {
-    midiStatus.input = false;
-    updateMidiStatus();
-  } else {
-    midiDevices.inputs.forEach(function (device) {
-      if (device.name.toLowerCase() === 'circuit') {
-        midiStatus.input = true;
-        updateMidiStatus();
-        device.onmidimessage = onMIDIMessage;
-        inputID = device.id;
-      }
-    });
-  }
-
-  if (!midiDevices.outputs.size) {
-    midiStatus.output = false;
-    updateMidiStatus();
-  } else {
-    midiDevices.outputs.forEach(function (device) {
-      if (device.name.toLowerCase() === 'circuit') {
-        midiStatus.output = true;
-        updateMidiStatus();
-        outputID = device.id;
-      }
-    });
-  }
-}
-
-function getMidiDevices(midi, connectionType) {
-  if (midi && midi[connectionType] && midi.size !== 0) {
-    return midi[connectionType];
-  }
-}
-
-// function printErrorMessage(message) {
-//   let messageHolder = document.getElementById('web-midi-connection-status');
-//   messageHolder.innerHTML += `<p>${message}</p>`;
-// }
-
-function updateMidiStatus() {
-  const messageHolder = document.getElementById('web-midi-connection-status');
-  const midiInText = midiStatus.input ? '&#10003;' : '<span class="error">x</span>';
-  const midiOutText = midiStatus.output ? '&#10003;' : '<span class="error">x</span>';
-  const midiConnectButton = document.querySelector('#web-midi-connect-device');
-
-  messageHolder.innerHTML = `
-    MIDI IN: ( ${midiInText} ) MIDI OUT: ( ${midiOutText} ) <br />
+  midiConnectionStatusBox.innerHTML = `
+    MIDI IN: ( ${midiInText} ) | MIDI OUT: ( ${midiOutText} ) <br />
   `;
+}
 
-  if (!midiStatus.input || !midiStatus.output) {
-    midiConnectButton.style.visibility = 'visible';
-  } else {
-    midiConnectButton.style.visibility = 'hidden';
-  }
+function onMIDIFailure(msg) {
+  alert(`midi failure: ${msg}`);
+  console.log(`midi failure: ${msg}`);
 }
 
 function onMIDIMessage(event) {
@@ -111,29 +87,24 @@ function onMIDIMessage(event) {
   }
 }
 
-function sendMiddleC(midi, portID) {
-  let noteOnMessage = [0x90, 60, 63];
-  let output = midi.outputs.get(portID);
-  output.send(noteOnMessage);
-  output.send([0x80, 60, 0x40], window.performance.now() + 1000.0);
-}
+// function sendMiddleC(midi, portID) {
+//   let noteOnMessage = [0x90, 60, 63];
+//   let output = midi.outputs.get(portID);
+//   output.send(noteOnMessage);
+//   output.send([0x80, 60, 0x40], window.performance.now() + 1000.0);
+// }
 
-function onMIDIFailure(msg) {
-  alert(`midi failure: ${msg}`);
-  console.log(`midi failure: ${msg}`);
-}
+// function getCircuitDevices(midiDevices) {
+//   let circuits = [];
 
-function getCircuitDevices(midiDevices) {
-  let circuits = [];
+//   midiDevices.forEach(function (device) {
+//     if (device.name.toLowerCase() === 'circuit') {
+//       circuits.push(device);
+//     }
+//   });
 
-  midiDevices.forEach(function (device) {
-    if (device.name.toLowerCase() === 'circuit') {
-      circuits.push(device);
-    }
-  });
-
-  return circuits;
-}
+//   return circuits;
+// }
 
 function sendWebMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
   let selectedMidiChannelHex = parseInt(selectedMidiChannel).toString(16);
@@ -148,7 +119,7 @@ function sendWebMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCVal
   }
 
   // Always check/update MIDI status
-  initWebMidi();
+  // initWebMidi();
 }
 
 export { initWebMidi, sendWebMidiEvent };

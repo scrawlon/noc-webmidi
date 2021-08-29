@@ -5,6 +5,7 @@
 */
 
 
+const editorWrapper = document.getElementById('circuit-midi-editor');
 const midiComponents = {
   cc: nocWebMidi.getMidiComponents('cc'),
   nrpn: nocWebMidi.getMidiComponents('nrpn')
@@ -12,32 +13,17 @@ const midiComponents = {
 const midiChannels = nocWebMidi.midiChannels;
 
 function renderEditor() {
-  const editorWrapper = document.getElementById('circuit-midi-editor');
+  const ccComponentTypes = Array.from(midiComponents.cc.keys());
+  const nrpnComponentTypes = Array.from(midiComponents.nrpn.keys());
+  const allComponentTypes = [...new Set([...ccComponentTypes, ...nrpnComponentTypes])];
 
-  editorWrapper.innerHTML = getEditorHtml();
-}
+  let editorHtml = '';
 
-function getEditorHtml() {
-  const ccKeys = Array.from(midiComponents.cc.keys());
-  const nrpnKeys = Array.from(midiComponents.nrpn.keys());
-  const midiKeys = [...new Set([...ccKeys, ...nrpnKeys])];
-
-  let editorHtml = getWebMidiControlHtml();
-
-  midiKeys.forEach(function (componentType) {
+  allComponentTypes.forEach(function (componentType) {
     editorHtml += getComponentSectionHtml(componentType);
   });
 
-  return editorHtml;
-}
-
-function getWebMidiControlHtml() {
-  return `
-    <div class='web-midi-control'>
-      <div id="web-midi-connection-status"></div>
-      <button type='button' id='web-midi-connect-device'>click here to connect MIDI device</button>
-    </div>
-  `;
+  editorWrapper.innerHTML = editorHtml;
 }
 
 function getComponentSectionHtml(componentType) {
@@ -45,9 +31,9 @@ function getComponentSectionHtml(componentType) {
   const componentHtml = getComponentHtml(componentType);
   const componentMidiChannelOptions = getComponentMidiChannelOptions(componentType);
 
-  // HTML for each MIDI component section.
+  // HTML for each MIDI component component.
   return `
-    <div id='${componentTypeSlug}' class='component-section'> 
+    <div id='${componentTypeSlug}' class='component' data-component='${componentType}'> 
       <h2>${componentType}</h2>
       <div class='midi-controls'>
         <label for='${componentTypeSlug}-midi-channel'>Midi Channel</label> 
@@ -57,7 +43,7 @@ function getComponentSectionHtml(componentType) {
         <button type='button' class='activate-midi-in' data-midi-enabled=''>
           MIDI IN
         </button> 
-        <button type='button' class='randomizer' data-component-section='${componentTypeSlug}'>
+        <button type='button' class='randomizer' data-component='${componentType}'>
           randomize
         </button>
       </div>
@@ -66,11 +52,11 @@ function getComponentSectionHtml(componentType) {
         <select id='${componentTypeSlug}-patch-select'>
           <option value='default'>Default Patch</option>
         </select>
-        <button type='button' class='patch-load' data-component-section='${componentType}'>load</button>
-        <button type='button' class='patch-save' data-component-section='${componentType}'>save</button>
-        <button type='button' class='patch-delete' data-component-section='${componentType}'>delete</button>
-        <button type='button' class='patch-export' data-component-section='${componentType}'>export</button>
-        <button type='button' class='patch-import' data-component-section='${componentType}'>import</button>
+        <button type='button' class='patch-load' data-component='${componentType}'>load</button>
+        <button type='button' class='patch-save' data-component='${componentType}'>save</button>
+        <button type='button' class='patch-delete' data-component='${componentType}'>delete</button>
+        <button type='button' class='patch-export' data-component='${componentType}'>export</button>
+        <button type='button' class='patch-import' data-component='${componentType}'>import</button>
       </div>
       ${componentHtml}
     </div>
@@ -78,34 +64,35 @@ function getComponentSectionHtml(componentType) {
 }
 
 function getComponentHtml(componentType) {
-  const ccComponent = midiComponents.cc.get(componentType);
-  const nrpnComponent = midiComponents.nrpn.get(componentType);
-  const components = [ccComponent, nrpnComponent];
+  const ccComponents = midiComponents.cc.get(componentType);
+  const nrpnComponents = midiComponents.nrpn.get(componentType);
+  const components = [ccComponents, nrpnComponents];
 
-  let componentParametersHtmlArrays = {};
+  let componentSectionsHtmlArrays = {};
   let componentHtml = '';
 
-  components.forEach(function (component) {
-    if (!component || !component.parameters) {
+  components.forEach(function (sections) {
+    if (!sections || !sections.parameters) {
       return;
     }
+    console.log({ sections });
 
-    component.parameters.forEach(function (parameters, parameterName) {
+    sections.parameters.forEach(function (parameters, parameterName) {
       const parameterHtml = getParameterHtml(parameters);
 
-      if (!(parameterName in componentParametersHtmlArrays)) {
-        componentParametersHtmlArrays[parameterName] = [];
+      if (!(parameterName in componentSectionsHtmlArrays)) {
+        componentSectionsHtmlArrays[parameterName] = [];
       }
 
-      componentParametersHtmlArrays[parameterName].push(parameterHtml);
+      componentSectionsHtmlArrays[parameterName].push(parameterHtml);
     });
   });
 
-  Object.keys(componentParametersHtmlArrays).forEach(function (parameterName) {
+  Object.keys(componentSectionsHtmlArrays).forEach(function (parameterName) {
     componentHtml += `
-      <div class='component' data-component-type='${parameterName}'>
+      <div class='section' data-section='${parameterName}'>
         <h3>${parameterName}</h3>
-        ${componentParametersHtmlArrays[parameterName].join('')}
+        ${componentSectionsHtmlArrays[parameterName].join('')}
       </div>
     `;
   });
@@ -128,7 +115,7 @@ function getParameterHtml(parameters) {
     const controllerValue = cc ? `data-midi-cc='${cc}'` : `data-midi-nrpn='${nrpn}'`;
 
     parameterHtml += `
-      <div class='component-value' ${controllerValue}> 
+      <div class='parameter' data-parameter='${parameter.name}' ${controllerValue}> 
         <label for='${nameSlug}'>${name}</label>: ${description} <br />
         ${inputField}
       </div> 
