@@ -42,7 +42,7 @@ function getComponentSectionHtml(componentType) {
       <h2>${componentType}</h2>
       <div class='midi-controls'>
         <label for='${componentTypeSlug}-midi-channel'>Midi Channel</label> 
-        <select id='${componentTypeSlug}-midi-channel' name='${componentTypeSlug}-midi-channel' class='component-midi-channel'>
+        <select id='${componentTypeSlug}-midi-channel' name='${componentTypeSlug}-midi-channel' class='midi-channel'>
           ${componentMidiChannelOptions}
         </select>      
         <button type='button' class='activate-midi-in' data-midi-enabled=''>
@@ -114,10 +114,19 @@ function getParameterHtml(parameters) {
     const nameSlug = name && name.toLowerCase().replace(' ', '-');
     const description = range && getParameterDescription(range);
     const inputField = getParameterInput(parameter);
-    const controllerValue = cc ? `data-midi-cc='${cc}'` : `data-midi-nrpn='${nrpn}'`;
+
+    let parameterDataset = `data-parameter-name='${parameter.name}'`;
+
+    if (cc) {
+      parameterDataset += `data-parameter-type='cc' data-parameter-number='${cc}'`;
+    }
+
+    if (nrpn) {
+      parameterDataset += `data-parameter-type='nrpn' data-parameter-number='${nrpn}'`;
+    }
 
     parameterHtml += `
-      <div class='parameter' data-parameter='${parameter.name}' ${controllerValue}> 
+      <div class='parameter' ${parameterDataset}> 
         <label for='${nameSlug}'>${name}</label>: ${description} <br />
         ${inputField}
       </div> 

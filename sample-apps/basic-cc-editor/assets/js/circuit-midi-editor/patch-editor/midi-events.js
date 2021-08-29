@@ -1,16 +1,15 @@
 
 /*
   Functions to attach dynamic JS events to editor controls.
-  Includes Patch Management controls and MIDI CC controls.
+  Includes Patch Management controls and MIDI CC/NRPN controls.
 */
-
-// import { initWebMidi, sendWebMidiEvent } from './web-midi.js';
 
 let midiChannels = nocWebMidi.midiChannels;
 let midiPatch = {};
 
 function initEditorEvents(selectors) {
   initWebMidi(selectors);
+  initParamterChangeEvents(selectors)
   // initSelectEvents();
   // initSliderEvents();
 }
@@ -24,8 +23,41 @@ function initWebMidi(selectors) {
   nocWebMidi.initWebMidi(config);
 }
 
-function initParamterChangeEvents() {
+function initParamterChangeEvents(selectors) {
+  const { editorWrapper } = selectors;
+  const editorWrapperBox = editorWrapper && document.querySelector(editorWrapper);
+  const components = editorWrapperBox && editorWrapperBox.querySelectorAll('.component');
 
+  if (!components) {
+    return false;
+  }
+
+  components.forEach(function (component) {
+    const sections = component.querySelectorAll('.section');
+
+    sections.forEach(function (section) {
+      section.addEventListener('input', function (event) {
+        const { target } = event;
+        const parameterValue = target.value;
+        const parameter = target.closest('.parameter');
+        const { parameterType, parameterNumber } = parameter.dataset;
+        const midiChannel = component.querySelector('.midi-channel') && component.querySelector('.midi-channel').value;
+
+        console.log({ parameterType, parameterNumber });
+
+        if (parameterType === 'cc') {
+          console.log(`send cc: ${parameterNumber}, value: ${parameterValue}, midi-channel: ${midiChannel}.`);
+        }
+
+        if (parameterType === 'nrpn') {
+          console.log(`send nrpn: ${parameterNumber}, value: ${parameterValue}, midi-channel: ${midiChannel}.`);
+        }
+      });
+    });
+  });
+
+
+  console.log('initParamterChangeEvents');
 }
 
 function initSelectEvents() {

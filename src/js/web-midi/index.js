@@ -11,13 +11,7 @@ let midiIn = {
 
 let midiConnectionStatusBox;
 
-function initWebMidi(webMidiConfig) {
-  const { midiConnectionStatusSelector } = webMidiConfig;
-
-  if (midiConnectionStatusSelector) {
-    midiConnectionStatusBox = document.querySelector(midiConnectionStatusSelector);
-  }
-
+function initWebMidi(config) {
   if (!navigator.requestMIDIAccess) {
     // Web Midi not supported, or user denied access
     onMIDIFailure('Your browser does not support web midi. See here for a list of supported browsers: https://caniuse.com/?search=web%20midi');
@@ -28,10 +22,10 @@ function initWebMidi(webMidiConfig) {
   navigator.requestMIDIAccess()
     .then(function (access) {
       midi = access;
-      updateMidiStatus(midi);
+      updateMidiStatus(midi, config);
 
       midi.onstatechange = function (e) {
-        updateMidiStatus(midi);
+        updateMidiStatus(midi, config);
 
         // Print information about the (dis)connected MIDI controller
         console.log(e.port.name, e.port.manufacturer, e.port.state);
@@ -39,27 +33,19 @@ function initWebMidi(webMidiConfig) {
     });
 }
 
-function updateMidiStatus(midi) {
+function updateMidiStatus(midi, config) {
   const { inputs, outputs } = midi;
+  const { midiConnectionStatusSelector } = config;
+  const midiConnectionStatusBox = midiConnectionStatusSelector && document.querySelector(midiConnectionStatusSelector);
 
-  let midiInText = '<span class="error">x</span>';
-  let midiOutText = '<span class="error">x</span>';
+  let midiInText = inputs && inputs.size ? '&#10003;' : '<span class="error">x</span>';
+  let midiOutText = outputs && outputs.size ? '&#10003;' : '<span class="error">x</span>';
 
   // Get lists of available MIDI controllers
   midiDevices.inputs = inputs;
   midiDevices.outputs = outputs;
 
-  if (midiDevices.inputs.size) {
-    midiInText = '&#10003;'
-  }
-
-  if (midiDevices.outputs.size) {
-    midiOutText = '&#10003;'
-  }
-
   midiDevices.inputs.forEach((input) => {
-    console.log(input.name); /* inherited property from MIDIPort */
-
     input.onmidimessage = function (message) {
       console.log(message.data);
     }
