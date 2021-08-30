@@ -4,23 +4,24 @@
   Includes Patch Management controls and MIDI CC/NRPN controls.
 */
 
-let midiChannels = nocWebMidi.midiChannels;
+const { midiChannels, initWebMidi, sendWebMidiEvent } = nocWebMidi;
+
 let midiPatch = {};
 
 function initEditorEvents(selectors) {
-  initWebMidi(selectors);
+  initMidi(selectors);
   initParamterChangeEvents(selectors)
   // initSelectEvents();
   // initSliderEvents();
 }
 
-function initWebMidi(selectors) {
+function initMidi(selectors) {
   const { midiConnectionStatus } = selectors;
   const config = {
     midiConnectionStatusSelector: midiConnectionStatus
   };
 
-  nocWebMidi.initWebMidi(config);
+  initWebMidi(config);
 }
 
 function initParamterChangeEvents(selectors) {
@@ -38,20 +39,16 @@ function initParamterChangeEvents(selectors) {
     sections.forEach(function (section) {
       section.addEventListener('input', function (event) {
         const { target } = event;
-        const parameterValue = target.value;
         const parameter = target.closest('.parameter');
-        const { parameterType, parameterNumber } = parameter.dataset;
+        const parameterValue = target.value;
+        const { parameterType, parameterNumber } = parameter && parameter.dataset;
         const midiChannel = component.querySelector('.midi-channel') && component.querySelector('.midi-channel').value;
 
-        console.log({ parameterType, parameterNumber });
-
-        if (parameterType === 'cc') {
-          console.log(`send cc: ${parameterNumber}, value: ${parameterValue}, midi-channel: ${midiChannel}.`);
+        if (!parameter || !parameterValue || !parameterType || !parameterNumber || !midiChannel) {
+          return false;
         }
 
-        if (parameterType === 'nrpn') {
-          console.log(`send nrpn: ${parameterNumber}, value: ${parameterValue}, midi-channel: ${midiChannel}.`);
-        }
+        sendWebMidiEvent(parameterType, parameterNumber, parameterValue, midiChannel);
       });
     });
   });
@@ -100,18 +97,18 @@ function handlePatchChanges(changedOption, control) {
   sendWebMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
 }
 
-function getComponentMidiCC(control) {
-  const componentValue = control.closest('.component-value');
+// function getComponentMidiCC(control) {
+//   const componentValue = control.closest('.component-value');
 
-  return componentValue.dataset.midiCc;
-}
+//   return componentValue.dataset.midiCc;
+// }
 
-function getComponentMidiChannel(control) {
-  const componentSection = control.closest('.component-section');
-  const componentMidiChannel = componentSection.querySelector('[id$="-midi-channel"');
+// function getComponentMidiChannel(control) {
+//   const componentSection = control.closest('.component-section');
+//   const componentMidiChannel = componentSection.querySelector('[id$="-midi-channel"');
 
-  return componentMidiChannel.value;
-}
+//   return componentMidiChannel.value;
+// }
 
 function markControlChange(midiChannel, midiCC, control) {
   if (!isChanged(midiChannel, midiCC)) {

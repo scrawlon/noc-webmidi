@@ -2,54 +2,108 @@
 const rangeValues = require('../../range-values');
 
 const midiNRPNs = {
-  ' 0:79': [
+  ' 0:104': [
     {
-      'name': 'lfo 2 waveform',
-      'range': [0, rangeValues.lfo.wave.length - 1],
-      'rangeValues': rangeValues.lfo.wave,
-      'defaultValue': 0
-    }
-  ],
-  ' 0:80': [
-    {
-      'name': 'lfo 2 phase offset',
-      'range': [0, 119],
-      'defaultValue': 0
-    }
-  ],
-  ' 0:81': [
-    {
-      'name': 'lfo 2 slew rate',
+      'name': 'EQ	bass frequency',
       'range': [0, 127],
-      'defaultValue': 0
+      'defaultValue': 64
     }
   ],
-  ' 0:82': [
+  ' 0:105': [
     {
-      'name': 'lfo 2 delay',
+      'name': 'EQ	bass level',
       'range': [0, 127],
+      'rangeValues': [-64, 63],
+      'defaultValue': 64
+    }
+  ],
+  ' 0:106': [
+    {
+      'name': 'EQ	mid frequency',
+      'range': [0, 127],
+      'defaultValue': 64
+    }
+  ],
+  ' 0:107': [
+    {
+      'name': 'EQ	mid level',
+      'range': [0, 127],
+      'rangeValues': [-64, 63],
+      'defaultValue': 64
+    }
+  ],
+  ' 0:108': [
+    {
+      'name': 'EQ	treble frequency',
+      'range': [0, 127],
+      'defaultValue': 64
+    }
+  ],
+  ' 0:109': [
+    {
+      'name': 'EQ	treble level',
+      'range': [0, 127],
+      'rangeValues': [-64, 63],
+      'defaultValue': 64
+    }
+  ],
+  ' 1:0': [
+    {
+      'name': 'distortion type',
+      'range': [0, rangeValues.distortion.driveType.length - 1],
+      'rangeValues': rangeValues.distortion.driveType,
       'defaultValue': 0
     }
   ],
-  ' 0:83': [
+  ' 1:1': [
     {
-      'name': 'lfo 2 delay sync',
+      'name': 'distortion compenstation',
+      'range': [0, 127],
+      'defaultValue': 100
+    }
+  ],
+  ' 1:24': [
+    {
+      'name': 'chorus type',
+      'range': [0, 1],
+      'rangeValues': ['Phaser', 'Chorus'],
+      'defaultValue': 1
+    }
+  ],
+  ' 1:25': [
+    {
+      'name': 'chorus rate',
+      'range': [0, 127],
+      'defaultValue': 84
+    }
+  ],
+  ' 1:26': [
+    {
+      'name': 'chorus rate sync',
       'range': [0, 35],
       'defaultValue': 0
     }
   ],
-  ' 0:83': [
+  ' 1:27': [
     {
-      'name': 'lfo 2 rate',
+      'name': 'chorus feedback',
       'range': [0, 127],
-      'defaultValue': 68
+      'rangeValues': [-64, 63],
+      'defaultValue': 74
     }
   ],
-  ' 0:84': [
+  ' 1:28': [
     {
-      'name': 'lfo 2 rate sync',
-      'range': [0, 35],
-      'defaultValue': 0
+      'name': 'chorus mod depth',
+      'range': [0, 127],
+      'defaultValue': 64
+    }
+  ],
+  ' 1:29': [
+    {
+      'name': 'chorus delay',
+      'range': [0, 127],
+      'defaultValue': 64
     }
   ],
 };
