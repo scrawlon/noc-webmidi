@@ -1,10 +1,4 @@
 
-/*
-  Functions to render the HTML for the editor.
-  Includes Patch Management controls and MIDI CC controls.
-*/
-
-
 const midiComponents = {
   cc: nocWebMidi.getMidiComponents('cc'),
   nrpn: nocWebMidi.getMidiComponents('nrpn')
@@ -18,7 +12,7 @@ function renderEditor(selectors) {
   const nrpnComponentTypes = midiComponents.nrpn.keys();
   const allComponentTypes = [...new Set([...ccComponentTypes, ...nrpnComponentTypes])];
 
-  if (!editorWrapperBox) {
+  if (!editorWrapperBox || !allComponentTypes.length) {
     return false;
   }
 
@@ -165,6 +159,8 @@ function getParameterInput(parameter) {
   const rangeKeys = range && Object.keys(range);
   const nameSlug = name && name.toLowerCase().replace(' ', '-');
   const isSlider = rangeKeys && Number.isInteger(parseInt(range[rangeKeys[0]]));
+
+  // console.log({ range, rangeKeys });
 
   return isSlider
     ? getParameterSliderInput(nameSlug, defaultValue, rangeKeys)

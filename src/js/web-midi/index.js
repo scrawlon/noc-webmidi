@@ -79,9 +79,6 @@ function onMIDIMessage(event) {
 function sendWebMidiEvent(parameterType = null, parameterNumber = null, parameterValue = null, midiChannel = null) {
   const [msb, lsb] = parameterNumber && parameterNumber.split(':') || [];
 
-  console.log({ msb, lsb });
-  // let midiChannel = 0xB0 + (midiChannel - 1);
-
   if (!parameterType || !parameterNumber || !parameterValue || !midiChannel) {
     return false;
   }

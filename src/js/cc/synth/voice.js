@@ -22,8 +22,8 @@ const midiCCs = {
   },
   ' 13': {
     'name': 'Keyboard Octave',
-    'range': [60, 68],
-    'rangeValues': [-4, 4],
+    'range': [58, 69],
+    'rangeValues': [-6, 5],
     'defaultValue': 64
   }
 };

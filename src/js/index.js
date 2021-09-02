@@ -2,7 +2,7 @@
 
 import { midiCCs, ccComponents, midiChannels } from './cc/';
 import { midiNRPNs, nrpnComponents } from './nrpn/';
-import { initWebMidi, sendWebMidiEvent } from './web-midi/';
+import { initWebMidi, sendWebMidiEvent } from './web-midi';
 
 
 let midiMessageType;
@@ -135,8 +135,7 @@ function getParameterSettings(parameters, sectionParameterValues) {
 // }
 
 function getParameterRangeValues(values) {
-  const range = values && values.hasOwnProperty('range') ? values.range : false;
-  const rangeValues = values && values.hasOwnProperty('rangeValues') ? values.rangeValues : false;
+  const { range, rangeValues } = values;
 
   return rangeValues ? getRangeValues(range, rangeValues) : getRange(range);
 }
