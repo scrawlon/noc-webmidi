@@ -32,7 +32,7 @@ function getComponentSectionHtml(componentType) {
 
   // HTML for each MIDI component component.
   return `
-    <div id='${componentTypeSlug}' class='component' data-component='${componentType}'> 
+    <div id='${componentTypeSlug}' class='component' data-component-name='${componentType}'> 
       <h2>${componentType}</h2>
       <div class='midi-controls'>
         <label for='${componentTypeSlug}-midi-channel'>Midi Channel</label> 
@@ -42,7 +42,7 @@ function getComponentSectionHtml(componentType) {
         <button type='button' class='activate-midi-in' data-midi-enabled=''>
           MIDI IN
         </button> 
-        <button type='button' class='randomizer' data-component='${componentType}'>
+        <button type='button' class='randomizer' data-component-name='${componentType}'>
           randomize
         </button>
       </div>
@@ -51,11 +51,11 @@ function getComponentSectionHtml(componentType) {
         <select id='${componentTypeSlug}-patch-select'>
           <option value='default'>Default Patch</option>
         </select>
-        <button type='button' class='patch-load' data-component='${componentType}'>load</button>
-        <button type='button' class='patch-save' data-component='${componentType}'>save</button>
-        <button type='button' class='patch-delete' data-component='${componentType}'>delete</button>
-        <button type='button' class='patch-export' data-component='${componentType}'>export</button>
-        <button type='button' class='patch-import' data-component='${componentType}'>import</button>
+        <button type='button' class='patch-load' data-component-name='${componentType}'>load</button>
+        <button type='button' class='patch-save' data-component-name='${componentType}'>save</button>
+        <button type='button' class='patch-delete' data-component-name='${componentType}'>delete</button>
+        <button type='button' class='patch-export' data-component-name='${componentType}'>export</button>
+        <button type='button' class='patch-import' data-component-name='${componentType}'>import</button>
       </div>
       ${componentHtml}
     </div>
@@ -86,7 +86,7 @@ function getComponentHtml(componentType) {
 
   Object.keys(componentSectionsHtmlArrays).forEach(function (parameterName) {
     componentHtml += `
-      <div class='section' data-section='${parameterName}'>
+      <div class='section' data-section-name='${parameterName}'>
         <h3>${parameterName}</h3>
         ${componentSectionsHtmlArrays[parameterName].join('')}
       </div>

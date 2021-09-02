@@ -3,37 +3,28 @@
 let midiPatch = {};
 
 function handlePatchChanges(component, parameterName, parameterValue) {
-  markControlChange(component, parameterName);
-  updateMidiPatch(component, parameterName, parameterValue)
-}
-
-function markControlChange(component, parameterName) {
+  const componentName = component.dataset.componentName;
   const control = component.querySelector(`[data-parameter-name='${parameterName}']`);
+  const changed = isChanged(componentName, parameterName, parameterValue);
 
-  if (control) {
-    control.classList.add('changed');
+  if (componentName && control && changed) {
+    updateMidiPatch(control, componentName, parameterName, parameterValue)
   }
 }
 
-function isChanged(midiChannel, midiCC) {
-  // console.log({ midiPatch, midiChannel, midiCC });
-  if (!midiPatch[midiChannels[midiChannel]]
-    || (midiPatch[midiChannels[midiChannel]]
-      && !midiPatch[midiChannels[midiChannel]][midiCC])) {
-
-    return false;
+function isChanged(componentName, parameterName, parameterValue) {
+  if (!midiPatch[componentName]
+    || !midiPatch[componentName][parameterName]
+    || midiPatch[componentName][parameterName] !== parameterValue) {
+    return true;
   }
 
-  return true;
+  return false;
 }
 
-function updateMidiPatch(component, parameterName, parameterValue) {
-  const componentName = component.dataset.component;
-  const control = component.querySelector(`[data-parameter-name='${parameterName}']`);
+function updateMidiPatch(control, componentName, parameterName, parameterValue) {
   const section = control.closest('.section');
-  const sectionName = section && section.dataset.section;
-
-  console.log({ section, sectionName, parameterValue });
+  const sectionName = section && section.dataset.sectionName;
 
   if (!componentName || !sectionName || !parameterName) {
     return false;
@@ -48,8 +39,13 @@ function updateMidiPatch(component, parameterName, parameterValue) {
   }
 
   midiPatch[componentName][sectionName][parameterName] = parameterValue;
+  markControlChange(control);
 
   console.log({ midiPatch });
+}
+
+function markControlChange(control) {
+  control.classList.add('changed');
 }
 
 export { handlePatchChanges };

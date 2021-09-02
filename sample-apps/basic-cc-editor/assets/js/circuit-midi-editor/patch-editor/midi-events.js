@@ -38,7 +38,10 @@ function initParamterChangeEvents(selectors) {
         const midiChannel = component.querySelector('.midi-channel') && component.querySelector('.midi-channel').value;
 
         sendWebMidiEvent(parameterType, parameterNumber, parameterValue, midiChannel);
-        parameterOutput.value = parameterValue;
+
+        if (parameterOutput) {
+          parameterOutput.value = parameterValue;
+        }
       });
 
       section.addEventListener('change', function (event) {
