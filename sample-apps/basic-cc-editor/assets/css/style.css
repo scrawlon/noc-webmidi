@@ -30,6 +30,22 @@
     font-weight: bold;
 }
 
+output, select {
+    border: 1px solid black;
+    padding: .25em;
+    margin: .5em 0 0;
+    min-width: 1.5em;
+    display: inline-block;
+}
+
+.section select {
+    width: 100%;
+}
+
+.section input[type='range'] {
+    min-width: 80%;
+}
+
 #web-midi-connection-status {
     width: 80%;
     margin: 20px auto;

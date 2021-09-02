@@ -3,8 +3,6 @@ import { handlePatchChanges } from './patch-events.js';
 
 const { midiChannels, initWebMidi, sendWebMidiEvent } = nocWebMidi;
 
-let midiPatch = {};
-
 function initEditorEvents(selectors) {
   initMidi(selectors);
   initParamterChangeEvents(selectors)
@@ -35,28 +33,23 @@ function initParamterChangeEvents(selectors) {
       section.addEventListener('input', function (event) {
         const parameter = event.target.closest('.parameter');
         const parameterValue = event.target.value;
-        const { parameterType, parameterNumber, parameterName } = parameter && parameter.dataset;
+        const { parameterType, parameterNumber } = parameter && parameter.dataset;
+        const parameterOutput = event.target.nextElementSibling
         const midiChannel = component.querySelector('.midi-channel') && component.querySelector('.midi-channel').value;
 
         sendWebMidiEvent(parameterType, parameterNumber, parameterValue, midiChannel);
-        handlePatchChanges(component, parameterName);
+        parameterOutput.value = parameterValue;
+      });
+
+      section.addEventListener('change', function (event) {
+        const parameter = event.target.closest('.parameter');
+        const parameterValue = event.target.value;
+        const { parameterName } = parameter && parameter.dataset;
+
+        handlePatchChanges(component, parameterName, parameterValue);
       });
     });
   });
-}
-
-function updateMidiPatch(midiChannel, midiCCNumber, midiCCValue) {
-  // let circuitMidiCCValues = nocWebMidi.getCircuitMidiCC(parseInt(midiChannel), parseInt(midiCCNumber));
-  // let patchType = midiChannels[midiChannel];
-
-  if (!midiPatch[patchType]) {
-    midiPatch[patchType] = {};
-  }
-
-  midiPatch[patchType][midiCCNumber] = {
-    name: circuitMidiCCValues.name,
-    value: midiCCValue
-  };
 }
 
 export { initEditorEvents };

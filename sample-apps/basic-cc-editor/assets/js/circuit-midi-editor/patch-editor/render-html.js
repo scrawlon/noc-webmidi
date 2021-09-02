@@ -106,7 +106,7 @@ function getParameterHtml(parameters) {
   parameters.forEach(function (parameter) {
     const { name, range, cc, nrpn } = parameter;
     const nameSlug = name && name.toLowerCase().replace(' ', '-');
-    const description = range && getParameterDescription(range);
+    // const description = range && getParameterDescription(range);
     const inputField = getParameterInput(parameter);
 
     let parameterDataset = `data-parameter-name='${parameter.name}'`;
@@ -121,7 +121,7 @@ function getParameterHtml(parameters) {
 
     parameterHtml += `
       <div class='parameter' ${parameterDataset}> 
-        <label for='${nameSlug}'>${name}</label>: ${description} <br />
+        <label for='${nameSlug}'>${name}</label><br />
         ${inputField}
       </div> 
     `;
@@ -146,13 +146,13 @@ function getComponentMidiChannelOptions(componentType) {
   return midiChannelOptions.join('\n');
 }
 
-function getParameterDescription(range) {
-  const rangeKeys = Object.keys(range);
-  const isSlider = Number.isInteger(parseInt(range[rangeKeys[0]]));
+// function getParameterDescription(range) {
+//   const rangeKeys = Object.keys(range);
+//   const isSlider = Number.isInteger(parseInt(range[rangeKeys[0]]));
 
-  // Generate text description of min/max values for slider components.
-  return isSlider ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
-}
+//   // Generate text description of min/max values for slider components.
+//   return isSlider ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
+// }
 
 function getParameterInput(parameter) {
   const { name, defaultValue, range } = parameter;
@@ -172,7 +172,10 @@ function getParameterSliderInput(nameSlug, defaultValue, rangeKeys) {
   const rangeMax = rangeKeys.pop();
 
   // Generate HTML for Slider element.
-  return `<input name='${nameSlug}' type='range' min='${rangeMin}' max='${rangeMax}' value='${defaultValue}' />`;
+  return `
+    <input name='${nameSlug}' type='range' min='${rangeMin}' max='${rangeMax}' value='${defaultValue}' />
+    <output name="display" for="${nameSlug}">${defaultValue}</output> 
+    `;
 }
 
 function getParameterSelectInput(nameSlug, defaultValue, range, rangeKeys) {
