@@ -46,16 +46,16 @@ function getComponentSectionHtml(componentType) {
           randomize
         </button>
       </div>
-      <div class='button-bar'> 
+      <div class='button-bar patch-management'> 
         <label for='${componentTypeSlug}-patch-select'>Patch Select: </label>
         <select id='${componentTypeSlug}-patch-select'>
           <option value='default'>Default Patch</option>
         </select>
-        <button type='button' class='patch-load' data-component-name='${componentType}'>load</button>
-        <button type='button' class='patch-save' data-component-name='${componentType}'>save</button>
-        <button type='button' class='patch-delete' data-component-name='${componentType}'>delete</button>
-        <button type='button' class='patch-export' data-component-name='${componentType}'>export</button>
-        <button type='button' class='patch-import' data-component-name='${componentType}'>import</button>
+        <button type='button' class='patch-load'>load</button>
+        <button type='button' class='patch-save'>save</button>
+        <button type='button' class='patch-delete'>delete</button>
+        <button type='button' class='patch-export'>export</button>
+        <button type='button' class='patch-import'>import</button>
       </div>
       ${componentHtml}
     </div>

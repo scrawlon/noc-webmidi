@@ -3,22 +3,25 @@ import { handlePatchChanges } from './patch-events.js';
 
 const { midiChannels, initWebMidi, sendWebMidiEvent } = nocWebMidi;
 
-function initEditorEvents(selectors) {
-  initMidi(selectors);
-  initParamterChangeEvents(selectors)
+function initMidiEvents(selectors) {
+  const { midiConnectionStatus, editorWrapper } = selectors;
+
+  if (midiConnectionStatus && editorWrapper) {
+    initWebMidi({ midiConnectionStatus });
+    initParamterChangeEvents(editorWrapper)
+  }
 }
 
-function initMidi(selectors) {
-  const { midiConnectionStatus } = selectors;
-  const config = {
-    midiConnectionStatusSelector: midiConnectionStatus
-  };
+// function initMidi(selectors) {
+//   const { midiConnectionStatus } = selectors;
+//   const config = {
+//     midiConnectionStatusSelector: midiConnectionStatus
+//   };
 
-  initWebMidi(config);
-}
+//   initWebMidi(config);
+// }
 
-function initParamterChangeEvents(selectors) {
-  const { editorWrapper } = selectors;
+function initParamterChangeEvents(editorWrapper) {
   const editorWrapperBox = editorWrapper && document.querySelector(editorWrapper);
   const components = editorWrapperBox && editorWrapperBox.querySelectorAll('.component');
 
@@ -35,7 +38,8 @@ function initParamterChangeEvents(selectors) {
         const parameterValue = event.target.value;
         const { parameterType, parameterNumber } = parameter && parameter.dataset;
         const parameterOutput = event.target.nextElementSibling
-        const midiChannel = component.querySelector('.midi-channel') && component.querySelector('.midi-channel').value;
+        const midiChannelInput = component.querySelector('.midi-channel');
+        const midiChannel = midiChannelInput && midiChannelInput.value;
 
         sendWebMidiEvent(parameterType, parameterNumber, parameterValue, midiChannel);
 
@@ -49,10 +53,10 @@ function initParamterChangeEvents(selectors) {
         const parameterValue = event.target.value;
         const { parameterName } = parameter && parameter.dataset;
 
-        handlePatchChanges(component, parameterName, parameterValue);
+        handlePatchChanges(component, section, parameterName, parameterValue);
       });
     });
   });
 }
 
-export { initEditorEvents };
+export { initMidiEvents };

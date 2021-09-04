@@ -1,5 +1,5 @@
 
-import { renderEditor, initEditorEvents } from './patch-editor/index.js';
+import { renderEditor, initMidiEvents, initPatchEvents } from './patch-editor/index.js';
 
 const config = {
   selectors: {
@@ -11,5 +11,6 @@ const config = {
 (function () {
   const { selectors } = config;
   renderEditor(selectors);
-  initEditorEvents(selectors);
+  initMidiEvents(selectors);
+  initPatchEvents();
 })();

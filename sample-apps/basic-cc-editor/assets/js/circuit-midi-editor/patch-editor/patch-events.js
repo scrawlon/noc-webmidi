@@ -2,29 +2,39 @@
 
 let midiPatch = {};
 
-function handlePatchChanges(component, parameterName, parameterValue) {
+function initPatchEvents() {
+  console.log('init patch events');
+
+  setDefaultPatch();
+}
+
+function setDefaultPatch() {
+  console.log('set default patch');
+}
+
+function handlePatchChanges(component, section, parameterName, parameterValue) {
   const componentName = component.dataset.componentName;
-  const control = component.querySelector(`[data-parameter-name='${parameterName}']`);
-  const changed = isChanged(componentName, parameterName, parameterValue);
+  const sectionName = section.dataset.sectionName;
+  const control = section.querySelector(`[data-parameter-name='${parameterName}']`);
+  const changed = isChanged(componentName, sectionName, parameterName, parameterValue);
 
   if (componentName && control && changed) {
-    updateMidiPatch(control, componentName, parameterName, parameterValue)
+    updateMidiPatch(control, componentName, sectionName, parameterName, parameterValue)
   }
 }
 
-function isChanged(componentName, parameterName, parameterValue) {
+function isChanged(componentName, sectionName, parameterName, parameterValue) {
   if (!midiPatch[componentName]
-    || !midiPatch[componentName][parameterName]
-    || midiPatch[componentName][parameterName] !== parameterValue) {
+    || !midiPatch[componentName][sectionName]
+    || !midiPatch[componentName][sectionName][parameterName]
+    || midiPatch[componentName][sectionName][parameterName] !== parameterValue) {
     return true;
   }
 
   return false;
 }
 
-function updateMidiPatch(control, componentName, parameterName, parameterValue) {
-  const section = control.closest('.section');
-  const sectionName = section && section.dataset.sectionName;
+function updateMidiPatch(control, componentName, sectionName, parameterName, parameterValue) {
 
   if (!componentName || !sectionName || !parameterName) {
     return false;
@@ -48,4 +58,4 @@ function markControlChange(control) {
   control.classList.add('changed');
 }
 
-export { handlePatchChanges };
+export { initPatchEvents, handlePatchChanges };

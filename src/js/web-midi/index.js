@@ -35,8 +35,8 @@ function initWebMidi(config) {
 
 function updateMidiStatus(midi, config) {
   const { inputs, outputs } = midi;
-  const { midiConnectionStatusSelector } = config;
-  const midiConnectionStatusBox = midiConnectionStatusSelector && document.querySelector(midiConnectionStatusSelector);
+  const { midiConnectionStatus } = config;
+  const midiConnectionStatusBox = midiConnectionStatus && document.querySelector(midiConnectionStatus);
 
   let midiInText = inputs && inputs.size ? '&#10003;' : '<span class="error">x</span>';
   let midiOutText = outputs && outputs.size ? '&#10003;' : '<span class="error">x</span>';

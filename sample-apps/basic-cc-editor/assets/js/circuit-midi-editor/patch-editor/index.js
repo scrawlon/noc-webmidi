@@ -1,4 +1,5 @@
 import { renderEditor } from './render-html.js';
-import { initEditorEvents } from './midi-events.js';
+import { initMidiEvents } from './midi-events.js';
+import { initPatchEvents } from './patch-events.js';
 
-export { renderEditor, initEditorEvents };
+export { renderEditor, initMidiEvents, initPatchEvents };
