@@ -1,27 +1,19 @@
 
+import { selectors } from './config.js';
 import { handlePatchChanges } from './patch-events.js';
 
 const { midiChannels, initWebMidi, sendWebMidiEvent } = nocWebMidi;
 
-function initMidiEvents(selectors) {
-  const { midiConnectionStatus, editorWrapper } = selectors;
+function initMidiEvents() {
+  const { midiConnectionWrapper, editorWrapper } = selectors;
 
-  if (midiConnectionStatus && editorWrapper) {
-    initWebMidi({ midiConnectionStatus });
-    initParamterChangeEvents(editorWrapper)
+  if (midiConnectionWrapper && editorWrapper) {
+    initWebMidi({ midiConnectionWrapper });
+    initParameterChangeEvents(editorWrapper)
   }
 }
 
-// function initMidi(selectors) {
-//   const { midiConnectionStatus } = selectors;
-//   const config = {
-//     midiConnectionStatusSelector: midiConnectionStatus
-//   };
-
-//   initWebMidi(config);
-// }
-
-function initParamterChangeEvents(editorWrapper) {
+function initParameterChangeEvents(editorWrapper) {
   const editorWrapperBox = editorWrapper && document.querySelector(editorWrapper);
   const components = editorWrapperBox && editorWrapperBox.querySelectorAll('.component');
 

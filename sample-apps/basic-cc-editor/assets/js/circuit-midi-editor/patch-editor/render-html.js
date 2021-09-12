@@ -1,16 +1,12 @@
 
-const midiComponents = {
-  cc: nocWebMidi.getMidiComponents('cc'),
-  nrpn: nocWebMidi.getMidiComponents('nrpn')
-};
-const midiChannels = nocWebMidi.midiChannels;
+import { selectors, getAllComponentTypes, getAllComponents } from './config.js';
 
-function renderEditor(selectors) {
+const { midiChannels } = nocWebMidi;
+
+function renderEditor() {
   const { editorWrapper } = selectors;
   const editorWrapperBox = document.querySelector(editorWrapper);
-  const ccComponentTypes = midiComponents.cc.keys();
-  const nrpnComponentTypes = midiComponents.nrpn.keys();
-  const allComponentTypes = [...new Set([...ccComponentTypes, ...nrpnComponentTypes])];
+  const allComponentTypes = getAllComponentTypes();
 
   if (!editorWrapperBox || !allComponentTypes.length) {
     return false;
@@ -51,11 +47,11 @@ function getComponentSectionHtml(componentType) {
         <select id='${componentTypeSlug}-patch-select'>
           <option value='default'>Default Patch</option>
         </select>
-        <button type='button' class='patch-load'>load</button>
-        <button type='button' class='patch-save'>save</button>
-        <button type='button' class='patch-delete'>delete</button>
-        <button type='button' class='patch-export'>export</button>
-        <button type='button' class='patch-import'>import</button>
+        <button type='button' value='load'>load</button>
+        <button type='button' value='save'>save</button>
+        <button type='button' value='delete'>delete</button>
+        <button type='button' value='import'>import</button>
+        <button type='button' value='export'>export</button>
       </div>
       ${componentHtml}
     </div>
@@ -63,32 +59,30 @@ function getComponentSectionHtml(componentType) {
 }
 
 function getComponentHtml(componentType) {
-  const ccComponents = midiComponents.cc.get(componentType);
-  const nrpnComponents = midiComponents.nrpn.get(componentType);
-  const components = [ccComponents, nrpnComponents];
+  const components = getAllComponents(componentType);
 
   let componentSectionsHtmlArrays = {};
   let componentHtml = '';
 
   components.forEach(function (sections) {
-    const { parameters = [] } = sections || {};
+    const { parameters: section = [] } = sections || {};
 
-    parameters.forEach(function (parameter, parameterName) {
-      const parameterHtml = getParameterHtml(parameter);
+    section.forEach(function (parameters, sectionName) {
+      const sectionHtml = getSectionHtml(parameters);
 
-      if (!(parameterName in componentSectionsHtmlArrays)) {
-        componentSectionsHtmlArrays[parameterName] = [];
+      if (!(sectionName in componentSectionsHtmlArrays)) {
+        componentSectionsHtmlArrays[sectionName] = [];
       }
 
-      componentSectionsHtmlArrays[parameterName].push(parameterHtml);
+      componentSectionsHtmlArrays[sectionName].push(sectionHtml);
     });
   });
 
-  Object.keys(componentSectionsHtmlArrays).forEach(function (parameterName) {
+  Object.keys(componentSectionsHtmlArrays).forEach(function (sectionName) {
     componentHtml += `
-      <div class='section' data-section-name='${parameterName}'>
-        <h3>${parameterName}</h3>
-        ${componentSectionsHtmlArrays[parameterName].join('')}
+      <div class='section' data-section-name='${sectionName}'>
+        <h3>${sectionName}</h3>
+        ${componentSectionsHtmlArrays[sectionName].join('')}
       </div>
     `;
   });
@@ -96,17 +90,16 @@ function getComponentHtml(componentType) {
   return componentHtml;
 }
 
-function getParameterHtml(parameters) {
-  let parameterHtml = '';
+function getSectionHtml(parameters) {
+  let sectionHtml = '';
 
   if (!parameters) {
-    return parameterHtml;
+    return sectionHtml;
   }
 
   parameters.forEach(function (parameter) {
     const { name, range, cc, nrpn } = parameter;
     const nameSlug = name && name.toLowerCase().replace(' ', '-');
-    // const description = range && getParameterDescription(range);
     const inputField = getParameterInput(parameter);
 
     let parameterDataset = `data-parameter-name='${parameter.name}'`;
@@ -119,7 +112,7 @@ function getParameterHtml(parameters) {
       parameterDataset += `data-parameter-type='nrpn' data-parameter-number='${nrpn}'`;
     }
 
-    parameterHtml += `
+    sectionHtml += `
       <div class='parameter' ${parameterDataset}> 
         <label for='${nameSlug}'>${name}</label><br />
         ${inputField}
@@ -127,7 +120,7 @@ function getParameterHtml(parameters) {
     `;
   });
 
-  return parameterHtml;
+  return sectionHtml;
 }
 
 function getComponentMidiChannelOptions(componentType) {
@@ -145,14 +138,6 @@ function getComponentMidiChannelOptions(componentType) {
 
   return midiChannelOptions.join('\n');
 }
-
-// function getParameterDescription(range) {
-//   const rangeKeys = Object.keys(range);
-//   const isSlider = Number.isInteger(parseInt(range[rangeKeys[0]]));
-
-//   // Generate text description of min/max values for slider components.
-//   return isSlider ? `(${range[rangeKeys[0]]} - ${range[rangeKeys[rangeKeys.length - 1]]})` : '';
-// }
 
 function getParameterInput(parameter) {
   const { name, defaultValue, range } = parameter;
