@@ -146,9 +146,9 @@ If you want to work on the code:
 * Clone your forked repo to your local computer.
 * Find you local copy in Terminal (these steps require Node.js):
   * Run 'npm install'.
-  * Run 'gulp watch'.
+  * Run 'npm run watch' for development (auto-rebuilds browser bundle on changes).
 * Development files are in '/src/js'.
-* Changes are compiled by Gulp into '/dist/js' and '/lib'.
+* Run 'npm run build' to build both browser and Node.js bundles in '/dist/js' and '/lib'.
 * All code is written in vanilla JavaScript.
 
 ***I am not employed by or in anyway associated with Focusrite Novation&trade;
