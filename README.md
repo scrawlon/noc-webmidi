@@ -127,14 +127,17 @@ by component type:
 
 ## Sample code
 If you're still not sure what's this is useful for, there's a sample project in
-the `/sample_code` folder. The file `sample_code.js` contains code for a
-simple Circuit MIDI CC editor. Open the file '/samples_code/index.html' in the
-Google Chrome web browser.
+the `/sample-app` folder. The file `sample_code.js` contains code for a
+simple Circuit MIDI CC editor. To run the sample:
+
+1. Start a local HTTP server in the project root (e.g., using Python: `python3 -m http.server 8000`).
+2. Open `http://localhost:8000/sample-app/index.html` in your web browser.
 
 * Requirements to run the sample code:
   * A Novation Circuit&trade; + USB cable.
-  * A computer running the Google Chrome browser, connected to the Novation Circuit&trade;
-  via usb cable.
+  * A computer running a modern web browser (e.g., Google Chrome), connected to the Novation Circuit&trade;
+  via USB cable.
+  * A local HTTP server to serve the files (due to browser security restrictions on `file://` URLs).
 
 ## How to Contribute
 If you find an error or see a way to improve, I recommend opening an issue to let me know.
@@ -146,9 +149,9 @@ If you want to work on the code:
 * Clone your forked repo to your local computer.
 * Find you local copy in Terminal (these steps require Node.js):
   * Run 'npm install'.
-  * Run 'gulp watch'.
+  * Run 'npm run watch' for development (auto-rebuilds browser bundle on changes).
 * Development files are in '/src/js'.
-* Changes are compiled by Gulp into '/dist/js' and '/lib'.
+* Run 'npm run build' to build both browser and Node.js bundles in '/dist/js' and '/lib'.
 * All code is written in vanilla JavaScript.
 
 ***I am not employed by or in anyway associated with Focusrite Novation&trade;
