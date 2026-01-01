@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build:browser && npm run build:node",
-    "build:browser": "esbuild src/js/noc-webmidi.js --bundle --minify --sourcemap --outfile=dist/js/noc-webmidi.min.js --format=iife --global-name=circuitMidiApp",
+    "build:browser": "esbuild src/js/noc-webmidi.js --bundle --minify --sourcemap --outfile=dist/js/noc-webmidi.min.js --format=iife",
     "build:node": "esbuild src/js/index.js --bundle --minify --sourcemap --outfile=lib/index.js --format=cjs --platform=node",
-    "watch": "esbuild src/js/noc-webmidi.js --bundle --sourcemap --outfile=dist/js/noc-webmidi.min.js --format=iife --global-name=circuitMidiApp --watch",
+    "watch": "esbuild src/js/noc-webmidi.js --bundle --minify --sourcemap --outfile=dist/js/noc-webmidi.min.js --format=iife --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
