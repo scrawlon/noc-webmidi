@@ -27,9 +27,6 @@
     // Load Circuit Components HTML
     buildMidiComponents(midiChannelsKeys);
 
-    // Load NRPN Components HTML
-    buildNRPNComponents();
-
     // Load Web MIDI
     getWebMidi();
   }
@@ -72,7 +69,7 @@
         + "<button type='submit' class='patch-import' data-component-section='"
         + key + "'>import</button>"
         + "</div>";
-      outputHTML += getComponentValueString(value, thisMidiChannel);
+      outputHTML += getComponentValueString(value, thisMidiChannel, key);
       outputHTML += "</div>";
       circuitWebMidiTestDiv.innerHTML = circuitWebMidiTestDiv.innerHTML + outputHTML;
     });
@@ -180,8 +177,9 @@
     return outputHTML;
   }
 
-  function getComponentValueString(component, midiChannel) {
+  function getComponentValueString(component, midiChannel, componentName) {
     var outputHTML = "";
+    var isSynth = componentName && componentName.includes('synth');
 
     component.forEach(function(value, key) {
       outputHTML += "<div class='component'>"
@@ -196,6 +194,25 @@
 
       outputHTML += "</div>";
     });
+
+    // Add NRPN controls for synth components
+    if (isSynth) {
+      var nrpnGroups = groupNRPNsByCategory();
+      nrpnGroups.forEach(function(group) {
+        outputHTML += "<div class='component'>"
+          + "<h3>" + group.name + " (NRPN)</h3>";
+        
+        Object.keys(group.parameters).forEach(function(key) {
+          var param = group.parameters[key];
+          outputHTML += "<div id='nrpn-" + key.replace(':', '-') + "-" + componentName.replace(' ', '-') + "' class='component-value'>";
+          outputHTML += param.name + ": " + getComponentRangeDescriptionText(param.range) + "<br />";
+          outputHTML += getNRPNRangeInput(midiChannel, param.bank, param.lsb, param.name, param.default, param.range);
+          outputHTML += "</div>";
+        });
+        
+        outputHTML += "</div>";
+      });
+    }
 
     return outputHTML;
   }

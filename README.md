@@ -3,12 +3,12 @@
 This JavaScript library provides MIDI CC and NRPN data for controlling 
 the Novation Circuit groovebox.
 
-The MIDI CC info contained here comes from the official
-["Circuit MIDI Parameters" guide][1].
+The MIDI CC and NRPN info contained here comes from the official
+["Circuit Programmer’s Reference Guide"][1].
 
-[1]: https://customer.novationmusic.com/en/support/downloads?brand=Novation&product_by_type=541&download_type=all
+[1]: https://fael-downloads-prod.focusrite.com/customer/prod/downloads/Circuit%20Programmer's%20Reference%20Guide%201.3_2.pdf
 
-[Visit the official NoC Web MIDI JS website](https://noc-webmidi.com) for more info,
+Visit the [NoC Web MIDI JS website](https://noc-webmidi.com) for more info,
 and to try the 
 [Novation Circuit MIDI CC patch editor](https://noc-webmidi.com/sample-app).
 
@@ -166,12 +166,14 @@ by component type:
 ## Sample code
 If you're still not sure what's this is useful for, there's a sample project in
 the `/sample-app` folder. The file `sample_code.js` contains code for a
-simple Circuit MIDI CC editor. To run the sample:
+simple Circuit MIDI CC and NRPN editor. To run the sample:
 
 1. Start a local HTTP server in the project root (e.g., using Python: `python3 -m http.server 8000`).
 2. Open `http://localhost:8000/sample-app/index.html` in your web browser.
 
-* Requirements to run the sample code:
+The sample app provides controls for both MIDI CC and NRPN parameters, organized by type (synth 1 & 2, drum 1-4, session and mixer).
+
+Requirements to run the sample code:
   * A Novation Circuit&trade; + USB cable.
   * A computer running a modern web browser (e.g., Google Chrome), connected to the Novation Circuit&trade;
   via USB cable.
