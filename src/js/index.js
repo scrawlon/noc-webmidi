@@ -10,6 +10,10 @@
     session: session.midiCCs
   };
 
+  var midiNRPNs = {
+    synth: synth.midiNRPNs
+  };
+
   var midiComponents = getMidiComponents(),
     midiDrumCCs = getDrumComponents(drum.midiComponents),
     midiChannels = {
@@ -109,6 +113,11 @@
     return circuitCCValues;
   }
 
+  function getCircuitMidiNRPN(bank, lsb) {
+    var nrpnKey = bank + ':' + lsb;
+    return midiNRPNs.synth[nrpnKey] || false;
+  }
+
   function getMidiParameterName(parameter) {
     return parameter.name ? parameter.name : false;
   }
@@ -155,6 +164,8 @@
     midiComponents: midiComponents,
     midiDrumCCs: midiDrumCCs,
     midiChannels: midiChannels,
-    getCircuitMidiCC: getCircuitMidiCC
+    midiNRPNs: midiNRPNs,
+    getCircuitMidiCC: getCircuitMidiCC,
+    getCircuitMidiNRPN: getCircuitMidiNRPN
   }
 })();

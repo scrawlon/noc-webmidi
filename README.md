@@ -1,6 +1,6 @@
 # NoC Web MIDI JS
 
-This JavaScript library provides MIDI CC data for controlling 
+This JavaScript library provides MIDI CC and NRPN data for controlling 
 the Novation Circuit groovebox.
 
 The MIDI CC info contained here comes from the official
@@ -75,6 +75,18 @@ by component type:
        rangeValues: ["Mono","Mono AG","Poly"]  
      }`
 
+* __circuitMidiApp.midiNRPNs__
+
+    This Object contains MIDI NRPN data for advanced parameters (e.g., LFOs, envelopes, Mod Matrix, Macro Knobs), broken down by component type.
+
+    `synth: {  
+      '0:0': { name: 'Envelope 2 Velocity', range: [0,127], default: 64 },  
+      '0:1': { name: 'Envelope 2 Attack', range: [0,127], default: 2 },  
+      '1:0': { name: 'Mod Matrix 1 Source 1', range: [0,17], default: 0 },  
+      '3:35': { name: 'Macro Knob 1 Source 1', range: [0,17], default: 0 },  
+      ...  
+    }`
+
 * __circuitMidiApp.midiComponents__
     This is a JavaScript Map of all the Circuit&trade; MIDI CC info:  
     `[  
@@ -123,6 +135,32 @@ by component type:
       name: "env 1 velocity",  
       range: [0,127],  
       rangeValues:[-64,63]  
+    }`  
+
+* __circuitMidiApp.getCircuitMidiNRPN()__  
+    This is a helper function that takes 2 parameters -
+    _NRPN bank number and NRPN LSB number_ -
+    and it returns the MIDI NRPN value object associated with those parameters.
+
+    For example:  
+    `circuitMidiApp.getCircuitMidiNRPN(0,0);`  
+    The above function call sends parameters 0 (bank) and 0 (lsb) and returns
+    the MIDI NRPN object for 'Envelope 2 Velocity':  
+
+    `{
+      name: "Envelope 2 Velocity",  
+      range: [0,127],  
+      default: 64  
+    }`  
+
+    Another example:  
+    `circuitMidiApp.getCircuitMidiNRPN(1,0);`  
+    Returns the MIDI NRPN object for 'Mod Matrix 1 Source 1':  
+
+    `{
+      name: "Mod Matrix 1 Source 1",  
+      range: [0,17],  
+      default: 0  
     }`  
 
 ## Sample code

@@ -4,6 +4,7 @@
     midiChannels = circuitMidiApp.midiChannels,
     midiComponents = circuitMidiApp.midiComponents,
     midiDrumCCs = circuitMidiApp.midiDrumCCs,
+    midiNRPNs = circuitMidiApp.midiNRPNs,
     midi = false,
     midiDevices = {},
     inputID = false,
@@ -12,6 +13,10 @@
     midiIn = {
       channel: 0,
       enabled: false
+    },
+    nrpnState = {
+      bank: null,
+      lsb: null
     };
 
   showEditorTest();
@@ -21,6 +26,9 @@
 
     // Load Circuit Components HTML
     buildMidiComponents(midiChannelsKeys);
+
+    // Load NRPN Components HTML
+    buildNRPNComponents();
 
     // Load Web MIDI
     getWebMidi();
@@ -74,6 +82,102 @@
     addSynthEditorEvents();
     activateMidiInButtons()
     activateRandomizeButtons();
+  }
+
+  function buildNRPNComponents() {
+    var circuitWebMidiTestDiv = document.getElementById("circuit-web-midi-test");
+    var nrpnGroups = groupNRPNsByCategory();
+
+    nrpnGroups.forEach(function(group) {
+      var outputHTML = "<div id='nrpn-" + group.id + "' class='component-section'>"
+        + "<h2>" + group.name + " (NRPN)"
+        + "<button type='submit' class='activate-midi-in' data-midi-channel='0' data-midi-enabled=''>MIDI IN</button>"
+        + "<button type='submit' class='randomizer' data-component-section='nrpn-" + group.id + "'>randomize</button>"
+        + "</h2>";
+      
+      outputHTML += getNRPNValueString(group.parameters, 0);
+      outputHTML += "</div>";
+      circuitWebMidiTestDiv.innerHTML = circuitWebMidiTestDiv.innerHTML + outputHTML;
+    });
+
+    activateMidiInButtons();
+    activateRandomizeButtons();
+    addSynthEditorEvents();
+  }
+
+  function groupNRPNsByCategory() {
+    var groups = [];
+    var synthNRPNs = midiNRPNs.synth;
+    var envelopesLFOS = {};
+    var effects = {};
+    var modMatrix = {};
+    var macroKnobs = {};
+
+    Object.keys(synthNRPNs).forEach(function(key) {
+      var parts = key.split(':');
+      var bank = parseInt(parts[0]);
+      var lsb = parseInt(parts[1]);
+      var param = synthNRPNs[key];
+      param.bank = bank;
+      param.lsb = lsb;
+
+      if (bank === 0) {
+        if (lsb <= 50) { // Envelopes and LFOs
+          envelopesLFOS[key] = param;
+        } else { // Effects
+          effects[key] = param;
+        }
+      } else if (bank === 1) {
+        modMatrix[key] = param;
+      } else if (bank === 3) {
+        macroKnobs[key] = param;
+      }
+    });
+
+    if (Object.keys(envelopesLFOS).length > 0) {
+      groups.push({ id: 'envelopes-lfos', name: 'Envelopes & LFOs', parameters: envelopesLFOS });
+    }
+    if (Object.keys(effects).length > 0) {
+      groups.push({ id: 'effects', name: 'Effects', parameters: effects });
+    }
+    if (Object.keys(modMatrix).length > 0) {
+      groups.push({ id: 'mod-matrix', name: 'Mod Matrix', parameters: modMatrix });
+    }
+    if (Object.keys(macroKnobs).length > 0) {
+      groups.push({ id: 'macro-knobs', name: 'Macro Knobs', parameters: macroKnobs });
+    }
+
+    return groups;
+  }
+
+  function getNRPNValueString(parameters, midiChannel) {
+    var outputHTML = "<div class='component'><h3>NRPN Parameters</h3>";
+
+    Object.keys(parameters).forEach(function(key) {
+      var param = parameters[key];
+      outputHTML += "<div id='nrpn-" + key.replace(':', '-') + "' class='component-value'>";
+      outputHTML += param.name + ": " + getComponentRangeDescriptionText(param.range) + "<br />";
+      outputHTML += getNRPNRangeInput(midiChannel, param.bank, param.lsb, param.name, param.default, param.range);
+      outputHTML += "</div>";
+    });
+
+    outputHTML += "</div>";
+    return outputHTML;
+  }
+
+  function getNRPNRangeInput(midiChannel, bank, lsb, name, defaultValue, range) {
+    var rangeKeys = Object.keys(range),
+      rangeKeysLength = rangeKeys.length,
+      outputHTML = "";
+
+    // NRPNs are always numeric ranges, so use slider
+    outputHTML = "<input type='range' min='" + range[0] + "' max='" + range[1] + "' value='" + defaultValue + "' "
+      + " data-midi-channel='" + midiChannel + "' "
+      + " data-nrpn-bank='" + bank + "' "
+      + " data-nrpn-lsb='" + lsb + "' "
+      + " />";
+    
+    return outputHTML;
   }
 
   function getComponentValueString(component, midiChannel) {
@@ -166,11 +270,21 @@
   function handlePatchChanges(changedOption, control) {
     var selectedMidiChannel = parseInt(changedOption.dataset.midiChannel),
       selectedMidiCC = changedOption.dataset.midiCc,
+      selectedNRPNBank = changedOption.dataset.nrpnBank,
+      selectedNRPNLsb = changedOption.dataset.nrpnLsb,
       selectedMidiCCValue = changedOption.value;
 
-    markControlChange(selectedMidiChannel, selectedMidiCC, control);
-    updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
-    sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
+    if (selectedNRPNBank !== undefined && selectedNRPNLsb !== undefined) {
+      // NRPN
+      markNRPNControlChange(selectedMidiChannel, selectedNRPNBank, selectedNRPNLsb, control);
+      updateMidiPatch(selectedMidiChannel, 'nrpn-' + selectedNRPNBank + ':' + selectedNRPNLsb, selectedMidiCCValue);
+      sendNRPNEvent(selectedMidiChannel, selectedNRPNBank, selectedNRPNLsb, selectedMidiCCValue);
+    } else {
+      // CC
+      markControlChange(selectedMidiChannel, selectedMidiCC, control);
+      updateMidiPatch(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
+      sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue);
+    }
   }
 
   function sendMidiEvent(selectedMidiChannel, selectedMidiCC, selectedMidiCCValue) {
@@ -180,6 +294,19 @@
     if ( midi && midi.outputs && outputID ) {
       output = midi.outputs.get(outputID);
       output.send( ["0xB"+selectedMidiChannelHex, selectedMidiCC, selectedMidiCCValue] );
+    }
+  }
+
+  function sendNRPNEvent(selectedMidiChannel, bank, lsb, value) {
+    var selectedMidiChannelHex = selectedMidiChannel.toString(16),
+      output = false;
+
+    if ( midi && midi.outputs && outputID ) {
+      output = midi.outputs.get(outputID);
+      // Send NRPN: CC 99 (bank), CC 98 (lsb), CC 6 (value)
+      output.send( ["0xB"+selectedMidiChannelHex, 0x63, bank] );
+      output.send( ["0xB"+selectedMidiChannelHex, 0x62, lsb] );
+      output.send( ["0xB"+selectedMidiChannelHex, 0x06, value] );
     }
   }
 
@@ -644,17 +771,34 @@
       sliderMaximum = Math.floor( sliders[i].getAttribute('max') );
       randomValue = Math.floor(Math.random() * (sliderMaximum - sliderMinimum)) + sliderMinimum,
       midiChannel = sliders[i].getAttribute('data-midi-channel'),
-      midiCCNumber = sliders[i].getAttribute('data-midi-cc');
+      midiCCNumber = sliders[i].getAttribute('data-midi-cc'),
+      nrpnBank = sliders[i].getAttribute('data-nrpn-bank'),
+      nrpnLsb = sliders[i].getAttribute('data-nrpn-lsb');
 
       sliders[i].value = randomValue;
       sliders[i].dispatchEvent(event);
-      updateMidiPatch(midiChannel, midiCCNumber, randomValue);
-      markControlChange(midiChannel, midiCCNumber, sliders[i]);
+      
+      if (nrpnBank !== null && nrpnLsb !== null) {
+        // NRPN
+        updateMidiPatch(midiChannel, 'nrpn-' + nrpnBank + ':' + nrpnLsb, randomValue);
+        markNRPNControlChange(midiChannel, nrpnBank, nrpnLsb, sliders[i]);
+      } else {
+        // CC
+        updateMidiPatch(midiChannel, midiCCNumber, randomValue);
+        markControlChange(midiChannel, midiCCNumber, sliders[i]);
+      }
     }
   }
 
   function markControlChange(midiChannel, midiCC, control) {
     if ( !isChanged(midiChannel, midiCC) ) {
+      control.parentNode.className += " midi-patch-value";
+    }
+  }
+
+  function markNRPNControlChange(midiChannel, bank, lsb, control) {
+    var nrpnKey = 'nrpn-' + bank + ':' + lsb;
+    if ( !isChanged(midiChannel, nrpnKey) ) {
       control.parentNode.className += " midi-patch-value";
     }
   }
@@ -847,8 +991,20 @@
         var eventType = event.data[0] & 0xf0;
 
         if ( eventType === 0xB0 ) {
-          updateSliderValue(eventMidiChannel, eventMidiCC, eventMidiCCValue);
-          updateMidiPatch(eventMidiChannel, eventMidiCC, eventMidiCCValue);
+          if (eventMidiCC === 0x63) { // NRPN Bank
+            nrpnState.bank = eventMidiCCValue;
+          } else if (eventMidiCC === 0x62) { // NRPN LSB
+            nrpnState.lsb = eventMidiCCValue;
+          } else if (eventMidiCC === 0x06 && nrpnState.bank !== null && nrpnState.lsb !== null) { // NRPN Value
+            updateNRPNSliderValue(eventMidiChannel, nrpnState.bank, nrpnState.lsb, eventMidiCCValue);
+            updateMidiPatch(eventMidiChannel, 'nrpn-' + nrpnState.bank + ':' + nrpnState.lsb, eventMidiCCValue);
+            nrpnState.bank = null;
+            nrpnState.lsb = null;
+          } else {
+            // Regular CC
+            updateSliderValue(eventMidiChannel, eventMidiCC, eventMidiCCValue);
+            updateMidiPatch(eventMidiChannel, eventMidiCC, eventMidiCCValue);
+          }
         }
       }
     }
@@ -861,6 +1017,15 @@
     slider.value = midiCCValue;
 
     markControlChange(midiChannel, midiCC, slider);
+  }
+
+  function updateNRPNSliderValue(midiChannel, bank, lsb, value) {
+    var slider = document
+      .querySelectorAll("[data-midi-channel='" + midiChannel + "'][data-nrpn-bank='" + bank + "'][data-nrpn-lsb='" + lsb + "']")[0];
+
+    slider.value = value;
+
+    markNRPNControlChange(midiChannel, bank, lsb, slider);
   }
   function sendMiddleC( midi, portID ) {
     var noteOnMessage = [0x90, 60, 63];
